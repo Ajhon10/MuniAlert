@@ -6,7 +6,7 @@ Application name: **MuniAlert**. Baseline: 2026-10-02. Institution, proponents a
 
 This appendix documents the implementation and testing evidence. It does not invent field research, cloud deployment or evaluation findings.
 
-<!-- Source SHA256: f249417c4fdefddfdce824dc3877bd5cd4d551ec301c41c07c77d67467b2cba4 -->
+<!-- Source SHA256: 4c7733badf904093f5dc50447cf6205c3beead3d5c9d941927991fef36ea22f2 -->
 
 # 01 — Project overview and requirements
 
@@ -295,6 +295,8 @@ The compact header attaches to the viewport's top edge with no forced margin or 
 Native modal dialogs use three flex regions: a fixed header, one keyboard-focusable scrolling body and a fixed named footer slot. Authentication and report components own their modal so their reactive actions can populate that footer directly. Footer submit buttons associate with uniquely identified forms, preserving browser validation and Enter submission. Nested confirmations share a reference-counted body-scroll lock. The outer dialog clips overflow to prevent photo/focus changes from scrolling its chrome. The feature-tour sheet uses the same header/body/footer pattern. The viewport requests content resizing for Android's onscreen keyboard; real-device behavior remains an acceptance check.
 
 The root pre-push hook runs the complete gate and rejects an uncommitted publication state. CI checks the same workspace using PHP 8.5 and Node 22, including source-publication safety and the separate Remotion lint/audit. A manual Android debug-APK workflow accepts only a public HTTPS API origin without credentials. GitHub source access does not host the API or establish physical-device acceptance. The fraud guide separates existing verification/rate-limit controls from proposed contact verification and account moderation; no automatic fraud classifier was introduced.
+
+Collaborators can run an independent local website from the tracked source, lockfiles, environment examples and migrations. They create their own environment/key/database/accounts; original owner environment files, database dumps and evidence are not runtime dependencies. Android Chrome uses the PC development site through USB forwarding. An installed APK or a phone-only remote test additionally needs an actually reachable HTTPS backend. The [first-download quickstart](COLLABORATOR_QUICKSTART.md) and [file handoff checklist](COLLABORATOR_FILE_CHECKLIST.md) distinguish these routes and optional cloud integrations.
 
 
 ---
@@ -807,6 +809,12 @@ The branding/guide follow-up passed 61 backend tests / 487 assertions, 36 browse
 ## Basista map follow-up — 9 November 2026
 
 `BasistaScopeTest` covers the 13-name allowlist, ASCII/case normalization, rejection outside the list and the count-preserving conditional camera migration. `maps.spec.ts` uses real MapLibre rendering and the actual local boundary files with deterministic base styles, covering geometry visibility, Fire/accident filtering, synchronized expansion, persisted modes/layers, retry recovery, packaged paths, 320–1440px reflow, simulated 200% text and retained confirmed pins. A separate real-provider review loads Clear/Streets/Dark and attributed labels with synthetic reports. Final results and source hashes are in [the Basista map evidence](evidence/basista-map-2026-11-09.json) and [handover](BASISTA_MAP_2026-11-09.md). Reference boundaries and browser simulation do not establish physical-device or municipal operational acceptance.
+
+## Fresh collaborator download — 9 November 2026
+
+A separate source archive of the published repository was extracted without `.git`, real environments, dependencies, uploaded evidence or compiled builds. Example-based local configuration, a new app key and a new MySQL schema were created; locked npm/Composer installation, platform checks, migrations/seeding and a frontend production build passed. Phone-sized Chromium exercised citizen registration, a synthetic report, confirmed Basista coordinates and authenticated private-photo loading. A separately provisioned administrator signed in and saved a response. No owner database dump or original key/upload folder was needed. The administrator command used scripted prompt answers in the headless harness; interactive terminal password entry and physical USB/Android behavior remain manual checks.
+
+See [the collaborator handover](COLLABORATOR_SETUP_2026-11-09.md) and [evidence](evidence/collaborator-setup-2026-11-09.json). This is a fresh-source test on the existing workstation with prerequisites already installed, not a clean operating-system or physical-device certification.
 
 
 ---

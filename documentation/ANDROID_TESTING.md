@@ -2,6 +2,8 @@
 
 Updated 9 November 2026. Start with the phone's Chrome browser over USB. Test the installed Capacitor app separately for native camera, secure storage and push. Browser emulation and a GitHub push do not establish physical Android acceptance.
 
+**Fresh collaborator download:** complete [the PC quickstart](COLLABORATOR_QUICKSTART.md) first. The owner only needs to send repository access/instructions for an independent local test; see [the file handoff checklist](COLLABORATOR_FILE_CHECKLIST.md). USB browser testing needs no APK, Android Studio or owner Firebase files. A phone-only tester needs an actual hosted HTTPS test URL, or a configured APK plus its running HTTPS backend.
+
 ## 1. Clone and start the private workspace
 
 Follow [team setup](TEAM_TESTING.md) to clone [Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert), install Node/PHP/Composer dependencies, configure a new development MySQL database and provision your own test accounts. The owner will add members as GitHub collaborators. Use synthetic incidents during testing.
@@ -24,7 +26,7 @@ The launcher selects `C:\php85\php.exe`, starts or reuses the matching API on 80
 6. Allow Chrome's location permission and Android's location service when testing GPS. Use the app's manual pin/coordinate flow if GPS is denied or inaccurate. Confirm the incident location explicitly.
 7. In desktop `chrome://inspect`, select **Inspect** under the phone's MuniAlert tab to inspect console/network errors. Client edits should update the phone through Vite while the cable and forwarding remain active.
 
-Chrome's [official USB/local-server guide](https://developer.chrome.com/docs/devtools/remote-debugging/local-server) explains forwarding. Localhost is a secure context for browser APIs. Plain HTTP on a Wi-Fi/LAN IP may show layout but is not a reliable secure-context GPS test. For wireless/remote tests, use an approved HTTPS staging site.
+Chrome's [official USB/local-server guide](https://developer.chrome.com/docs/devtools/remote-debugging/local-server) explains forwarding. The USB route does not require the phone and PC to share Wi-Fi. Keep phone internet available for external map tiles; forwarding local app traffic does not provide general internet access. Localhost is a secure context for browser APIs. Plain HTTP on a Wi-Fi/LAN IP may show layout but is not a reliable secure-context GPS test. For wireless/remote tests, use an approved HTTPS staging site.
 
 If Android platform-tools are already installed, the CLI alternative is:
 
@@ -36,6 +38,8 @@ adb reverse tcp:8000 tcp:8000
 ```
 
 The device must show `device`, not `unauthorized`. When finished, remove only the mappings you created with `adb reverse --remove tcp:5173` and, if used, `adb reverse --remove tcp:8000`.
+
+The optional packaged `/app/` website is generated, not included in the download. To test it locally, first run root `npm.cmd run build:web`, add `http://localhost:8000` to backend `FRONTEND_URLS` and `localhost:8000` to `SANCTUM_STATEFUL_DOMAINS`, then run `config:clear` and restart services. The primary 5173 USB route above needs none of these packaged-site changes.
 
 ## 3. Phone test checklist
 
@@ -71,6 +75,8 @@ The current source uses Capacitor 7, Android SDK Platform/target 35, minimum API
 6. Firebase foreground/background push requires separate project configuration, credentials and a running delivery process. In-app saved notifications work without Firebase. Keep `google-services.json`, service-account files and signing keys outside Git.
 
 The private repository also provides a manual **Build Android debug APK** workflow. Supply the approved HTTPS API origin in Actions, then download the `munialert-android-debug` artifact after success. A debug APK and its configured backend must both be reachable/useful to the tester. A signed release APK/AAB is a separate deliverable.
+
+The source repository already includes the Gradle wrapper JAR/scripts; do not request an owner's dependency/build directories. Android Studio creates `local.properties` for each PC. No debug APK or HTTPS staging address is currently supplied in the checked local setup. Native Firebase push additionally needs a test `google-services.json` for `ph.municipal.bantay`; its server service-account key belongs on the backend, never in the APK.
 
 ## 5. Troubleshooting and remote members
 

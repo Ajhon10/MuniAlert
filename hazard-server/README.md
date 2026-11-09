@@ -6,25 +6,29 @@ Laravel 12, Sanctum, and MySQL API for MuniAlert. It lives in the `hazard-server
 
 Requires PHP compatible with the lockfile, Composer 2, MySQL, and Node 22.12+ for the development launcher. Use workstation PHP 8.5 (`C:/php85/php.exe`) for Composer and Artisan. Use a separate MySQL schema named `municipal_hazards`; the schema is created in MySQL Workbench or another database client, while Laravel migrations create its tables.
 
-```sh
+For a new installation, from this server folder in PowerShell:
+
+```powershell
 composer install
-cp .env.example .env
+if (!(Test-Path .env)) {
+    Copy-Item .env.example .env
+}
+# New installation only:
 php artisan key:generate
 ```
 
-Copy `.env.example` and generate an app key only for a fresh installation. An existing local `.env` was moved with this project; keep its `APP_KEY` and other settings. On PowerShell, use `Copy-Item .env.example .env` only if `.env` does not already exist. Set `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` in `.env` to the correct MySQL connection. The password belongs to the MySQL user. Never commit `.env` or share its password.
+GitHub does not contain a real `.env`. Copy `.env.example` and generate your own app key for a fresh installation; keep your existing `.env`/key when updating. On PowerShell, copy only if `.env` does not exist. Set `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` using your own local MySQL connection. The password belongs to the MySQL user. An owner's SQL dump, `.env` or app key is unnecessary for a new development database. Follow [the root collaborator quickstart](../documentation/COLLABORATOR_QUICKSTART.md) for the complete first-install sequence.
 
 Run these one at a time, stopping if a command fails:
 
 ```sh
 php artisan config:clear
 php artisan migrate --seed
-php artisan storage:link
 php artisan hazard:admin admin@example.test
 composer run serve
 ```
 
-If `storage:link` says the link exists, keep the existing link. The development launcher selects PHP 8.5 on Windows, reuses an existing healthy API from this workspace, and binds port 8000 without silently falling back to 8001. From Git Bash, invoke Composer with `PATH="/c/php85:$PATH" composer run serve`. The API runs at `http://127.0.0.1:8000`; start `hazard-client` separately with `npm run dev` on port 5173. Run `composer test` for isolated Laravel tests. Never run destructive test migrations against the application database.
+New incident evidence is private and does not need `storage:link`; use that command only for separately required legacy public assets. The development launcher selects PHP 8.5 on Windows, reuses an existing healthy API from this workspace, and binds port 8000 without silently falling back to 8001. From Git Bash, invoke Composer with `PATH="/c/php85:$PATH" composer run serve`. The API runs at `http://127.0.0.1:8000`; from the repository root prefer `npm run dev` to start both API and client on 5173. Run `composer test` for isolated Laravel tests. Never run destructive test migrations against the application database.
 
 Migration `2026_10_02_000002` adds admin-managed map/hotline settings, milestone badge definitions, confirmed-report news reactions/comments, and soft deletion for a reporter's own unverified report. Run `php artisan migrate` after updating an existing installation. The seeded hotline list is empty until an administrator publishes locally approved numbers in the client CMS. Reward descriptions are informational; the API does not pay cash or deliver gifts.
 

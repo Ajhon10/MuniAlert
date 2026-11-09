@@ -1,0 +1,146 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Asia/Manila",
+  "recordedAt": "2026-11-09T07:29:04.401Z",
+  "audit": {
+    "checkedAt": "2026-11-09T07:02:33.680Z",
+    "requiredSource": [
+      {
+        "file": "package.json",
+        "tracked": true
+      },
+      {
+        "file": "package-lock.json",
+        "tracked": true
+      },
+      {
+        "file": "scripts/dev.mjs",
+        "tracked": true
+      },
+      {
+        "file": "scripts/php.mjs",
+        "tracked": true
+      },
+      {
+        "file": "hazard-client/.env.example",
+        "tracked": true
+      },
+      {
+        "file": "hazard-server/.env.example",
+        "tracked": true
+      },
+      {
+        "file": "hazard-server/composer.json",
+        "tracked": true
+      },
+      {
+        "file": "hazard-server/composer.lock",
+        "tracked": true
+      },
+      {
+        "file": "hazard-server/database/seeders/DatabaseSeeder.php",
+        "tracked": true
+      },
+      {
+        "file": "hazard-client/capacitor.config.ts",
+        "tracked": true
+      },
+      {
+        "file": "hazard-client/android/gradlew",
+        "tracked": true
+      },
+      {
+        "file": "hazard-client/android/gradlew.bat",
+        "tracked": true
+      },
+      {
+        "file": "hazard-client/android/gradle/wrapper/gradle-wrapper.jar",
+        "tracked": true
+      },
+      {
+        "file": "hazard-client/android/gradle/wrapper/gradle-wrapper.properties",
+        "tracked": true
+      },
+      {
+        "file": "hazard-client/public/boundaries/basista-barangays.geojson",
+        "tracked": true
+      },
+      {
+        "file": ".github/workflows/android-debug-apk.yml",
+        "tracked": true
+      }
+    ],
+    "localOnlyPresence": [
+      {
+        "file": "hazard-server/.env",
+        "present": true,
+        "tracked": false
+      },
+      {
+        "file": "hazard-client/.env",
+        "present": false,
+        "tracked": false
+      },
+      {
+        "file": "hazard-server/vendor/autoload.php",
+        "present": true,
+        "tracked": false
+      },
+      {
+        "file": "node_modules/vite/package.json",
+        "present": true,
+        "tracked": false
+      },
+      {
+        "file": "hazard-client/android/local.properties",
+        "present": false,
+        "tracked": false
+      },
+      {
+        "file": "hazard-client/android/app/google-services.json",
+        "present": false,
+        "tracked": false
+      },
+      {
+        "file": "hazard-client/android/app/build/outputs/apk/debug/app-debug.apk",
+        "present": false,
+        "tracked": false
+      }
+    ],
+    "optionalConfigured": {
+      "nativeApiOrigin": false,
+      "webPush": false,
+      "serverFcm": false,
+      "googleOAuth": false,
+      "facebookOAuth": false,
+      "evidenceDisk": "evidence"
+    }
+  },
+  "freshSource": {
+    "checkedAt": "2026-11-09T07:20:36.670Z",
+    "sourceCommit": "e8ae7c644efe048bb9a17625b8a48526a5241dfa",
+    "sourceArchive": true,
+    "originalEnvironmentCopied": false,
+    "newApplicationKeyGenerated": true,
+    "separateMySqlDatabase": true,
+    "dependenciesInstalledFresh": true,
+    "lockedPlatformChecksPassed": true,
+    "productionBuildPassed": true,
+    "administratorCommandPassed": true,
+    "physicalAndroid": false,
+    "checks": [
+      "Vite proxy and new MySQL-backed API healthy",
+      "Phone-sized browser citizen registration/session succeeds",
+      "Synthetic report, confirmed Basista pin, reference/timeline and private photo work without copied uploads or storage symlink",
+      "Administrator created through documented CLI can sign in and save a reviewed response"
+    ],
+    "pageErrors": [],
+    "passed": true
+  },
+  "adminProvisioning": "Real CreateAdmin command handler with scripted prompt answers; Windows hidden terminal reader was not automated.",
+  "applicationSourceChanged": false,
+  "physicalAndroid": false,
+  "nativeApkBuilt": false,
+  "stagingDeployed": false,
+  "publicationReceipt": ".cache/collaborator-publication-result.json"
+}

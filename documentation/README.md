@@ -51,3 +51,5 @@ For members: [private workspace setup](TEAM_TESTING.md), [Android USB/native tes
 [Fixed modals, desktop heading and refreshed video](MODALS_HEADER_VIDEO_2026-11-09.md) records the follow-up layout fix and the current MP4 exports, superseding the earlier promotional output hashes.
 
 [KIKOS narrator and flush mobile header](NARRATOR_MOBILE_2026-11-09.md) records the latest narrator, top-spacing correction and MP4 hashes. Its export record supersedes the preceding video versions.
+
+For a new teammate: [first-download quickstart](COLLABORATOR_QUICKSTART.md), [files and owner handoff](COLLABORATOR_FILE_CHECKLIST.md), and [fresh-source setup verification](COLLABORATOR_SETUP_2026-11-09.md).

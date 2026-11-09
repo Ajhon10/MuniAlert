@@ -233,3 +233,12 @@ Owner: project development team. Updated: 2026-10-02.
 - [x] Resolve the new tool dependency audit findings with a reviewed Sharp 0.35.5 override; retain every required test/audit and use CPU-only ONNX installation in CI.
 - [x] Refresh captures and both MP4s; check encoded speech against the new clips, metadata/audio levels, playback, Studio and eight samples per format.
 - [x] Pass all 14 local checks: 65 backend tests / 502 assertions, 45 browser tests, five launcher tests and zero dependency findings. Prepare the continuing private update with final publication evidence kept separately.
+
+## Collaborator download and Android/website setup — 9 November 2026
+
+- [x] Audit the published source, required setup files and intentionally excluded local/cloud artifacts without printing credentials.
+- [x] Add a complete first-download guide and owner handoff checklist; distinguish desktop web, USB Android Chrome, native APK and phone-only/shared-hosted tests.
+- [x] Correct the APK artifact name, root/workspace commands, guarded environment copies and private-photo storage instructions.
+- [x] Install a fresh source archive with locked dependencies, new example-based configuration/key and a separate MySQL schema; migrate, seed and build successfully.
+- [x] Verify citizen registration/report/photo loading and administrator review using phone-sized/desktop Chromium, with scripted administrator prompt answers and no owner data copied.
+- [x] Prepare the documentation update for private publication; record the exact pre-push/remote CI result separately. Physical Android and native/shared-hosting acceptance remain separate.

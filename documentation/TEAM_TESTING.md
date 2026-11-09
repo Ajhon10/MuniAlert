@@ -2,19 +2,25 @@
 
 The private repository is [Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert). The owner will configure collaborator access. One clone contains `hazard-client`, `hazard-server`, shared tests/documentation and the separate Remotion authoring project. No submodule permissions or additional repositories are needed.
 
+For a first download, use [the complete collaborator quickstart](COLLABORATOR_QUICKSTART.md). [The file checklist](COLLABORATOR_FILE_CHECKLIST.md) explains what is included, what gets generated locally and what the owner must provide for shared/native testing. A basic independent local test needs no private file from the owner. A ZIP can run the app after extraction, but developers should clone for Git updates/hooks/full verification.
+
 ## Start on a member's development PC
 
-Install Git, Node 22.13 or newer compatible Node 22, PHP 8.5, Composer 2 and MySQL 8. Use PHP 8.5 for Composer/Artisan; this workstation uses `C:\php85\php.exe`. Check the lockfile on any different runtime before claiming compatibility. Android Studio is optional for the browser-first phone test.
+Install Git, Node 22.13 or newer compatible Node 22, PHP 8.5, Composer 2 and MySQL 8. The Windows launchers require `C:\php85\php.exe`; configure that CLI's extensions and PATH. Run Composer's locked platform check before continuing. Android Studio is optional for the browser-first phone test.
 
 ```powershell
 git clone https://github.com/Ajhon10/MuniAlert.git
 cd MuniAlert
 $env:Path = 'C:\php85;' + $env:Path
-npm.cmd ci
-composer --working-dir=hazard-server install
 if (!(Test-Path hazard-server/.env)) {
     Copy-Item hazard-server/.env.example hazard-server/.env
 }
+if (!(Test-Path hazard-client/.env)) {
+    Copy-Item hazard-client/.env.example hazard-client/.env
+}
+npm.cmd ci
+composer --working-dir=hazard-server install
+composer --working-dir=hazard-server check-platform-reqs
 ```
 
 Create an **empty development** MySQL database named `municipal_hazards` and a database user that can access it. Edit only the ignored `hazard-server/.env` with that member's credentials. Retain the example's localhost frontend/session configuration. Do not copy someone else's application key, passwords, database export, incident evidence, Firebase service account or signing key into Git. Never overwrite an existing environment file during an update.
@@ -23,6 +29,7 @@ For the first setup of this new development database:
 
 ```powershell
 node scripts/php.mjs hazard-server/artisan key:generate
+node scripts/php.mjs hazard-server/artisan config:clear
 npm.cmd run db:migrate
 npm.cmd run db:seed
 npm.cmd run dev
@@ -35,6 +42,8 @@ node scripts/php.mjs hazard-server/artisan hazard:admin admin@example.test
 ```
 
 The normal seed provides categories and routing; it does not publish shared administrator passwords. The optional demo-account seeder requires three distinct local environment passwords and is unnecessary for ordinary team setup. `?demo=1` is a read-only fictional preview; leave it before testing a real submission to your development database.
+
+Leave the client API origin blank for this website/USB route. Keep the PC services open at `http://localhost:5173`; `/api/health` on that same origin should return `status: ok`. An empty dashboard and an absent owner login are expected with a new database. For the full new-database and account steps, use the quickstart above.
 
 ## Test an Android phone
 

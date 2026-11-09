@@ -1,6 +1,17 @@
 # MuniAlert — Municipal Hazard Reporting
 
-Private team repository: **[Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert)**. One clone contains the two application folders, shared tests, documentation and Remotion source. Start with [team setup](documentation/TEAM_TESTING.md) and [Android phone development testing](documentation/ANDROID_TESTING.md).
+Private team repository: **[Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert)**. One clone contains both apps, shared tests, documentation and Remotion source.
+
+**New collaborator? Start with [the complete download/setup guide](documentation/COLLABORATOR_QUICKSTART.md).** For a new local website and Android-Chrome test, you do not need the owner's private `.env`, app key, database dump or installed dependency folders. Use the included examples and create your own development database/accounts. [Included/missing-file checklist and what the owner should send](documentation/COLLABORATOR_FILE_CHECKLIST.md).
+
+| What you want to test | Start here |
+| --- | --- |
+| Website on your PC | [First-time setup](documentation/COLLABORATOR_QUICKSTART.md) |
+| Website on your Android phone | Start the PC services, then [USB Chrome port forwarding](documentation/ANDROID_TESTING.md#2-connect-android-chrome-over-usb--recommended-first-test) |
+| Installed Android app | [Native build/setup](documentation/ANDROID_TESTING.md#4-installed-capacitor-app); requires a reachable HTTPS backend |
+| Android phone only / shared remote test | Ask the owner for a running HTTPS test URL, or the configured APK plus backend/test accounts |
+
+GitHub hosts the source; it does not run this PHP/MySQL application. Downloading the ZIP onto a phone does not start the program.
 
 The applications remain separate:
 
@@ -11,9 +22,36 @@ The applications remain separate:
 
 ## Run both locally
 
-Create an empty MySQL schema named `municipal_hazards`. In `hazard-server/.env`, set the credentials for the MySQL account that can access it. A password belongs to the MySQL account, not the project. Follow each application's README for first-time dependency installation, app key, migrations, and administrator creation.
+Install Node 22.13+ (Node 22), **PHP 8.5 at `C:\php85` on Windows**, Composer 2 and MySQL 8. Use the repository root, not only one app folder. A GitHub ZIP must be extracted first. Run each command separately and fix errors before continuing:
 
-From this BANTAY folder, start both services with one command:
+```powershell
+$env:Path = 'C:\php85;' + $env:Path
+if (!(Test-Path hazard-server/.env)) {
+    Copy-Item hazard-server/.env.example hazard-server/.env
+}
+if (!(Test-Path hazard-client/.env)) {
+    Copy-Item hazard-client/.env.example hazard-client/.env
+}
+npm.cmd ci
+composer --working-dir=hazard-server install
+composer --working-dir=hazard-server check-platform-reqs
+```
+
+Create an **empty development** MySQL schema named `municipal_hazards`. Set its host, port, username and password in your copied `hazard-server/.env`. Leave `VITE_API_BASE_URL` blank for local website/USB browser testing. [Database setup and required PHP extensions](documentation/COLLABORATOR_QUICKSTART.md).
+
+For this **new installation only**:
+
+```powershell
+node scripts/php.mjs hazard-server/artisan key:generate
+node scripts/php.mjs hazard-server/artisan config:clear
+npm.cmd run db:migrate
+npm.cmd run db:seed
+node scripts/php.mjs hazard-server/artisan hazard:admin admin@example.test
+```
+
+Choose the administrator name/password when prompted. Create a separate citizen account through the app. Fresh installations have no owner accounts or incident records. Do not regenerate an existing app key or reset an existing database when updating.
+
+From the repository root, start both services and keep the terminal running:
 
 ```sh
 npm run dev
