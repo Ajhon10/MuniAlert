@@ -1,0 +1,551 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Asia/Manila",
+  "recordedAt": "2026-11-09T06:12:37.004Z",
+  "verification": {
+    "startedAt": "2026-11-09T06:00:05.959Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Repository publication safety",
+        "command": "node scripts/check-publication.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Composer manifest",
+        "command": "composer --working-dir=hazard-server validate --strict",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP formatting",
+        "command": "php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Development launcher checks",
+        "command": "node --test scripts/tests/launchers.test.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Vue type checking",
+        "command": "npm run typecheck",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Frontend production build",
+        "command": "npm run build",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Single-origin web package",
+        "command": "npm run build:web",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Laravel feature tests",
+        "command": "npm test",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Browser integration tests",
+        "command": "npm run test:e2e",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Capacitor synchronization",
+        "command": "npm exec -w hazard-client -- cap sync android",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Node dependency audit",
+        "command": "npm audit --audit-level=moderate --cache .npm-cache",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP dependency audit",
+        "command": "composer --working-dir=hazard-server audit --no-interaction",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Documentation consistency",
+        "command": "node scripts/check-docs.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Promotional source and dependencies",
+        "command": "node scripts/verify-promo.mjs",
+        "passed": true,
+        "exitCode": 0
+      }
+    ],
+    "completedAt": "2026-11-09T06:04:31.650Z"
+  },
+  "tests": {
+    "backend": 65,
+    "assertions": 502,
+    "browser": 45,
+    "launcher": 5
+  },
+  "mobileHeader": {
+    "top": 0,
+    "widths": [
+      320,
+      390,
+      709,
+      768,
+      1023
+    ],
+    "safeAreaInsideSurface": true,
+    "desktopRegressionPassed": true
+  },
+  "narrator": {
+    "preset": "af_heart",
+    "referenceProject": "KIKOS Order Planner",
+    "voiceBinaryMatchesReference": true,
+    "modelMatchesReference": true,
+    "referenceProjectChanged": false
+  },
+  "video": {
+    "passed": true,
+    "checkedAt": "2026-11-09T06:06:56.182Z",
+    "outputs": [
+      {
+        "name": "MuniAlert-portrait.mp4",
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "frames": "1800",
+        "seconds": 60.011,
+        "video_codec": "h264",
+        "pixel_format": "yuvj420p",
+        "audio_codec": "aac",
+        "audio_channels": 2,
+        "audio_peak_db": -2.64,
+        "audio_mean_db": -22.08,
+        "bytes": 22394130,
+        "sha256": "49aa1ba4889c58d9c696d00c980359393fdfeb002206b40e4c9335ed78104472"
+      },
+      {
+        "name": "MuniAlert-landscape.mp4",
+        "width": 1920,
+        "height": 1080,
+        "fps": "30/1",
+        "frames": "1800",
+        "seconds": 60.011,
+        "video_codec": "h264",
+        "pixel_format": "yuvj420p",
+        "audio_codec": "aac",
+        "audio_channels": 2,
+        "audio_peak_db": -2.64,
+        "audio_mean_db": -22.08,
+        "bytes": 17123984,
+        "sha256": "cf8318d1a6bea0a33341bc3224df571be226e80fce5e94013d6cd902c9999624"
+      }
+    ],
+    "captures": {
+      "capturedAt": "2026-11-09T05:56:47.089Z",
+      "origin": "http://localhost:5173",
+      "provenance": "Actual Vue interface captured with synthetic API fixtures. No account credentials or production incident records. All API writes blocked.",
+      "files": [
+        {
+          "name": "guide.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "4969bf1ed6a246f697efb0139635b99108f93648465f22fc407b5c5214cc8a04"
+        },
+        {
+          "name": "tour.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "8a2b335bd65537ec3da0ef121668df42ba9e14afbc09bc9fe55e72977250b80d"
+        },
+        {
+          "name": "privacy.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "a6cee8ea3a3796e8ae97297f1261411105f0a8a6556cfbf9c7523a0a2d20d2a5"
+        },
+        {
+          "name": "home.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "8e2415259884629aed8162ab968ee3555717766e4ebb4a62ff6854a9852ad5ed"
+        },
+        {
+          "name": "report.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "80d794dca4ade2709c8b54909ab0dd058de40b4be765c38ae06116389b8fa2a2"
+        },
+        {
+          "name": "location.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "db3d807d485e8d9146e125218391ca0d95c64388168f94e30c424193b9fef0e3"
+        },
+        {
+          "name": "tracking.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "ac3c15232338eb4cfe37c187539a9086a2a76e7e2d6c977a55d7ac19d9e8da50"
+        },
+        {
+          "name": "map.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "b4b493a024ce5df22995301a0687dee2d224dd00bb7eb781895190b08d95a194"
+        },
+        {
+          "name": "records.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "d2ec28a2084290ce36645f5ae51f3ac09733560ea5dac31fbb867cdcd8cf54e6"
+        }
+      ],
+      "errors": []
+    },
+    "narration": {
+      "generatedAt": "2026-11-09T05:55:19.495Z",
+      "engine": "kokoro-js@1.2.1",
+      "voice": "af_heart",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "modelSha256": "fbae9257e1e05ffc727e951ef9b9c98418e6d79f1c9b6b13bd59f5c9028a1478",
+      "dtype": "q8",
+      "device": "cpu",
+      "reference": "Same generic preset and model as KIKOS Order Planner; new MuniAlert speech, no personal voice cloning.",
+      "clips": [
+        {
+          "id": "01-intro",
+          "sceneSeconds": 7,
+          "text": "Meet Muni Alert. A clearer way to report municipal emergencies and public hazards.",
+          "file": "01-intro.wav",
+          "voice": "af_heart",
+          "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+          "dtype": "q8",
+          "speed": 1.0688983050847458,
+          "seconds": 5.85,
+          "scene_seconds": 7,
+          "starts_at_scene_second": 0.6,
+          "gain": 1.271669031039634,
+          "sha256": "02660c80025ec1e6732e99fcddb817b8029855620ba4dab03303af82329ac86d"
+        },
+        {
+          "id": "02-reporting",
+          "sceneSeconds": 11,
+          "text": "Choose a category, add safe photos, and describe what happened. Use GPS or a manual pin, then confirm the incident location.",
+          "file": "02-reporting.wav",
+          "voice": "af_heart",
+          "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+          "dtype": "q8",
+          "speed": 1.02,
+          "seconds": 8.975,
+          "scene_seconds": 11,
+          "starts_at_scene_second": 0.6,
+          "gain": 1.2024266961807801,
+          "sha256": "b365b0268a0671d01b3a3e84bd6a9830a12bb0e38d60275112b1d724f6d39da5"
+        },
+        {
+          "id": "03-privacy",
+          "sceneSeconds": 8,
+          "text": "Photos and exact locations stay private. Public updates use reviewed summaries.",
+          "file": "03-privacy.wav",
+          "voice": "af_heart",
+          "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+          "dtype": "q8",
+          "speed": 1.02,
+          "seconds": 5.825,
+          "scene_seconds": 8,
+          "starts_at_scene_second": 0.6,
+          "gain": 0.8417052587514245,
+          "sha256": "d90d2082f468781b23261e561222fa22c31c65abcbe182a6e2e7a9ea88d51309"
+        },
+        {
+          "id": "04-tracking",
+          "sceneSeconds": 11,
+          "text": "Municipal teams review reports, verify locations and record action taken. Citizens can follow status updates and resolution photos.",
+          "file": "04-tracking.wav",
+          "voice": "af_heart",
+          "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+          "dtype": "q8",
+          "speed": 1.035151515151515,
+          "seconds": 9.9,
+          "scene_seconds": 11,
+          "starts_at_scene_second": 0.6,
+          "gain": 1.1749414416033772,
+          "sha256": "604b0d480ce43f7a3aec2a784f6b165f1d021fbe163630ae099fc368be06264d"
+        },
+        {
+          "id": "05-records",
+          "sceneSeconds": 9,
+          "text": "Group records by week or month, then filter and export. Counts describe reports, not confirmed casualties.",
+          "file": "05-records.wav",
+          "voice": "af_heart",
+          "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+          "dtype": "q8",
+          "speed": 1.02,
+          "seconds": 7.525,
+          "scene_seconds": 9,
+          "starts_at_scene_second": 0.6,
+          "gain": 1.577907881161375,
+          "sha256": "7764be2cefdb8dd8dfbc8a5f275e1e8ac4987ff49108f26d665a45b4b1c222a1"
+        },
+        {
+          "id": "06-guide",
+          "sceneSeconds": 10,
+          "text": "Start with the feature tour, or search the user manual. Clear instructions for citizens and municipal administrators.",
+          "file": "06-guide.wav",
+          "voice": "af_heart",
+          "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+          "dtype": "q8",
+          "speed": 1.02,
+          "seconds": 7.425,
+          "scene_seconds": 10,
+          "starts_at_scene_second": 0.6,
+          "gain": 1.117670978741275,
+          "sha256": "e1f7e05a54a2bb8f3af47fc6e83682dcd4469a46e41785cbc20ee384ee46f8f9"
+        },
+        {
+          "id": "07-closing",
+          "sceneSeconds": 7,
+          "text": "Muni Alert. For immediate danger, call emergency services first.",
+          "file": "07-closing.wav",
+          "voice": "af_heart",
+          "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+          "dtype": "q8",
+          "speed": 1.02,
+          "seconds": 4.925,
+          "scene_seconds": 7,
+          "starts_at_scene_second": 0.6,
+          "gain": 1.616676436644451,
+          "sha256": "042d08bd5836a4d73fa7ef29433a7d907b0482f132e058ccc1724ca12656c990"
+        }
+      ],
+      "voiceSha256": "d583ccff3cdca2f7fae535cb998ac07e9fcb90f09737b9a41fa2734ec44a8f0b"
+    },
+    "narrationTiming": [
+      {
+        "file": "01-intro.wav",
+        "seconds": 5.85,
+        "scene_seconds": 7,
+        "starts_at_scene_second": 0.6,
+        "voice": "af_heart",
+        "speed": 1.0688983050847458
+      },
+      {
+        "file": "02-reporting.wav",
+        "seconds": 8.975,
+        "scene_seconds": 11,
+        "starts_at_scene_second": 0.6,
+        "voice": "af_heart",
+        "speed": 1.02
+      },
+      {
+        "file": "03-privacy.wav",
+        "seconds": 5.825,
+        "scene_seconds": 8,
+        "starts_at_scene_second": 0.6,
+        "voice": "af_heart",
+        "speed": 1.02
+      },
+      {
+        "file": "04-tracking.wav",
+        "seconds": 9.9,
+        "scene_seconds": 11,
+        "starts_at_scene_second": 0.6,
+        "voice": "af_heart",
+        "speed": 1.035151515151515
+      },
+      {
+        "file": "05-records.wav",
+        "seconds": 7.525,
+        "scene_seconds": 9,
+        "starts_at_scene_second": 0.6,
+        "voice": "af_heart",
+        "speed": 1.02
+      },
+      {
+        "file": "06-guide.wav",
+        "seconds": 7.425,
+        "scene_seconds": 10,
+        "starts_at_scene_second": 0.6,
+        "voice": "af_heart",
+        "speed": 1.02
+      },
+      {
+        "file": "07-closing.wav",
+        "seconds": 4.925,
+        "scene_seconds": 7,
+        "starts_at_scene_second": 0.6,
+        "voice": "af_heart",
+        "speed": 1.02
+      }
+    ],
+    "notes": [
+      "Review samples cover all seven scenes and the Basista map transition in portrait and landscape.",
+      "Narration uses the same generic Kokoro af_heart preset and q8 model as KIKOS Order Planner.",
+      "Screens use synthetic fixtures and block API writes.",
+      "No signed Android, deployment or cloud-service acceptance implied."
+    ],
+    "updatedFromPrevious": true,
+    "narrationMatch": {
+      "passed": true,
+      "checkedAt": "2026-11-09T06:07:34.935Z",
+      "voice": "af_heart",
+      "method": "Correlate decoded 48kHz mono MP4 speech with each newly generated WAV at its actual scene start; background music remains in the MP4 signal.",
+      "results": [
+        {
+          "format": "portrait",
+          "matches": [
+            {
+              "id": "01-intro",
+              "startsAt": 0.6,
+              "correlation": 0.99482
+            },
+            {
+              "id": "02-reporting",
+              "startsAt": 7.1,
+              "correlation": 0.97219
+            },
+            {
+              "id": "03-privacy",
+              "startsAt": 17.6,
+              "correlation": 0.97974
+            },
+            {
+              "id": "04-tracking",
+              "startsAt": 25.1,
+              "correlation": 0.98562
+            },
+            {
+              "id": "05-records",
+              "startsAt": 35.6,
+              "correlation": 0.99332
+            },
+            {
+              "id": "06-guide",
+              "startsAt": 44.1,
+              "correlation": 0.98484
+            },
+            {
+              "id": "07-closing",
+              "startsAt": 53.6,
+              "correlation": 0.99603
+            }
+          ]
+        },
+        {
+          "format": "landscape",
+          "matches": [
+            {
+              "id": "01-intro",
+              "startsAt": 0.6,
+              "correlation": 0.99482
+            },
+            {
+              "id": "02-reporting",
+              "startsAt": 7.1,
+              "correlation": 0.97219
+            },
+            {
+              "id": "03-privacy",
+              "startsAt": 17.6,
+              "correlation": 0.97974
+            },
+            {
+              "id": "04-tracking",
+              "startsAt": 25.1,
+              "correlation": 0.98562
+            },
+            {
+              "id": "05-records",
+              "startsAt": 35.6,
+              "correlation": 0.99332
+            },
+            {
+              "id": "06-guide",
+              "startsAt": 44.1,
+              "correlation": 0.98484
+            },
+            {
+              "id": "07-closing",
+              "startsAt": 53.6,
+              "correlation": 0.99603
+            }
+          ]
+        }
+      ]
+    },
+    "playback": {
+      "checkedAt": "2026-11-09T06:07:37.741Z",
+      "passed": true,
+      "results": [
+        {
+          "format": "portrait",
+          "played": true,
+          "seeked": 15.8,
+          "duration": 60.011,
+          "width": 1080,
+          "height": 1920,
+          "error": null
+        },
+        {
+          "format": "landscape",
+          "played": true,
+          "seeked": 15.8,
+          "duration": 60.011,
+          "width": 1920,
+          "height": 1080,
+          "error": null
+        }
+      ]
+    },
+    "preview": {
+      "checkedAt": "2026-11-09T06:07:04.969Z",
+      "results": [
+        {
+          "id": "MuniAlertPortrait",
+          "loaded": true,
+          "title": "MuniAlertPortrait / promo-video - Remotion Studio",
+          "errors": []
+        },
+        {
+          "id": "MuniAlertLandscape",
+          "loaded": true,
+          "title": "MuniAlertLandscape / promo-video - Remotion Studio",
+          "errors": []
+        },
+        {
+          "id": "Guide",
+          "loaded": true,
+          "title": "Guide / promo-video - Remotion Studio",
+          "errors": []
+        }
+      ]
+    },
+    "reviewedSamplesPerFormat": 8
+  },
+  "publication": {
+    "repository": "https://github.com/Ajhon10/MuniAlert",
+    "receipt": ".cache/narrator-header-publication-result.json",
+    "sourcePushedAtEvidenceCapture": false,
+    "mp4sExcluded": true
+  },
+  "acceptance": {
+    "physicalAndroid": false,
+    "hostingDeployed": false,
+    "externalVideoPosted": false
+  }
+}

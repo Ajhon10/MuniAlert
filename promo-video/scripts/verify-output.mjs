@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync, statSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import './check-narration.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const probe = process.platform === 'win32' ? resolve(root, 'node_modules/@remotion/compositor-win32-x64-msvc/ffprobe.exe') : 'ffprobe';
@@ -43,5 +44,5 @@ for (const [name, width, height] of [['MuniAlert-portrait.mp4', 1080, 1920], ['M
   if (!Number.isFinite(peak) || !Number.isFinite(mean) || peak >= 0 || mean < -60 || samples < 48000 * 2 * 59) throw Error(`Silent, clipped or incomplete audio detected: ${name}`);
   results.push({ name, width, height, fps: video.r_frame_rate, frames: video.nb_frames, seconds: Number(metadata.format.duration), video_codec: video.codec_name, pixel_format: video.pix_fmt, audio_codec: audio.codec_name, audio_channels: audio.channels, audio_peak_db: peak, audio_mean_db: mean, bytes: statSync(file).size, sha256: createHash('sha256').update(readFileSync(file)).digest('hex') });
 }
-writeFileSync(resolve(root, 'out/verification.json'), JSON.stringify({ passed: true, checkedAt: new Date().toISOString(), outputs: results, captures: captureManifest, narrationTiming: JSON.parse(readFileSync(resolve(root, 'out/audio-timing.json'), 'utf8')), notes: ['Review samples cover all seven scenes and the Basista map transition in portrait and landscape.', 'Screens use synthetic fixtures and block API writes.', 'No signed Android, deployment or cloud-service acceptance implied.'] }, null, 2));
+writeFileSync(resolve(root, 'out/verification.json'), JSON.stringify({ passed: true, checkedAt: new Date().toISOString(), outputs: results, captures: captureManifest, narration: JSON.parse(readFileSync(resolve(root, 'public/audio/narration-manifest.json'), 'utf8')), narrationTiming: JSON.parse(readFileSync(resolve(root, 'out/audio-timing.json'), 'utf8')), notes: ['Review samples cover all seven scenes and the Basista map transition in portrait and landscape.', 'Narration uses the same generic Kokoro af_heart preset and q8 model as KIKOS Order Planner.', 'Screens use synthetic fixtures and block API writes.', 'No signed Android, deployment or cloud-service acceptance implied.'] }, null, 2));
 console.log(JSON.stringify(results, null, 2));

@@ -224,3 +224,12 @@ Owner: project development team. Updated: 2026-10-02.
 - [x] Refresh the nine synthetic UI captures with Basista locations, map filtering/boundaries and fixed modal actions. Re-render portrait/landscape MP4s and verify their changed hashes, audio, metadata, playback and eight sample frames per format.
 - [x] Verify the editable Studio compositions, update both user manuals and technical appendix, and pass all 14 checks: 65 backend tests / 502 assertions, 45 browser tests and five launcher tests.
 - [x] Prepare the checked source for the continuing private team repository update. The pre-push hook repeats the complete gate; the remote commit/CI outcome is recorded separately in the local publication receipt.
+
+## KIKOS narrator and flush mobile header — 9 November 2026
+
+- [x] Identify the reference narrator as Kokoro `af_heart`, match the preset/model hashes and synthesize all seven MuniAlert lines locally.
+- [x] Replace the Windows narrator generator, keep speech within scene windows and add narration byte/timing checks to the existing gate.
+- [x] Remove the forced compact-header top margin/offset; keep real device safe-area padding inside the header. Verify 320–1023px widths and desktop regression coverage.
+- [x] Resolve the new tool dependency audit findings with a reviewed Sharp 0.35.5 override; retain every required test/audit and use CPU-only ONNX installation in CI.
+- [x] Refresh captures and both MP4s; check encoded speech against the new clips, metadata/audio levels, playback, Studio and eight samples per format.
+- [x] Pass all 14 local checks: 65 backend tests / 502 assertions, 45 browser tests, five launcher tests and zero dependency findings. Prepare the continuing private update with final publication evidence kept separately.

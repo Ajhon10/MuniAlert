@@ -28,10 +28,14 @@
 .topbar .icon-button, .topbar .top-avatar { width: 44px; height: 44px; min-width: 44px; }
 @media (max-width: 1023px) {
   .topbar {
-    width: auto;
+    width: 100%;
     max-width: none;
-    margin: max(10px, env(safe-area-inset-top)) 12px 0;
-    padding: 6px 10px 6px 16px;
+    top: 0;
+    margin: 0;
+    padding: calc(6px + env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 6px max(16px, env(safe-area-inset-left, 0px));
+    border-radius: 0 0 18px 18px;
+    border-top: 0;
+    border-inline: 0;
     min-height: 60px;
     gap: 12px;
     justify-content: space-between;
@@ -47,7 +51,7 @@
   .heading-tools { align-items: flex-start; }
 }
 @media (max-width: 359px) {
-  .topbar { margin-inline: 10px; padding-inline: 10px; gap: 8px; }
+  .topbar { padding-inline: 10px; gap: 8px; }
   .topbar .top-actions { gap: 6px; }
 }
 @media (prefers-contrast: more) { .topbar { border-color: #526e5c; } }

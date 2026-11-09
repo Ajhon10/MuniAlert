@@ -53,7 +53,7 @@ Six half-second fades overlap the scenes, producing exactly 60 seconds.
 
 `scripts/capture-ui.mjs` captures the actual Vue interface with **synthetic API fixtures**, blocks API writes and records asset hashes in `public/screens/manifest.json`. Fictional names use `example.test`; no credentials, real victims or production incident records enter the assets. The video carries a **Demonstration data** label. These are interface demonstrations, not evidence of deployment, device validation or response performance.
 
-Narration is generated locally from the authored script using the installed Microsoft Zira Desktop voice. `scripts/generate-narration.ps1` regenerates the seven clips. `scripts/generate-music.py` creates the original synthesized instrumental; no sampled or third-party recordings are used. `out/audio-timing.json` records clip durations and checks that no narration exceeds its scene.
+Narration uses the same local **Kokoro `af_heart`** preset as KIKOS Order Planner, as requested by the user. `npm run narration` generates all seven clips; `npm run narration:offline` reuses the ignored local model cache. See [narration sources and reproduction](NARRATION.md). `scripts/generate-music.py` creates the original synthesized instrumental; no sampled or third-party recordings are used. `npm run check:narration` validates the preset/clip hashes and actual WAV durations against their scene windows.
 
 Regenerating screenshots requires the parent BANTAY workspace's Playwright installation/browser and the application running on port 5173. Previewing and rendering the already captured video do not require the app server, an API, a database or cloud credentials.
 
@@ -61,7 +61,7 @@ Regenerating screenshots requires the parent BANTAY workspace's Playwright insta
 
 The project uses React/TypeScript and matching Remotion 4.0.541 packages, as required for the requested Remotion authoring workflow. The scaffold's development-tool audit finding was resolved with a reviewed `minimatch` 11.0.1 override; lint/type checks and audit verify compatibility. No audit check is disabled.
 
-`verify:output` decodes the exported audio and checks duration, frame count, dimensions, codecs, audio levels and file hashes in `out/verification.json`. The matched FFmpeg omits `volumedetect`; direct PCM measurement avoids relying on that unavailable filter. Final exports contain 1,800 video frames each and approximately 60.011 seconds of container duration (AAC padding), with a measured audio peak of -2.68 dBFS.
+`verify:output` decodes the exported audio and checks duration, frame count, dimensions, codecs, audio levels, narration provenance and file hashes in `out/verification.json`. The matched FFmpeg omits `volumedetect`; direct PCM measurement avoids relying on that unavailable filter. Final exports contain 1,800 video frames each and approximately 60.011 seconds of container duration (AAC padding). Measured levels belong to the current export's verification record.
 
 See [the project handover](../documentation/BRANDING_GUIDE_PROMO_2026-11-09.md) for final results. No promotion was posted externally, and no app deployment or signed Android release is implied.
 

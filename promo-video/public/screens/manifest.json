@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-11-09T02:53:52.080Z",
+  "capturedAt": "2026-11-09T05:56:47.089Z",
   "origin": "http://localhost:5173",
   "provenance": "Actual Vue interface captured with synthetic API fixtures. No account credentials or production incident records. All API writes blocked.",
   "files": [
@@ -7,25 +7,25 @@
       "name": "guide.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "48997e23c32cc52454021e8835ff7425615d171df45a77acbd79526df5ef3fae"
+      "sha256": "4969bf1ed6a246f697efb0139635b99108f93648465f22fc407b5c5214cc8a04"
     },
     {
       "name": "tour.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "f25a79254a42b8de9d5ac78c69929417cd9d8fc68ce34bdf0d767f3ace290caa"
+      "sha256": "8a2b335bd65537ec3da0ef121668df42ba9e14afbc09bc9fe55e72977250b80d"
     },
     {
       "name": "privacy.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "566938700bc2a4153a525a1cf76c5cdfd9913d345be31a4a594416875e476c27"
+      "sha256": "a6cee8ea3a3796e8ae97297f1261411105f0a8a6556cfbf9c7523a0a2d20d2a5"
     },
     {
       "name": "home.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "27c7a1433adf25fae17443071e423dbf40c4b8faa9161c2d5913ff09b57ac5e2"
+      "sha256": "8e2415259884629aed8162ab968ee3555717766e4ebb4a62ff6854a9852ad5ed"
     },
     {
       "name": "report.png",
@@ -49,13 +49,13 @@
       "name": "map.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "4d624a96d279f4b3a23c8eb94dd0a86a8914e17eb3f5ee614128c10ba743284d"
+      "sha256": "b4b493a024ce5df22995301a0687dee2d224dd00bb7eb781895190b08d95a194"
     },
     {
       "name": "records.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "ae338af13437888327653418eacc1f5c5a133eabb38c0679f39065e4ed328129"
+      "sha256": "d2ec28a2084290ce36645f5ae51f3ac09733560ea5dac31fbb867cdcd8cf54e6"
     }
   ],
   "errors": []

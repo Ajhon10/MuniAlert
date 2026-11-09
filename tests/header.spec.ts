@@ -6,6 +6,7 @@ test('compact header uses bottom More, preserves reading space and remains legib
   await expect(header.locator('.mobile-menu')).toHaveCount(0);
   for (const width of [320, 390, 709, 768, 1023]) {
     await page.setViewportSize({ width, height: 844 });
+    await page.evaluate(() => window.scrollTo(0, 0));
     await expect(page.getByRole('button', { name: 'More navigation', exact: true })).toBeVisible();
     await expect(header.locator('.ph-clock')).toBeHidden();
     await expect(header.locator('.breadcrumb > span')).toHaveText('MuniAlert');
@@ -13,10 +14,14 @@ test('compact header uses bottom More, preserves reading space and remains legib
     const actions = await header.locator('.top-actions').boundingBox();
     expect(brand!.x + brand!.width).toBeLessThanOrEqual(actions!.x);
     const bounds = await header.boundingBox();
+    expect(bounds!.y).toBe(0);
+    expect(bounds!.width).toBe(width);
     expect(bounds!.x).toBeGreaterThanOrEqual(0);
     expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: 'test-results/header-mobile-flush-top.png', animations: 'disabled' });
   await page.setViewportSize({ width: 709, height: 844 });
   await page.locator('#manual-privacy').scrollIntoViewIfNeeded();
   expect(await header.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(247, 251, 249)');

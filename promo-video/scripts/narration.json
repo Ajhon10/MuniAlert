@@ -1,0 +1,9 @@
+[
+  { "id": "01-intro", "sceneSeconds": 7, "text": "Meet Muni Alert. A clearer way to report municipal emergencies and public hazards." },
+  { "id": "02-reporting", "sceneSeconds": 11, "text": "Choose a category, add safe photos, and describe what happened. Use GPS or a manual pin, then confirm the incident location." },
+  { "id": "03-privacy", "sceneSeconds": 8, "text": "Photos and exact locations stay private. Public updates use reviewed summaries." },
+  { "id": "04-tracking", "sceneSeconds": 11, "text": "Municipal teams review reports, verify locations and record action taken. Citizens can follow status updates and resolution photos." },
+  { "id": "05-records", "sceneSeconds": 9, "text": "Group records by week or month, then filter and export. Counts describe reports, not confirmed casualties." },
+  { "id": "06-guide", "sceneSeconds": 10, "text": "Start with the feature tour, or search the user manual. Clear instructions for citizens and municipal administrators." },
+  { "id": "07-closing", "sceneSeconds": 7, "text": "Muni Alert. For immediate danger, call emergency services first." }
+]
