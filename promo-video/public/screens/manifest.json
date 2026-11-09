@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-11-08T11:58:10.150Z",
+  "capturedAt": "2026-11-09T02:53:52.080Z",
   "origin": "http://localhost:5173",
   "provenance": "Actual Vue interface captured with synthetic API fixtures. No account credentials or production incident records. All API writes blocked.",
   "files": [
@@ -7,49 +7,55 @@
       "name": "guide.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "c2e7830f421c457f69ed733f778b05995a0466476b766d03fc5d98462d658702"
+      "sha256": "48997e23c32cc52454021e8835ff7425615d171df45a77acbd79526df5ef3fae"
     },
     {
       "name": "tour.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "495af62231ed53dbacb4d9286fa0d2ba9618fdf131dc4006c7e81bf1d8ba0d10"
+      "sha256": "f25a79254a42b8de9d5ac78c69929417cd9d8fc68ce34bdf0d767f3ace290caa"
     },
     {
       "name": "privacy.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "9b3a94960e127759888bc2686314c46db6cc308b58e3ab0281653af56b815be1"
+      "sha256": "566938700bc2a4153a525a1cf76c5cdfd9913d345be31a4a594416875e476c27"
     },
     {
       "name": "home.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "6597bce6ef241e5938fb4363c9cd4172606b9720530e6f6ddc5f460c15cc2fb0"
+      "sha256": "27c7a1433adf25fae17443071e423dbf40c4b8faa9161c2d5913ff09b57ac5e2"
     },
     {
       "name": "report.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "92eb480150ac0e1899b89b8f1b7e9cbc5c478dddb68995c4cedfadfb4f80fd14"
+      "sha256": "80d794dca4ade2709c8b54909ab0dd058de40b4be765c38ae06116389b8fa2a2"
     },
     {
       "name": "location.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "71d5b54a45a7ea9b89e47ff4cdde11b8b59875aa113679fb1f59962af2062364"
+      "sha256": "db3d807d485e8d9146e125218391ca0d95c64388168f94e30c424193b9fef0e3"
     },
     {
       "name": "tracking.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "72378904aab7f8ced603f0e98791bdc5037513cd190bbb5b43b4b2de843e77d3"
+      "sha256": "ac3c15232338eb4cfe37c187539a9086a2a76e7e2d6c977a55d7ac19d9e8da50"
+    },
+    {
+      "name": "map.png",
+      "viewport": "390x720",
+      "scale": 2,
+      "sha256": "4d624a96d279f4b3a23c8eb94dd0a86a8914e17eb3f5ee614128c10ba743284d"
     },
     {
       "name": "records.png",
       "viewport": "390x720",
       "scale": 2,
-      "sha256": "3aeed1a2ae5d119a0f2c23dda4cddb428d8c1b69acfbcfc628b53d6dda440f81"
+      "sha256": "ae338af13437888327653418eacc1f5c5a133eabb38c0679f39065e4ed328129"
     }
   ],
   "errors": []

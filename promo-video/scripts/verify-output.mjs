@@ -7,6 +7,9 @@ const root = resolve(import.meta.dirname, '..');
 const probe = process.platform === 'win32' ? resolve(root, 'node_modules/@remotion/compositor-win32-x64-msvc/ffprobe.exe') : 'ffprobe';
 const ffmpeg = process.platform === 'win32' ? resolve(root, 'node_modules/@remotion/compositor-win32-x64-msvc/ffmpeg.exe') : 'ffmpeg';
 const results = [];
+const captureManifest = JSON.parse(readFileSync(resolve(root, 'public/screens/manifest.json'), 'utf8'));
+if (captureManifest.errors.length || !captureManifest.files.some(file => file.name === 'map.png')) throw Error('Current Basista map capture is required.');
+for (const file of captureManifest.files) if (createHash('sha256').update(readFileSync(resolve(root, 'public/screens', file.name))).digest('hex') !== file.sha256) throw Error(`Promotional capture hash differs: ${file.name}`);
 for (const [name, width, height] of [['MuniAlert-portrait.mp4', 1080, 1920], ['MuniAlert-landscape.mp4', 1920, 1080]]) {
   const file = resolve(root, 'out', name);
   const metadata = JSON.parse(execFileSync(probe, ['-v', 'error', '-print_format', 'json', '-show_format', '-show_streams', file], { encoding: 'utf8', windowsHide: true }));
@@ -40,5 +43,5 @@ for (const [name, width, height] of [['MuniAlert-portrait.mp4', 1080, 1920], ['M
   if (!Number.isFinite(peak) || !Number.isFinite(mean) || peak >= 0 || mean < -60 || samples < 48000 * 2 * 59) throw Error(`Silent, clipped or incomplete audio detected: ${name}`);
   results.push({ name, width, height, fps: video.r_frame_rate, frames: video.nb_frames, seconds: Number(metadata.format.duration), video_codec: video.codec_name, pixel_format: video.pix_fmt, audio_codec: audio.codec_name, audio_channels: audio.channels, audio_peak_db: peak, audio_mean_db: mean, bytes: statSync(file).size, sha256: createHash('sha256').update(readFileSync(file)).digest('hex') });
 }
-writeFileSync(resolve(root, 'out/verification.json'), JSON.stringify({ passed: true, checkedAt: new Date().toISOString(), outputs: results, narrationTiming: JSON.parse(readFileSync(resolve(root, 'out/audio-timing.json'), 'utf8')), notes: ['All seven scene samples reviewed in portrait and landscape.', 'Screens use synthetic fixtures and block API writes.', 'No signed Android, deployment or cloud-service acceptance implied.'] }, null, 2));
+writeFileSync(resolve(root, 'out/verification.json'), JSON.stringify({ passed: true, checkedAt: new Date().toISOString(), outputs: results, captures: captureManifest, narrationTiming: JSON.parse(readFileSync(resolve(root, 'out/audio-timing.json'), 'utf8')), notes: ['Review samples cover all seven scenes and the Basista map transition in portrait and landscape.', 'Screens use synthetic fixtures and block API writes.', 'No signed Android, deployment or cloud-service acceptance implied.'] }, null, 2));
 console.log(JSON.stringify(results, null, 2));

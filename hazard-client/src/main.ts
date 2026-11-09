@@ -8,4 +8,5 @@ import './assets/android.css';
 import './assets/guide.css';
 import './assets/maps.css';
 import './assets/header.css';
+import './assets/modals.css';
 createApp(App).directive('liquid-glass', vLiquidGlass).mount('#app');

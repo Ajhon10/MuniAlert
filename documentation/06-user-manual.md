@@ -61,7 +61,7 @@ For a report still **Submitted** or **Under verification**, open it and choose *
 
 Use **Content management** to set the initial map center and zoom, add approved emergency hotlines, and edit badge descriptions and cash/gift information. Confirm each publication. Hotline changes become visible to citizens immediately. Test the numbers with the municipality before publishing them.
 
-Administrators see operations navigation and cannot submit citizen reports. All roles can edit their profile and see their badges. The header displays live Philippine time.
+Administrators see operations navigation and cannot submit citizen reports. All roles can edit their profile and see their badges. Philippine time appears in the desktop utilities or the compact screen's content heading.
 
 Closed and rejected records cannot be reopened in this version. The application blocks skipping workflow stages. Responder assignment identifies a team/person by name; it is not a live dispatch or responder-tracking subsystem.
 
@@ -116,10 +116,14 @@ Choose **Start feature tour** for a highlighted walkthrough of the overview, rep
 
 ## Map styles, boundaries and hazard types
 
-On phones/tablets, **More** in the bottom dock opens the full navigation. The header has no second menu button. Its guide/account actions remain available while reading, with a solid background. Desktop uses a compact utility header.
+On phones/tablets, **More** in the bottom dock opens the full navigation. The header has no second menu button. Its guide/account actions remain available while reading, with a solid background. Desktop utilities sit beside the page heading without a separate empty header row.
 
 Beside the map, choose **Clear**, **Streets** or **Dark**. Open **Boundaries** to switch the Basista barangays, Basista/nearby municipalities or Pangasinan province outlines. Labels appear as you zoom in. These are reference boundaries, not proof of legal jurisdiction. Mode and boundary choices are remembered on this device.
 
 Use **Show hazard type** to see only Fire, Road accident or another category. This stays synchronized with the report category filter; status and search still apply. **Show all hazard types** clears only the category choice. **Fit reports** fits the currently loaded page; **Basista area** returns to the covered area. Map counts and page controls identify partial pages rather than implying every record is shown at once. If map content fails, use **Retry map**, another mode, or the report list.
 
 Administrators should follow [the false-report review guide](FRAUD_PREVENTION.md). Sign-in, rate limits and evidence review reduce abuse but do not prove a report genuine. Verified contact enrollment, account suspension and automated image/fraud detection are not implemented. Do not delay urgent assistance while completing documentary review.
+
+## Reading and completing popups
+
+Sign-in, reporting, report details and confirmations keep their title/close button at the top and actions at the bottom. Scroll the middle to reach the remaining fields or history. **Submit hazard report**, **Save response update**, confirmation choices and **Close** remain reachable without scrolling to the end. Required fields still need completion before a form can be submitted. A confirmation's **Go back** returns to the form underneath. The feature tour follows the same layout: its explanation scrolls while the title and Back/Next controls remain visible.

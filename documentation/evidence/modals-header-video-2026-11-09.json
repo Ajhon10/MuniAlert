@@ -1,0 +1,317 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Asia/Manila",
+  "recordedAt": "2026-11-09T05:27:50.727Z",
+  "scope": "Fixed modal chrome, desktop heading row and refreshed portrait/landscape promotion",
+  "verification": {
+    "startedAt": "2026-11-09T02:54:24.408Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Repository publication safety",
+        "command": "node scripts/check-publication.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Composer manifest",
+        "command": "composer --working-dir=hazard-server validate --strict",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP formatting",
+        "command": "php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Development launcher checks",
+        "command": "node --test scripts/tests/launchers.test.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Vue type checking",
+        "command": "npm run typecheck",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Frontend production build",
+        "command": "npm run build",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Single-origin web package",
+        "command": "npm run build:web",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Laravel feature tests",
+        "command": "npm test",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Browser integration tests",
+        "command": "npm run test:e2e",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Capacitor synchronization",
+        "command": "npm exec -w hazard-client -- cap sync android",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Node dependency audit",
+        "command": "npm audit --audit-level=moderate --cache .npm-cache",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP dependency audit",
+        "command": "composer --working-dir=hazard-server audit --no-interaction",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Documentation consistency",
+        "command": "node scripts/check-docs.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Promotional source and dependencies",
+        "command": "node scripts/verify-promo.mjs",
+        "passed": true,
+        "exitCode": 0
+      }
+    ],
+    "completedAt": "2026-11-09T02:57:49.875Z"
+  },
+  "tests": {
+    "backend": 65,
+    "assertions": 502,
+    "browser": 45,
+    "launcher": 5
+  },
+  "video": {
+    "passed": true,
+    "checkedAt": "2026-11-09T05:23:44.460Z",
+    "outputs": [
+      {
+        "name": "MuniAlert-portrait.mp4",
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "frames": "1800",
+        "seconds": 60.011,
+        "video_codec": "h264",
+        "pixel_format": "yuvj420p",
+        "audio_codec": "aac",
+        "audio_channels": 2,
+        "audio_peak_db": -2.68,
+        "audio_mean_db": -21.68,
+        "bytes": 22374505,
+        "sha256": "88a0115512b3fb68a899fe102fdd85b298d98c7d80165f6143a1645a4b3e208b"
+      },
+      {
+        "name": "MuniAlert-landscape.mp4",
+        "width": 1920,
+        "height": 1080,
+        "fps": "30/1",
+        "frames": "1800",
+        "seconds": 60.011,
+        "video_codec": "h264",
+        "pixel_format": "yuvj420p",
+        "audio_codec": "aac",
+        "audio_channels": 2,
+        "audio_peak_db": -2.68,
+        "audio_mean_db": -21.68,
+        "bytes": 17044771,
+        "sha256": "8b6560bd348dcacdc51f09e000856e4bc12bd834e5063d3cbdfd148ed0721de3"
+      }
+    ],
+    "captures": {
+      "capturedAt": "2026-11-09T02:53:52.080Z",
+      "origin": "http://localhost:5173",
+      "provenance": "Actual Vue interface captured with synthetic API fixtures. No account credentials or production incident records. All API writes blocked.",
+      "files": [
+        {
+          "name": "guide.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "48997e23c32cc52454021e8835ff7425615d171df45a77acbd79526df5ef3fae"
+        },
+        {
+          "name": "tour.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "f25a79254a42b8de9d5ac78c69929417cd9d8fc68ce34bdf0d767f3ace290caa"
+        },
+        {
+          "name": "privacy.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "566938700bc2a4153a525a1cf76c5cdfd9913d345be31a4a594416875e476c27"
+        },
+        {
+          "name": "home.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "27c7a1433adf25fae17443071e423dbf40c4b8faa9161c2d5913ff09b57ac5e2"
+        },
+        {
+          "name": "report.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "80d794dca4ade2709c8b54909ab0dd058de40b4be765c38ae06116389b8fa2a2"
+        },
+        {
+          "name": "location.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "db3d807d485e8d9146e125218391ca0d95c64388168f94e30c424193b9fef0e3"
+        },
+        {
+          "name": "tracking.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "ac3c15232338eb4cfe37c187539a9086a2a76e7e2d6c977a55d7ac19d9e8da50"
+        },
+        {
+          "name": "map.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "4d624a96d279f4b3a23c8eb94dd0a86a8914e17eb3f5ee614128c10ba743284d"
+        },
+        {
+          "name": "records.png",
+          "viewport": "390x720",
+          "scale": 2,
+          "sha256": "ae338af13437888327653418eacc1f5c5a133eabb38c0679f39065e4ed328129"
+        }
+      ],
+      "errors": []
+    },
+    "narrationTiming": [
+      {
+        "file": "01-intro.wav",
+        "seconds": 5.513,
+        "scene_seconds": 7,
+        "starts_at_scene_second": 0.6
+      },
+      {
+        "file": "02-reporting.wav",
+        "seconds": 8.738,
+        "scene_seconds": 11,
+        "starts_at_scene_second": 0.6
+      },
+      {
+        "file": "03-privacy.wav",
+        "seconds": 7.078,
+        "scene_seconds": 8,
+        "starts_at_scene_second": 0.6
+      },
+      {
+        "file": "04-tracking.wav",
+        "seconds": 8.648,
+        "scene_seconds": 11,
+        "starts_at_scene_second": 0.6
+      },
+      {
+        "file": "05-records.wav",
+        "seconds": 7.428,
+        "scene_seconds": 9,
+        "starts_at_scene_second": 0.6
+      },
+      {
+        "file": "06-guide.wav",
+        "seconds": 8.803,
+        "scene_seconds": 10,
+        "starts_at_scene_second": 0.6
+      },
+      {
+        "file": "07-closing.wav",
+        "seconds": 5.249,
+        "scene_seconds": 7,
+        "starts_at_scene_second": 0.6
+      }
+    ],
+    "notes": [
+      "Review samples cover all seven scenes and the Basista map transition in portrait and landscape.",
+      "Screens use synthetic fixtures and block API writes.",
+      "No signed Android, deployment or cloud-service acceptance implied."
+    ],
+    "updatedFromPrevious": true,
+    "samplesReviewedPerFormat": 8,
+    "formats": [
+      "portrait",
+      "landscape"
+    ],
+    "playback": {
+      "checkedAt": "2026-11-09T05:25:54.242Z",
+      "passed": true,
+      "results": [
+        {
+          "format": "portrait",
+          "played": true,
+          "seeked": 15.8,
+          "duration": 60.011,
+          "width": 1080,
+          "height": 1920,
+          "error": null
+        },
+        {
+          "format": "landscape",
+          "played": true,
+          "seeked": 15.8,
+          "duration": 60.011,
+          "width": 1920,
+          "height": 1080,
+          "error": null
+        }
+      ]
+    },
+    "preview": {
+      "checkedAt": "2026-11-09T05:25:13.812Z",
+      "results": [
+        {
+          "id": "MuniAlertPortrait",
+          "loaded": true,
+          "title": "MuniAlertPortrait / promo-video - Remotion Studio",
+          "errors": []
+        },
+        {
+          "id": "MuniAlertLandscape",
+          "loaded": true,
+          "title": "MuniAlertLandscape / promo-video - Remotion Studio",
+          "errors": []
+        },
+        {
+          "id": "Guide",
+          "loaded": true,
+          "title": "Guide / promo-video - Remotion Studio",
+          "errors": []
+        }
+      ]
+    }
+  },
+  "publication": {
+    "repository": "https://github.com/Ajhon10/MuniAlert",
+    "externalReceipt": ".cache/modal-video-publication-result.json",
+    "sourcePushAtEvidenceCapture": false,
+    "generatedMp4sExcluded": true
+  },
+  "acceptance": {
+    "physicalAndroid": false,
+    "nativeApkBuild": false,
+    "hostingDeployed": false,
+    "municipalAcceptance": false
+  }
+}

@@ -5,6 +5,7 @@ export const manualSections: ManualSection[] = [
   { id: 'getting-started', audience: 'all', title: 'Sign in and find your way around', summary: 'Your account, navigation and the preview workspace.', steps: [
     'Use Sign in or the account button. Create a citizen account with your name, email and password. Google or Facebook sign-in is available only when enabled by the municipality.',
     'On a phone, use Home, Map, Report, Updates and More. More opens the complete navigation, including this guide. Administrator navigation shows Review and Manage instead of citizen reporting.',
+    'In a popup, scroll the middle to read all fields or details. The title, close button and bottom actions stay visible. Use Go back to cancel a confirmation without losing the form underneath.',
     'A Demo workspace banner means the records are fictional. Exit preview before sending a real report. A report is accepted only when the system returns a reference number.',
     'Stay signed in on your own device. Use Sign out on shared devices; clearing app data, revocation or session expiry requires a new sign-in.',
   ], keywords: 'account login register navigation menu android demo preview google facebook' },

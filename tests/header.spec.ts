@@ -33,6 +33,10 @@ test('desktop utility header fits its contents instead of stretching an empty wh
   await page.goto('/?demo=1');
   const header = await page.locator('.topbar').boundingBox();
   const content = await page.locator('.main-shell').boundingBox();
+  const heading = await page.locator('.page-heading').boundingBox();
+  expect(header!.y).toBeGreaterThanOrEqual(heading!.y);
+  expect(header!.y).toBeLessThan(heading!.y + 8);
+  expect(await page.locator('.page-heading .topbar').count()).toBe(1);
   expect(header!.width).toBeLessThan(content!.width * 0.8);
   await expect(page.locator('.topbar .ph-clock')).toBeVisible();
   await page.screenshot({ path: 'test-results/header-desktop-compact.png', animations: 'disabled' });

@@ -12,7 +12,7 @@ function run(args) {
   if (result.status !== 0) process.exit(result.status || 1);
 }
 if (process.argv.includes('--review')) {
-  for (const frame of [100, 330, 580, 850, 1150, 1430, 1690]) {
+  for (const frame of [100, 330, 480, 580, 850, 1150, 1430, 1690]) {
     run(['still', 'MuniAlertPortrait', `out/review-portrait/element-${String(frame).padStart(4, '0')}.png`, `--frame=${frame}`, '--scale=0.5']);
     run(['still', 'MuniAlertLandscape', `out/review-landscape/element-${String(frame).padStart(4, '0')}.png`, `--frame=${frame}`, '--scale=0.5']);
   }

@@ -215,3 +215,12 @@ Owner: project development team. Updated: 2026-10-02.
 - [x] Preserve local Git histories, consolidate the workspace and review the selected publication contents.
 - [x] Pass all 14 workspace checks: 65 backend tests / 502 assertions, 42 browser tests, five launcher tests and clean dependency audits. The pre-push hook repeats the gate on the committed state.
 - [x] Document the private publication workflow and separate physical Android testing from automated results. Record the external push/CI outcome in the local publication receipt.
+
+## Fixed modal regions, shared desktop heading and refreshed video — 9 November 2026
+
+- [x] Keep dialog titles/close buttons and action footers visible while only the body scrolls, including sign-in, reporting, details, confirmations and the feature tour.
+- [x] Preserve native form validation, nested confirmation focus/scroll behavior and 320px/short-landscape layouts; prevent photo-focus changes from scrolling the outer dialog.
+- [x] Move desktop utilities beside the page heading to remove the remaining empty toolbar row; retain the compact mobile header.
+- [x] Refresh the nine synthetic UI captures with Basista locations, map filtering/boundaries and fixed modal actions. Re-render portrait/landscape MP4s and verify their changed hashes, audio, metadata, playback and eight sample frames per format.
+- [x] Verify the editable Studio compositions, update both user manuals and technical appendix, and pass all 14 checks: 65 backend tests / 502 assertions, 45 browser tests and five launcher tests.
+- [x] Prepare the checked source for the continuing private team repository update. The pre-push hook repeats the complete gate; the remote commit/CI outcome is recorded separately in the local publication receipt.

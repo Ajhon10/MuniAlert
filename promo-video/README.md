@@ -33,7 +33,7 @@ npm run poster
 npm run verify:output
 ```
 
-`render:portrait` and `render:landscape` export one format. `review` uses standalone still rendering to inspect seven representative frames in each format. Sparse-frame sequence rendering with per-frame audio mixing produced an `EINVAL` error during review on this workstation; still rendering avoids that review path. Complete continuous MP4 rendering, including narration/music, is checked separately. Use Remotion's matched browser by default; `MUNIALERT_BROWSER_EXECUTABLE` is an optional override.
+`render:portrait` and `render:landscape` export one format. `review` uses standalone still rendering to inspect eight representative frames in each format, covering all seven scenes plus the Basista map transition. Sparse-frame sequence rendering with per-frame audio mixing produced an `EINVAL` error during review on this workstation; still rendering avoids that review path. Complete continuous MP4 rendering, including narration/music, is checked separately. Use Remotion's matched browser by default; `MUNIALERT_BROWSER_EXECUTABLE` is an optional override.
 
 On this managed workstation, Remotion's configuration loader needs the normal Lenovo user context because sandbox profile traversal is denied. Normal Lenovo terminals can use the commands above. No Git ownership exception is required.
 
@@ -66,3 +66,5 @@ The project uses React/TypeScript and matching Remotion 4.0.541 packages, as req
 See [the project handover](../documentation/BRANDING_GUIDE_PROMO_2026-11-09.md) for final results. No promotion was posted externally, and no app deployment or signed Android release is implied.
 
 Rendered MP4s and review outputs in `out/` stay local and are excluded from the source repository. After cloning, use the render commands above to recreate both downloadable formats. The checked-in synthetic screens, narration, music and Remotion source support the editable preview without access to municipal data.
+
+The 9 November follow-up refreshed all nine UI captures and both MP4s with Basista locations, a fire-filter/boundary map view and fixed dialog headers/footers. The opening identifies Basista's 13 barangays. `verify:output` checks capture hashes alongside the encoded outputs; see [the current handover](../documentation/MODALS_HEADER_VIDEO_2026-11-09.md) for results and limitations.

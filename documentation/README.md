@@ -47,3 +47,5 @@ Short manual downloads: [citizen PDF](MUNIALERT-CITIZEN-MANUAL.pdf) and [adminis
 For members: [private workspace setup](TEAM_TESTING.md), [Android USB/native testing](ANDROID_TESTING.md), and [false-report review and fraud-prevention guidance](FRAUD_PREVENTION.md). The latter distinguishes existing controls from unimplemented proposals.
 
 [Header and private team-repository handover](HEADER_TEAM_2026-11-09.md) records the responsive fixes, publication safeguards and local verification.
+
+[Fixed modals, desktop heading and refreshed video](MODALS_HEADER_VIDEO_2026-11-09.md) records the follow-up layout fix and the current MP4 exports, superseding the earlier promotional output hashes.

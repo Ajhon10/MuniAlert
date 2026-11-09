@@ -1,4 +1,4 @@
-# BANTAY interface direction
+# MuniAlert interface direction
 
 The requested reference is LUMA Store's system typography and liquid-glass
 material. BANTAY remains a community safety tool: the map, report status and
@@ -16,6 +16,8 @@ reporting action take priority over decorative content.
 - Layout: persistent left workspace navigation on desktop; a five-action bottom
   dock on phones and tablets. The map and report list stay left-aligned and fluid.
   A report action is always reachable; More exposes the complete navigation.
+- Desktop utilities share the page-heading row. Popups retain their title and
+  actions while only their middle scrolls, including nested confirmations.
 - Accessibility: 44px controls, safe-area spacing, keyboard focus, native dialogs,
   reduced motion/transparency, high contrast and no-blur fallbacks.
 
