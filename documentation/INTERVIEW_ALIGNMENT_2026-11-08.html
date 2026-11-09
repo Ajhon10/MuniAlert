@@ -1,0 +1,222 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BANTAY interview and Android review</title><style>
+*{box-sizing:border-box}body{margin:0;background:#eef4f1;color:#263b35;font:16px/1.65 system-ui,sans-serif}main{max-width:1100px;margin:32px auto;padding:40px;background:white;border:1px solid #c9d8d0;border-radius:16px}h1{font-size:30px;line-height:1.3}h2{font-size:23px;line-height:1.4;margin-top:36px}a{color:#1d644e;overflow-wrap:anywhere}p,td{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;margin:20px 0;font-size:14px}td,th{border:1px solid #c7d7cd;padding:12px;vertical-align:top;text-align:left}th{background:#edf5f0}code{font-size:.9em}img{max-width:100%;height:auto}li{margin-block:10px}.tools{padding:16px;background:#1c5441;color:white;display:flex;justify-content:space-between;gap:16px}.tools button{font:inherit;padding:10px 18px;border:0;background:white;color:#1c5441;border-radius:8px;min-height:48px}
+@media(max-width:639px){main{margin:0;border:0;border-radius:0;padding:24px 16px}h1{font-size:27px}table,tbody,tr,td{display:block}thead{display:none}tr{border:1px solid #b9cdbf;border-radius:12px;margin:16px 0;padding:8px;background:#fafcfb}td{border:0;padding:8px;font-size:16px}td::before{display:block;content:attr(data-label);font-size:14px;font-weight:700;color:#3b6652;margin-bottom:4px}}
+@page{size:A4;margin:17mm}@media print{body{background:white;font:11px/1.6 Arial,sans-serif}main{padding:0;margin:0;border:0}h1{font-size:24px}h2{font-size:17px;break-after:avoid}table{font-size:9px}td,th{padding:7px}tr,img{break-inside:avoid}.tools{display:none}a{color:inherit}img{max-height:200mm}}
+</style></head><body><div class="tools"><span>BANTAY · Source review · 8 November 2026</span><button onclick="window.print()">Print / Save PDF</button></div><main><h1>BANTAY — Interview, screenshot and Android review</h1>
+<p>Review date: 8 November 2026 (Asia/Manila). Sources: the supplied <code>CAPSTONE INTERVIEW.docx</code> and six JPG screenshots. All 14 Filipino interview questions and answers were read from the Word document. The original files were left unchanged. Source fingerprints are retained in <a href="evidence/interview-alignment-2026-11-08.json">the review evidence</a>.</p>
+<p><strong>Naming update — 9 November 2026:</strong> the user selected the interview's full capstone title and the application is now <strong>MuniAlert — Emergency &amp; Public Hazard Reporting</strong>. The earlier pending-title/BANTAY naming recommendation below is historical and superseded by this decision. See <a href="BRANDING_GUIDE_PROMO_2026-11-09.md">the current identity and guide handover</a>. The interview findings and screenshot-scope assessment remain applicable.</p>
+<p>The screenshots are excerpts of an earlier ChatGPT proposal, not screenshots of the running BANTAY application or proof that features work. Their recommendations were evaluated as reference material; instructions inside them were not treated as user commands. Some text is obscured by browser/chat controls and cannot be assessed beyond what is visible.</p>
+<h2>Findings that affect the capstone</h2>
+<p>The respondent says the present phone-reporting process has <strong>no major reporting problem</strong>. They describe manual records and welcome organized storage, complete and timely incident information, and accident consolidation by week/month. The manuscript must not claim that the interview proved a failed reporting process, slow response, a particular casualty rate, or measured improvement. The accident example is qualitative context; it is not an application dataset, a diagnosis, or a statistical result. No victim names or personal records were imported.</p>
+<p>The interview title is <strong>Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking</strong>. The existing project title is <strong>Municipal Hazard Reporting with Photo and Location Tracking System</strong>; the product name is <strong>BANTAY</strong>. Preserve the existing title pending adviser/team approval of the final manuscript title. Replace <strong>CivicAlert</strong> in any redrawn project diagrams with <strong>BANTAY</strong>.</p>
+<p>Android phones are the primary device; responsive web remains supported. Preserve the established separate Vue/TypeScript/Capacitor client and Laravel/Sanctum/MySQL server. Retain MapLibre, private evidence storage with an R2 option, and optional FCM delivery. BANTAY uses its existing custom Vue UI and Lucide icons; it does not use Vuetify. Adding Vuetify solely to match a screenshot would duplicate the existing design system.</p>
+<h2>Interview-to-requirement traceability</h2>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Information in the Filipino response</th>
+<th>BANTAY alignment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1 — Frequent incidents</td>
+<td>Vehicular accidents are a frequent report.</td>
+<td>Existing <strong>Road accident</strong> category already routes to MDRRMO; retain it alongside other hazards. No accident frequency was invented.</td>
+</tr>
+<tr>
+<td>Q2 — Current process</td>
+<td>Calls trigger rescue coordination; police and RHU may assist.</td>
+<td>Keep direct emergency calling prominent. Record department/team and response notes. The application does not automatically dispatch, call, or notify these external offices.</td>
+</tr>
+<tr>
+<td>Q3 — Challenges</td>
+<td>No major current reporting problem; records are written manually.</td>
+<td>Reframe the rationale around records, consolidation and tracking. Do not present process failure as an interview finding.</td>
+</tr>
+<tr>
+<td>Q4 — Photo evidence/privacy</td>
+<td>Photos document an incident; victim identities and family concerns matter.</td>
+<td>Original incident/resolution photos and descriptions are private. Public news uses separately reviewed text, with no original evidence images. No automatic face blurring is claimed.</td>
+</tr>
+<tr>
+<td>Q5 — Location</td>
+<td>Barangay and a particular place help the team find the incident.</td>
+<td>Preserve barangay, landmark, confirmed pin, GPS accuracy and independent verified coordinates. Public map areas are approximate; responders use private precise locations.</td>
+</tr>
+<tr>
+<td>Q6 — Needed information</td>
+<td>Incident type, exact place, injury observations and relevant context.</td>
+<td>Category, description, barangay/landmark, optional incident time, yes/no/unknown injury observation and optional affected-person estimate. No required victim identity, age or medical diagnosis.</td>
+</tr>
+<tr>
+<td>Q7 — Authorized recipients</td>
+<td>Rescue, municipal officials, police and RHU receive information according to duty.</td>
+<td>Citizen/Admin remain the two account roles. Authorized team leaders can use admin accounts. There is no department-specific access role or external agency portal; all admins can access municipal reports. Municipal approval of that broad permission remains necessary.</td>
+</tr>
+<tr>
+<td>Q8 — Timeliness</td>
+<td>Information should reach the responsible team promptly.</td>
+<td>Immediate inbox persistence and explicit response notes are implemented. Push depends on Firebase/network/hosting cron. No guaranteed real-time delivery or measured response time is claimed.</td>
+</tr>
+<tr>
+<td>Q9 — Useful features</td>
+<td>Complete, timely, organized records that are easy to inspect.</td>
+<td>Validated forms, references, private history, filters, assignment, status timestamps and period records.</td>
+</tr>
+<tr>
+<td>Q10 — Testing</td>
+<td>Test, inspect and improve before operational use.</td>
+<td>Automated API/browser checks are local evidence. Physical Android, actual cloud integration and municipal UAT remain separate acceptance tasks.</td>
+</tr>
+<tr>
+<td>Q11 — Consolidation</td>
+<td>Count accidents by week, month or period; compare seasons.</td>
+<td>Admin weekly/monthly summaries, date/category filters and CSV export cover all matching records. Counts do not establish causes or unique incidents; unknown incident times use a disclosed submission-time fallback.</td>
+</tr>
+<tr>
+<td>Q12 — Simplicity</td>
+<td>Ordinary citizens need clear instructions and an uncomplicated interface.</td>
+<td>Larger phone text/controls, readable report cards, visible labels, simple Filipino reporting guidance, manual location fallback and a full-height phone form. Full bilingual localization is not claimed.</td>
+</tr>
+<tr>
+<td>Q13 — Verification</td>
+<td>A team leader or authorized team member verifies official records.</td>
+<td>Admin-only verification with preserved GPS/selected/verified coordinates and an auditable timeline. No automatic verification or fraud determination.</td>
+</tr>
+<tr>
+<td>Q14 — Priority</td>
+<td>Type, danger and people affected inform priority; accident response must not be delayed.</td>
+<td>Injury/affected-person observations are private, with an explicit unknown option; admin sets priority. The app's documentary verification workflow must not hold up emergency calls or field response. No automated medical triage or dispatch algorithm.</td>
+</tr>
+</tbody>
+</table>
+<h2>Check of each screenshot</h2>
+<table>
+<thead>
+<tr>
+<th>Image</th>
+<th>Visible subject</th>
+<th>Assessment and correction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 — <code>1a41f4ff…jpg</code></td>
+<td>“CivicAlert” architecture: Vue/TypeScript/Vuetify → Laravel → MySQL/R2</td>
+<td>Sound overall separation. Rename to <strong>BANTAY</strong>; replace Vuetify with <strong>existing Vue UI</strong>; add Capacitor Android, Sanctum, MapLibre, private evidence authorization, inbox and scheduled/optional FCM. R2 is private evidence storage, not an unrestricted photo gallery.</td>
+</tr>
+<tr>
+<td>2 — <code>8dc2cc99…jpg</code></td>
+<td>Citizen/Admin permission matrix</td>
+<td>Mostly fits the two-role scope, but mark uploads as <strong>citizen incident</strong> versus <strong>admin resolution</strong>. “View all” and export mean authorized admin records, not public access to raw evidence. Admin provisioning is controlled; no public admin registration. Add private evidence, reviewed publication and analytics permissions.</td>
+</tr>
+<tr>
+<td>3 — <code>f7403067…jpg</code></td>
+<td>Activity-log fragment, storage advice and repeated matrix</td>
+<td>Storing object keys/metadata in MySQL and bytes in object storage is correct. BANTAY uses <code>audit_logs</code>, not <code>activity_logs</code>. Audit timestamps/actor/report references are necessary. Public bucket access is inappropriate for raw accident evidence. The matrix repeats image 2.</td>
+</tr>
+<tr>
+<td>4 — <code>8a4340cc…jpg</code></td>
+<td>Simplified ERD</td>
+<td>Useful outline, not an implementation-ready schema. BANTAY uses <code>categories</code>, a report <code>department_id</code>, <code>assigned_responder</code>, <code>report_status_history</code>, notifications, confirmations and audit logs. GPS/selected/verified coordinates must remain separate. Add occurrence time, injury/affected estimates, reviewed public text, and photo type. Store password hashes. The real <a href="03-database-design.md">schema documentation</a> and migrations are authoritative.</td>
+</tr>
+<tr>
+<td>5 — <code>d3c74e79…jpg</code></td>
+<td>Admin feature list</td>
+<td>Verification, priority, routing, status, notes and page export already existed. Resolution-photo upload and weekly/monthly summaries are now added. Category/department CRUD, citizen-account management and an audit-log browsing UI remain proposed capabilities; the screenshot must not label them implemented. The status workflow below the list is mostly obscured.</td>
+</tr>
+<tr>
+<td>6 — <code>a449272a…jpg</code></td>
+<td>Citizen features and two-role recommendation</td>
+<td>Signup, reporting, camera/photo upload, GPS/manual location, history and inbox fit BANTAY. Resolution photos now have a distinct private view. Push requires real configuration and device testing. Keep departments as routing records even without department login accounts.</td>
+</tr>
+</tbody>
+</table>
+<p>The source screenshots are readable enough to assess their visible proposal text. They do <strong>not</strong> establish Android layout quality, touch behavior, offline behavior, or implementation correctness. Their very narrow multi-column ERD/matrix and obscured lower text are unsuitable as final phone instructions. Use app screenshots for UI evidence and regenerated diagrams/tables for the manuscript.</p>
+<h2>Corrected access and data model</h2>
+<table>
+<thead>
+<tr>
+<th>Action/data</th>
+<th>Guest or other citizen</th>
+<th>Report owner</th>
+<th>Municipal administrator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Approximate community map and separately reviewed text</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Original title/description, exact landmark/coordinates, injury observations, photos</td>
+<td>No</td>
+<td>Own report</td>
+<td>Authorized municipal records</td>
+</tr>
+<tr>
+<td>Submit incident report with up to three photos</td>
+<td>Signed-in citizen only</td>
+<td>Yes</td>
+<td>No in the current citizen-only flow</td>
+</tr>
+<tr>
+<td>Verify, set priority, department/team and response note</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Add up to three resolution photos</td>
+<td>No</td>
+<td>No</td>
+<td>Assigned/responding/resolved records</td>
+</tr>
+<tr>
+<td>Publish/unpublish a separate reviewed news summary</td>
+<td>No</td>
+<td>No</td>
+<td>Confirmed statuses only</td>
+</tr>
+<tr>
+<td>View private timeline and resolution evidence</td>
+<td>No</td>
+<td>Own report</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Weekly/monthly consolidated summary and CSV</td>
+<td>No</td>
+<td>No</td>
+<td>Yes; date range capped at 366 days</td>
+</tr>
+</tbody>
+</table>
+<p>MySQL stores typed records, object keys and metadata; the private evidence disk/R2 stores image bytes. Media access verifies authentication, report ownership/admin role, and that the photo belongs to that report. Browser cookies and Android bearer credentials are used in requests; tokens never appear in image URLs. Responses use <code>private, no-store</code> and temporary client blob URLs. Existing local public evidence has a repair command; R2 privacy must also be configured at the bucket.</p>
+<img src="diagrams/architecture.svg" alt="BANTAY Android, API and private evidence architecture">
+<p>Single department/team assignment remains the current model. Coordination with additional offices can be documented in private response notes. A multi-agency dispatch ledger or agency-specific permissions would need an explicitly agreed extension; these are not silently implied by the screenshot.</p>
+<h2>Android interaction and reading criteria</h2>
+<ul>
+<li>Aim for 48 CSS-pixel interactive controls in the WebView, comfortable spacing and visible focus. Native Android's guidance uses <strong>48 dp</strong>; CSS pixels are not a claim of measured physical size on every device. Validate the packaged app with Android font/display scaling and TalkBack. See <a href="https://developer.android.com/guide/topics/ui/accessibility/views/apps-views">Android accessibility guidance</a>.</li>
+<li>Main form text/inputs are 16px; supporting guidance is 15px or larger. Status labels supplement color. The old 10px <code>!important</code> help-text rule has been removed. Normal text pairs should meet 4.5:1; implementation and browser checks are not a full accessibility certification.</li>
+<li>Use one vertical form, phone-width cards, a persistent five-item navigation dock and a full-height phone dialog with a sticky close/header and safe-area padding. No page-wide horizontal scroll at 320px. Keep maps supplementary: manual coordinates, barangay and landmark work when tiles fail.</li>
+<li>Preserve zoom, readable wrapping and focus visibility. Check text enlargement and reflow against <a href="https://www.w3.org/WAI/WCAG22/Understanding/reflow.html">W3C reflow guidance</a>. Browser emulation does not establish OS font scaling or actual Android keyboard behavior.</li>
+<li>Use Filipino hints for category selection, location confirmation and the description. Injury options distinguish <strong>Hindi tiyak</strong>, <strong>May nasugatan</strong>, and <strong>Walang nakitang nasugatan</strong>. A full language toggle, offline draft synchronization and automatic background resubmission are not implemented.</li>
+<li>Do not use a confirmation/photo/duplicate check as a prerequisite to calling emergency services. The saved reference confirms API acceptance of a record, not that rescue has been dispatched. Only approved municipality hotlines should be published.</li>
+</ul>
+<p>Cloudflare notes that public bucket URLs expose bucket contents; a private application endpoint cannot undo that exposure. Use a separate private evidence bucket and disable public access. See <a href="https://developers.cloudflare.com/r2/buckets/public-buckets/">Cloudflare R2 public access</a>.</p>
+<h2>Remaining scope and acceptance</h2>
+<p>Implemented changes: private evidence delivery and public projection, explicit reviewed news publication, incident observations, independent resolution-photo uploads, complete weekly/monthly records and CSV, Android typography/controls/forms and Filipino guidance. The additive local migration preserves existing records and does not fabricate missing incident times or publish old descriptions.</p>
+<p>Screenshot-only proposals still absent: category/department CRUD screens, citizen-account administration, audit-log viewer, multi-agency dispatch and automated escalation. Do not mark those complete in the capstone. Admin provisioning, routing defaults and persisted audit logs already exist.</p>
+<p>Local command results, screenshots and limitations are recorded in <a href="evidence/interview-alignment-2026-11-08.json">the dated evidence</a>. JDK/ADB were unavailable during this review. A signed APK/AAB, actual camera/GPS/notification behavior, Android hardware Back/keyboard/TalkBack/scaling, real OAuth/R2/FCM, Hostinger operation, workload acceptance and municipal UAT still require execution. No deployment, GitHub push, cloud delivery, quantitative interview finding or field acceptance is claimed.</p>
+<h2>Verification record</h2>
+<p>The first release-gate run passed the functional checks but failed Composer audit with eight advisories across five Symfony packages. The failed record is preserved in <a href="evidence/interview-gate-before-dependency-fix-2026-11-08.json">the initial gate evidence</a>. Compatible, minimal updates keep <code>symfony/filesystem</code>, <code>http-foundation</code>, <code>http-kernel</code>, <code>routing</code> and <code>yaml</code> on <strong>7.4.23</strong>; Laravel and the accepted stack remain unchanged. The upstream <a href="https://github.com/symfony/symfony/security/advisories/GHSA-6prc-h956-hxjq">filesystem advisory</a> and <a href="https://github.com/symfony/symfony/security/advisories/GHSA-hwfg-qwvh-2wfx">YAML advisory</a> identify patched 7.4 releases. No audit exception or disabled check was added.</p>
+<p>Eight new alignment tests also pass against <strong>MySQL 8.0.44</strong> in the separate <code>municipal_hazards_test</code> schema (85 assertions), including more-than-one-page totals and PHT boundaries. The PHPUnit application now refuses unapproved databases before reset traits execute; a separate refusal probe passed. The normal application remains on its original MySQL schema with zero incident/photo records. The normal browser ? Vite proxy ? Laravel ? database path was checked through <code>npm run dev</code>, not only disposable test servers.</p>
+<p>A simulated 200% text-enlargement check at 320px exposed a nonwrapping submit-button rule; buttons now wrap and the check passes. This is browser simulation, not Android OS font-scaling acceptance. Fresh screenshots use fictional preview data: <a href="evidence/android-dashboard-360-2026-11-08.png">phone dashboard</a>, <a href="evidence/android-report-360-2026-11-08.png">report form</a>, and <a href="evidence/android-report-200pct-320-2026-11-08.png">simulated enlarged text</a>. The final gate status is recorded in the linked JSON evidence. No physical-device result is implied.</p>
+<p>Readable exports: <a href="INTERVIEW_ALIGNMENT_2026-11-08.html">HTML report</a> and <a href="INTERVIEW_ALIGNMENT_2026-11-08.pdf">PDF report</a>. Regenerate these using <code>node scripts/export-interview-review.mjs</code> after changing this source.</p>
+<p>Final local result: <strong>all 12 release checks passed</strong>, including <strong>60 backend tests / 475 assertions, 31 browser tests and five launcher tests</strong>, with zero npm findings and no Composer advisories. The separate MySQL alignment suite passed eight tests / 85 assertions. See <a href="evidence/interview-gate-final-2026-11-08.json">the final gate</a>. This records local verification, not physical Android, live cloud delivery, deployment, workload acceptance or municipal UAT.</p>
+</main><script>for(const table of document.querySelectorAll('table')){const labels=[...table.querySelectorAll('thead th')].map(cell=>cell.textContent);for(const row of table.querySelectorAll('tbody tr'))[...row.children].forEach((cell,i)=>cell.dataset.label=labels[i]||'');}</script></body></html>

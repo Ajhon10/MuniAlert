@@ -1,0 +1,67 @@
+{
+  "startedAt": "2026-10-02T02:47:51.663Z",
+  "passed": true,
+  "checks": [
+    {
+      "name": "Composer manifest",
+      "command": "composer --working-dir=backend validate --strict",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "PHP formatting",
+      "command": "php backend/vendor/bin/pint --test backend/app backend/bootstrap backend/config backend/database backend/routes backend/tests",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "Vue type checking",
+      "command": "npm run typecheck",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "Frontend production build",
+      "command": "npm run build",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "Laravel feature tests",
+      "command": "npm test",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "Browser integration tests",
+      "command": "npm run test:e2e",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "Capacitor synchronization",
+      "command": "npm exec -w frontend -- cap sync android",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "Node dependency audit",
+      "command": "npm audit --audit-level=moderate",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "PHP dependency audit",
+      "command": "composer --working-dir=backend audit --no-interaction",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "Documentation consistency",
+      "command": "node scripts/check-docs.mjs",
+      "passed": true,
+      "exitCode": 0
+    }
+  ],
+  "completedAt": "2026-10-02T02:48:30.831Z"
+}

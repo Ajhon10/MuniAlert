@@ -1,0 +1,156 @@
+{
+  "date": "2026-11-04",
+  "timezone": "Asia/Manila",
+  "gate": {
+    "startedAt": "2026-11-04T07:13:26.722Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Composer manifest",
+        "command": "composer --working-dir=hazard-server validate --strict",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP formatting",
+        "command": "php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Development launcher checks",
+        "command": "node --test scripts/tests/launchers.test.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Vue type checking",
+        "command": "npm run typecheck",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Frontend production build",
+        "command": "npm run build",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Single-origin web package",
+        "command": "npm run build:web",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Laravel feature tests",
+        "command": "npm test",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Browser integration tests",
+        "command": "npm run test:e2e",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Capacitor synchronization",
+        "command": "npm exec -w hazard-client -- cap sync android",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Node dependency audit",
+        "command": "npm audit --audit-level=moderate --cache .npm-cache",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP dependency audit",
+        "command": "composer --working-dir=hazard-server audit --no-interaction",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Documentation consistency",
+        "command": "node scripts/check-docs.mjs",
+        "passed": true,
+        "exitCode": 0
+      }
+    ],
+    "completedAt": "2026-11-04T07:15:14.976Z"
+  },
+  "backend": {
+    "testsPassed": 35,
+    "assertions": 221
+  },
+  "browserTestsPassed": 20,
+  "launcherTestsPassed": 5,
+  "normalRuntime": {
+    "checkedAt": "2026-11-04T07:10:48.115Z",
+    "connection": "Connected",
+    "heading": "Community overview",
+    "health": {
+      "status": 200,
+      "data": {
+        "status": "ok"
+      }
+    },
+    "responses": [
+      {
+        "path": "/api/settings",
+        "status": 200
+      },
+      {
+        "path": "/api/catalog",
+        "status": 200
+      },
+      {
+        "path": "/api/stats",
+        "status": 200
+      },
+      {
+        "path": "/api/reports",
+        "status": 200
+      },
+      {
+        "path": "/api/settings",
+        "status": 200
+      },
+      {
+        "path": "/api/health",
+        "status": 200
+      }
+    ],
+    "errors": [],
+    "mobileFits": true,
+    "normalDatabaseReset": false
+  },
+  "composerServeVerifiedAsOwner": true,
+  "ownership": {
+    "repositoryRootsRestored": true,
+    "bantayFilesAndFoldersProcessed": 52955,
+    "failures": 0,
+    "additionalProjectRepositoryDirectoriesRestored": 14,
+    "accessPermissionsPreserved": true,
+    "wildcardGitTrustAdded": false
+  },
+  "initialBrowserRun": {
+    "passed": 19,
+    "failed": 1,
+    "reason": "Node launcher test discovered by Playwright mutated its port environment",
+    "repair": "Moved Node tests outside the Playwright test directory; all checks rerun successfully"
+  },
+  "deployed": false,
+  "pushed": false,
+  "normalDatabaseReset": false,
+  "sha256": {
+    "scripts/dev.mjs": "0ca79551080e8990bf4874735ec5e6a302b6f6431820485f1c46904e2942c4a4",
+    "scripts/tests/launchers.test.mjs": "110c9de8c68c444c8d1eb643634ab873feb392f71586b485a004a2149ad2432e",
+    "hazard-client/scripts/dev.mjs": "975922590c94494e86526158cde2d3b4239a1e3b313d21408b469d66485b89a3",
+    "hazard-client/vite.config.ts": "20a8977e560570f69a0267ad1096d185f7d6e63e2174bae47f7dc2362e53fbca",
+    "hazard-server/scripts/serve.mjs": "8e745f460df97cd879f5ce7a3831577b20da9a0a171d34cdb594dad8aaea5042",
+    "hazard-server/routes/api.php": "aef38edbf41346766ed701bb594fe9a45cd8b5505f38cd0e85356497565cf21f",
+    "hazard-server/tests/Feature/HealthTest.php": "8d89e2d2bfbe18fbb7b49740fcd385d05b4d41c2777ac2459e6f0ffe54a67a81"
+  }
+}

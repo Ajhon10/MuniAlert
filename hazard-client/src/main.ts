@@ -1,0 +1,11 @@
+import { createApp } from 'vue';
+import App from './App.vue';
+import { vLiquidGlass } from './directives/liquidGlass';
+import './assets/main.css';
+import './assets/responsive.css';
+import './assets/liquid-glass.css';
+import './assets/android.css';
+import './assets/guide.css';
+import './assets/maps.css';
+import './assets/header.css';
+createApp(App).directive('liquid-glass', vLiquidGlass).mount('#app');

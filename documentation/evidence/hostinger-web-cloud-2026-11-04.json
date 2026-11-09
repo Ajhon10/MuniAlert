@@ -1,0 +1,118 @@
+{
+  "date": "2026-11-04",
+  "timezone": "Asia/Manila",
+  "confirmedTargets": {
+    "hosting": "Hostinger Web/Cloud",
+    "mobile": "Android",
+    "web": "responsive Vue/Laravel on one HTTPS origin"
+  },
+  "gate": {
+    "startedAt": "2026-11-04T06:30:00.217Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Composer manifest",
+        "command": "composer --working-dir=hazard-server validate --strict",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP formatting",
+        "command": "php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Vue type checking",
+        "command": "npm run typecheck",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Frontend production build",
+        "command": "npm run build",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Single-origin web package",
+        "command": "npm run build:web",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Laravel feature tests",
+        "command": "npm test",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Browser integration tests",
+        "command": "npm run test:e2e",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Capacitor synchronization",
+        "command": "npm exec -w hazard-client -- cap sync android",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Node dependency audit",
+        "command": "npm audit --audit-level=moderate --cache .npm-cache",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP dependency audit",
+        "command": "composer --working-dir=hazard-server audit --no-interaction",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Documentation consistency",
+        "command": "node scripts/check-docs.mjs",
+        "passed": true,
+        "exitCode": 0
+      }
+    ],
+    "completedAt": "2026-11-04T06:34:32.397Z"
+  },
+  "backend": {
+    "testsPassed": 32,
+    "assertions": 209,
+    "database": "isolated SQLite"
+  },
+  "browser": {
+    "testsPassed": 20,
+    "physicalAndroid": false
+  },
+  "templatePhpSyntaxPassed": true,
+  "audits": {
+    "npmVulnerabilities": 0,
+    "composerAdvisories": 0
+  },
+  "worker": {
+    "maxJobs": 3,
+    "betweenJobBudgetSeconds": 30,
+    "overlapLockSeconds": 180,
+    "requiresPersistentDaemon": false,
+    "requiresChildProcessForScheduledTasks": false
+  },
+  "sha256": {
+    "hazard-server/app/Console/Commands/WorkPush.php": "1c542af27c99402dd528d673f1f23693f39a0a6b0b962b2ca62d8f4458356be5",
+    "hazard-server/app/Jobs/SendReportPush.php": "a87ada947f477c4644047da4add7f015e5250ce7f70bcfc893e31dcedc29cfec",
+    "hazard-server/config/hazards.php": "62c7e2a0a0666dad946832c09e15e9989ca686b2a60634afd9137254a62c0ccf",
+    "hazard-server/routes/console.php": "e8a07c7194b47b4c037b3d63549d93b15a6a491531c64e91bfc21d82c52d0295",
+    "hazard-server/tests/Feature/ScheduledPushWorkerTest.php": "f5124848dbd7a67f8a066f55d09773e254bbf1caca11cb93aebaef113c7959d8",
+    "hazard-server/tests/Fixtures/RecordScheduledPush.php": "409b6c5bd6dd445a91255ec8a9baf222ae13a1af86dc3a8f04119a4655e16a46",
+    "deployment/hostinger/public-index.php.example": "34f345eda2c926e8d34e73a2030b8a48f54391bb89beea72fb0e005eccf6df7e",
+    "deployment/hostinger/cron-command.example": "61529c1e74d004fe97b4274700ea246c5fdfd244700e552696f91826fee1ae48",
+    "documentation/HOSTINGER_WEB_CLOUD.md": "2e19168fcc0b5701359df391375810943345c613ad2fa9dca15959b4f15ff05e"
+  },
+  "deployed": false,
+  "hostingerAccountVerified": false,
+  "realCloudVerified": false,
+  "physicalDeviceVerified": false
+}

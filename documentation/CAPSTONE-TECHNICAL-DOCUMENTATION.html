@@ -1,0 +1,2116 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MuniAlert — Capstone Technical Documentation</title><style>
+body{font:14px/1.7 Georgia,serif;color:#233b31;margin:0;background:#edf1ed}main{max-width:980px;margin:30px auto;background:#fff;padding:55px 65px;box-shadow:0 5px 30px #213d2512}h1,h2,h3,h4,nav,.toolbar{font-family:Arial,sans-serif;line-height:1.35}h1{font-size:27px;color:#1f4a3c}h2{font-size:20px;margin-top:28px}h3{font-size:16px;margin-top:23px}section{margin-top:55px;border-top:2px solid #d7e4d9;padding-top:18px}a{color:#367259}table{border-collapse:collapse;width:100%;font:11px/1.55 Arial,sans-serif;margin:18px 0}td,th{border:1px solid #dce5db;padding:8px;text-align:left;vertical-align:top}th{background:#eff5ee}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f0;padding:16px;font:10px/1.6 Consolas,monospace;border:1px solid #e0e8dc;border-radius:5px}code{font-size:.9em;overflow-wrap:anywhere}img{max-width:100%;height:auto}blockquote{border-left:3px solid #83a88e;padding:8px 18px;background:#f4f7ef}nav ol{columns:2;font-size:12px;padding-left:22px}nav li{margin-bottom:9px}.cover{padding:30px 0 35px}.label{font:700 10px Arial,sans-serif;letter-spacing:2px;color:#869b80}.notice{padding:16px;background:#faf5e8;border:1px solid #ede0bd;font:12px/1.7 Arial,sans-serif}.toolbar{position:sticky;top:0;background:#244f3f;color:white;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;font-size:12px}.toolbar button{border:1px solid #9bbb9e;padding:8px 12px;background:#fff;color:#244f3f;border-radius:5px;cursor:pointer}@page{size:A4;margin:18mm 16mm}@media print{body{background:white;font-size:11px}main{margin:0;padding:0;box-shadow:none}.toolbar{display:none}.cover{break-after:page}section{break-before:page;border:0;margin-top:0;padding-top:0}h1,h2,h3{break-after:avoid}tr,img{break-inside:avoid}img{max-height:225mm;object-fit:contain}table{font-size:9px}pre{font-size:8px}a{color:inherit;text-decoration:none}nav ol{columns:1}}@media(max-width:650px){main{margin:0;padding:25px 18px}nav ol{columns:1}table{font-size:10px}.toolbar{font-size:10px}}
+</style></head><body><!-- Source SHA256: 09c78c72243be31a9e4b029921e3b59580fc977c0abfa8a0f1bcec6de8ce1420 --><div class="toolbar"><span>Technical appendix · implementation baseline</span><button onclick="window.print()">Print / Save as PDF</button></div><main><div class="cover"><p class="label">CAPSTONE TECHNICAL DOCUMENTATION</p><h1>Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking</h1><p>Application name: <strong>MuniAlert</strong><br>Baseline date: 2 October 2026</p><p>Institution: ____________________<br>Proponents: ____________________<br>Adviser: ____________________<br>Municipality: Basista, Pangasinan</p><p class="notice">Prepared as an implementation appendix. Complete institutional details and actual evaluation findings under the school’s required format. External cloud/device/deployment validation is identified separately; fictional demo data is not municipal research evidence.</p><nav><h2>Contents</h2><ol><li><a href="#01-project-overview">01 — Project overview and requirements</a></li><li><a href="#02-system-architecture">02 — System architecture and source structure</a></li><li><a href="#03-database-design">03 — Database design and data dictionary</a></li><li><a href="#04-api-reference">04 — REST API reference</a></li><li><a href="#05-testing-and-validation">05 — Testing and validation</a></li><li><a href="#06-user-manual">06 — Citizen and administrator user manual</a></li><li><a href="#07-deployment-and-maintenance">07 — Deployment, Android build and maintenance</a></li><li><a href="#08-capstone-manuscript-guide">08 — Capstone manuscript preparation guide</a></li><li><a href="#09-security-and-privacy">09 — Security, privacy and operational decisions</a></li><li><a href="#10-traceability-and-acceptance">10 — Requirements traceability and acceptance</a></li></ol></nav></div><section id="01-project-overview"><h1>01 — Project overview and requirements</h1>
+<h2>Project identity</h2>
+<p><strong>Formal title:</strong> Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking.<br>
+<strong>Application name:</strong> MuniAlert (short for the municipal emergency and public hazard reporting system).<br>
+<strong>Managing office:</strong> Basista Municipal Hall, Pangasinan; the 13 barangays confirmed by the user.<br>
+<strong>Proponents, institution, adviser, and academic year:</strong> to be supplied by the project team.</p>
+<h2>Problem statement</h2>
+<p>The supplied Filipino interview reports an existing phone-based response process that the respondent says has no major reporting problem. Incidents are recorded manually, and the proposed system can improve organized records, completeness, timeliness and weekly/monthly consolidation. Road accidents are a frequent report; rescue, police and RHU coordinate according to need. Victim privacy and simple instructions are explicit requirements. This is qualitative evidence from the supplied document, not a measured response-time failure, respondent-count claim or proof of municipal acceptance. See the <a href="INTERVIEW_ALIGNMENT_2026-11-08.md">interview and screenshot review</a>.</p>
+<h2>General objective</h2>
+<p>Develop and evaluate a mobile-friendly system through which citizens submit photographed, geographically identified hazards and municipal administrators verify, assign, respond to, and close those reports.</p>
+<h2>Specific objectives</h2>
+<ol>
+<li>Provide a citizen workflow for a hazard category, description, photo evidence, barangay, and landmark.</li>
+<li>Support device GPS and manually placed or adjusted pins, requiring explicit location confirmation.</li>
+<li>Preserve GPS coordinates/accuracy and the selected pin independently, and display their distance for administrator review.</li>
+<li>Provide a map-centered dashboard, filtering, status history, department routing, and responder assignment.</li>
+<li>Reduce duplicate dispatches by suggesting recent, same-category reports within 100 meters and recording citizen confirmations.</li>
+<li>Reduce storage and bandwidth through photo compression and configurable object storage.</li>
+<li>Notify reporters of status changes through an in-app inbox and configured push integrations.</li>
+<li>Verify the implementation using automated tests and subsequently evaluate it with actual municipal users.</li>
+</ol>
+<h2>Stakeholders and roles</h2>
+<table>
+<thead>
+<tr>
+<th>Actor</th>
+<th>Responsibilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Guest</td>
+<td>Browse public hazards and view community statistics; sign in to report</td>
+</tr>
+<tr>
+<td>Citizen</td>
+<td>Submit reports, confirm another active hazard, track own private history, read notifications</td>
+</tr>
+<tr>
+<td>Municipal administrator</td>
+<td>Verify evidence/location, set priority, select department/team, post response notes, resolve and close reports</td>
+</tr>
+<tr>
+<td>Student maintainer</td>
+<td>Maintain code, tests, documentation, deployment configuration, backups and supported dependencies</td>
+</tr>
+<tr>
+<td>Municipal operator/adviser</td>
+<td>Approve operational workflow, public information policy, acceptance criteria and study procedures</td>
+</tr>
+</tbody>
+</table>
+<p>Responder assignment is a team/name field in this version. A separately authenticated responder app and dispatch roster are not implemented.</p>
+<h2>Functional requirements</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Acceptance criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-01</td>
+<td>Separate web and API applications</td>
+<td>Vue frontend and Laravel backend build/run independently</td>
+</tr>
+<tr>
+<td>FR-02</td>
+<td>Authentication and role enforcement</td>
+<td>Public registration creates only citizens; admin operations reject citizens; remembered sessions survive browser/app restarts and logout revokes access</td>
+</tr>
+<tr>
+<td>FR-03</td>
+<td>Photo reporting</td>
+<td>At least one and at most three valid photos; final images at most 1 MB and 1920 pixels per side</td>
+</tr>
+<tr>
+<td>FR-04</td>
+<td>GPS capture</td>
+<td>GPS latitude, longitude and accuracy stored as a complete group</td>
+</tr>
+<tr>
+<td>FR-05</td>
+<td>Manual/adjusted location</td>
+<td>A manually selected pin is valid without GPS; adjusted GPS remains separate</td>
+</tr>
+<tr>
+<td>FR-06</td>
+<td>Location confirmation</td>
+<td>Submitting without explicit confirmation fails; editing a pin resets confirmation</td>
+</tr>
+<tr>
+<td>FR-07</td>
+<td>Location verification</td>
+<td>Admin sees source, distance and accuracy, and stores independent verified coordinates</td>
+</tr>
+<tr>
+<td>FR-08</td>
+<td>Map and discovery</td>
+<td>Hazards appear as map markers and searchable/filterable paginated records</td>
+</tr>
+<tr>
+<td>FR-09</td>
+<td>Duplicate detection</td>
+<td>Suggest active same-category hazards within 100 m and six hours</td>
+</tr>
+<tr>
+<td>FR-10</td>
+<td>Confirmations</td>
+<td>One confirmation per citizen/report; reporters cannot confirm their own report</td>
+</tr>
+<tr>
+<td>FR-11</td>
+<td>Workflow and routing</td>
+<td>Valid transitions only; assigned status requires a response team; defaults route by category</td>
+</tr>
+<tr>
+<td>FR-12</td>
+<td>Traceability</td>
+<td>Status notes, actor references, timestamps and audit entries are retained</td>
+</tr>
+<tr>
+<td>FR-13</td>
+<td>Notifications</td>
+<td>Status updates create a private inbox entry; configured FCM job delivers push</td>
+</tr>
+<tr>
+<td>FR-14</td>
+<td>Android integration</td>
+<td>Capacitor project contains camera, geolocation and push integrations</td>
+</tr>
+<tr>
+<td>FR-15</td>
+<td>Documentation and release verification</td>
+<td>Phase tracker and capstone attachments maintained; all required checks pass before any GitHub push</td>
+</tr>
+<tr>
+<td>FR-16</td>
+<td>Private evidence and reviewed publication</td>
+<td>Raw descriptions, exact locations, observations and photos are owner/admin only; public news requires a separate admin-reviewed title/summary</td>
+</tr>
+<tr>
+<td>FR-17</td>
+<td>Incident observations</td>
+<td>Optional incident time and affected-person estimate; explicit yes/no/unknown injury observation; no victim identity fields</td>
+</tr>
+<tr>
+<td>FR-18</td>
+<td>Resolution evidence</td>
+<td>Administrators may add up to three private resolution photos, separately typed from the three incident photos</td>
+</tr>
+<tr>
+<td>FR-19</td>
+<td>Period consolidation</td>
+<td>Admin can filter up to 366 days and export weekly/monthly report counts with PHT dates and unknown-time fallback disclosed</td>
+</tr>
+<tr>
+<td>FR-20</td>
+<td>Consistent application identity</td>
+<td>MuniAlert is displayed in the web interface and Android label; the full user-approved capstone title appears in the guide and current documents</td>
+</tr>
+<tr>
+<td>FR-21</td>
+<td>Feature guidance and user manual</td>
+<td>Guests, citizens and admins can browse role-specific instructions, search topics and run a six-step highlighted tour</td>
+</tr>
+<tr>
+<td>FR-22</td>
+<td>Promotional deliverables</td>
+<td>Remotion source and editable preview plus user-requested MP4 exports use clearly labeled synthetic demonstrations</td>
+</tr>
+<tr>
+<td>FR-23</td>
+<td>Clear, configurable map</td>
+<td>Clear/Streets/Dark styles, independently switchable boundary levels, fit/area controls and synchronized hazard-category filtering remain usable on phones</td>
+</tr>
+<tr>
+<td>FR-24</td>
+<td>Basista service area</td>
+<td>Basista Municipal Hall covers exactly the 13 user-selected barangays; report entry uses an allowlist and map assets carry source provenance</td>
+</tr>
+</tbody>
+</table>
+<h2>Nonfunctional requirements</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Verification approach</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFR-01</td>
+<td>Responsive access</td>
+<td>Browser checks from 320px to 1920px, including tablet and landscape, with responsive report cards and no page-wide horizontal overflow</td>
+</tr>
+<tr>
+<td>NFR-02</td>
+<td>Privacy and authorization</td>
+<td>Public responses omit raw descriptions, precise coordinates, injury observations, original photos, identity and GPS; direct unauthorized media requests fail</td>
+</tr>
+<tr>
+<td>NFR-03</td>
+<td>Data integrity</td>
+<td>Foreign keys, unique confirmations, transactional history/notifications/audits, guarded status transitions</td>
+</tr>
+<tr>
+<td>NFR-04</td>
+<td>Maintainability</td>
+<td>Separate services/composables/configuration, migrations, reproducible lockfiles and documented commands</td>
+</tr>
+<tr>
+<td>NFR-05</td>
+<td>Honest failure feedback</td>
+<td>Unavailable server, denied GPS, image failure and unconfigured push show understandable messages</td>
+</tr>
+<tr>
+<td>NFR-06</td>
+<td>Low operating dependency</td>
+<td>Local development storage works; R2, map provider and Firebase are configurable</td>
+</tr>
+<tr>
+<td>NFR-07</td>
+<td>Deployment safety</td>
+<td>HTTPS, private environment files, least-privilege DB credentials and worker/scheduler supervision</td>
+</tr>
+</tbody>
+</table>
+<p>Performance targets, availability SLA, recovery time, retention period and usability thresholds must be approved before evaluation. No numerical performance achievement is claimed without a measured test.</p>
+<h2>Scope and limitations</h2>
+<p>Implemented: citizen/admin workflows, photo compression, GPS/manual pins, evidence comparison, map/list dashboard, basic routing, status history, confirmations, in-app notifications, integration code, and technical documentation.</p>
+<p>Not yet externally validated: real R2 access, FCM delivery, signed APK/AAB, actual barangay boundaries, Hostinger deployment, device field performance, backup restoration on the target host, and municipal UAT.</p>
+<p>Outside this version: offline submission/synchronization, native iOS packaging, continuous location tracking, emergency dispatch guarantees, AI hazard classification, real-time responder tracking, verified identity enrollment, heatmaps, advanced analytics, and an administrative account-management UI. A report is not an emergency call.</p>
+<h2>Social authentication extension ? 4 November 2026</h2>
+<p>FR-02 now includes Google and Facebook signup/sign-in through Laravel Socialite for responsive web and Android. Password accounts can explicitly connect a provider after confirming their password. New social accounts are citizens; matching email never silently links identities. Provider configuration, real consent/callback tests, physical Android and target-host acceptance remain external requirements. See <a href="SOCIAL_AUTH_SETUP.md">provider setup</a>.</p>
+</section>
+<section id="02-system-architecture"><h1>02 — System architecture and source structure</h1>
+<h2>Accepted technology baseline</h2>
+<p>The user selected one private <code>Ajhon10/MuniAlert</code> GitHub workspace repository on 9 November 2026 for team testing. The Vue client and Laravel server remain separate applications in <code>hazard-client/</code> and <code>hazard-server/</code>; shared tests, capstone documentation and deployment examples live at the root. Earlier local Git histories are preserved in ignored backups. This repository consolidation does not change the accepted stack or hosting architecture. Web releases package Vue inside Laravel’s public directory for one-origin Hostinger deployment. The confirmed deployment target is Hostinger Web/Cloud hosting, with Android plus responsive web as clients. See <a href="HOSTINGER_WEB_CLOUD.md">the selected hosting guide</a>, <a href="STACK_AND_HOSTINGER.md">stack review</a> and <a href="TEAM_TESTING.md">team setup</a>.</p>
+<p>Vue 3 + TypeScript + Vite provides the client application. Capacitor packages the same client for Android. Laravel 12 exposes the REST API, Sanctum authenticates requests, and MySQL persists application data. MapLibre renders the map; a configurable tile/style provider supplies cartography. Laravel Filesystem stores evidence on a private local evidence disk or an operator-verified private Cloudflare R2 bucket. Authenticated media requests authorize each report/photo; original files are never published by the UI. Database notifications work independently of Firebase; a queued job can send FCM HTTP v1 messages when configured.</p>
+<p>The client now presents role-specific navigation: citizens see reporting, verified news, notifications and their profile; administrators see report review, content management and their profile. The API independently checks roles for every privileged mutation. A public settings endpoint supplies approved hotlines and the initial map center. Confirmed-report news requires both a confirmed status and a separately reviewed public title/summary; citizen comments and reactions are stored separately. Achievement badges are calculated from verified report counts and their definitions are managed by administrators. The Philippine clock is formatted in the browser with the <code>Asia/Manila</code> time zone and updates every second.</p>
+<p><img src="diagrams/architecture.svg" alt="Application architecture"></p>
+<pre><code class="language-mermaid">flowchart TB
+    Citizen[Citizen phone browser] --&gt; Vue[Vue 3 / TypeScript workspace]
+    Android[Capacitor Android: camera, GPS, push] --&gt; Vue
+    Admin[Municipal administrator] --&gt; Vue
+    Vue --&gt;|HTTPS JSON / multipart| API[Laravel API + Sanctum]
+    Vue --&gt; Map[MapLibre + configured map tiles]
+    API --&gt; Request[Validation / authorization]
+    Request --&gt; Rules[Workflow and location rules]
+    Rules --&gt; DB[(MySQL)]
+    API --&gt; Photos[PhotoStorage: decode / WebP / size limits]
+    Photos --&gt; R2[Local storage or Cloudflare R2]
+    DB --&gt; Inbox[Private notification inbox]
+    Rules --&gt; Queue[Database queue]
+    Queue --&gt; FCM[Firebase Cloud Messaging]
+    Scheduler[Laravel scheduler] --&gt; Cleanup[Expired token / stale device cleanup]
+</code></pre>
+<h2>Repository structure</h2>
+<pre><code class="language-text">BANTAY/
+├── hazard-client/
+│   ├── src/
+│   │   ├── views/DashboardView.vue      # Workspace composition
+│   │   ├── components/                # Map, report form, auth, detail, dialog
+│   │   ├── composables/useDashboard.ts # Workspace state and actions
+│   │   ├── services/                  # HTTP, media/GPS, push integrations
+│   │   ├── config/api.ts              # Configured API server origin
+│   │   ├── types/index.ts             # Typed API/domain contracts
+│   │   ├── data/demo.ts               # Explicit fictional preview fixtures
+│   │   └── assets/main.css            # Responsive UI styles
+│   ├── android/                      # Capacitor native project
+│   └── capacitor.config.ts
+├── hazard-server/
+│   ├── app/Http/Controllers/Api/      # HTTP orchestration
+│   ├── app/Http/Requests/             # Input validation
+│   ├── app/Http/Resources/            # Public/private JSON projection
+│   ├── app/Models/                    # Eloquent entities and relations
+│   ├── app/Services/PhotoStorage.php  # Image processing/storage boundary
+│   ├── app/Support/                   # Location mathematics, status rules
+│   ├── app/Jobs/SendReportPush.php    # Queued FCM delivery
+│   ├── app/Console/Commands/          # Administrator provisioning
+│   ├── database/migrations/          # Canonical schema
+│   ├── database/seeders/             # Categories/departments only
+│   ├── routes/                       # API, web auth, scheduler registration
+│   └── tests/Feature/                 # Isolated workflow/security tests
+├── deployment/                       # Nginx, worker and environment guidance
+├── documentation/                    # Capstone and operational attachments
+├── scripts/                          # Verification, test server, docs build
+├── tests/                            # Playwright browser tests
+├── hazard-client/.github/workflows/  # Client verification
+├── hazard-server/.github/workflows/  # Server verification
+├── AGENTS.md / MEMORY.md / TASKS.md
+└── package.json
+</code></pre>
+<h2>Principles adapted from PDEA</h2>
+<p>The reference was read from the existing local <code>PDEA/pdea-server</code> and <code>PDEA/pdea-client</code> source, including <code>composer.json</code>, <code>routes/api.php</code>, <code>app/Services/FileStorageService.php</code>, <code>tests/Feature/SecurityHardeningTest.php</code>, <code>src/config/api.ts</code>, <code>src/services/authService.ts</code>, and the frontend <code>views</code>, <code>layout</code>, and <code>composables</code> directories. PDEA's historical architecture HTML labels itself historical, so current source took precedence.</p>
+<table>
+<thead>
+<tr>
+<th>Reference principle</th>
+<th>Application in Bantay</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Separate Vue client and Laravel server</td>
+<td>Independent <code>hazard-client/</code> and <code>hazard-server/</code> roots</td>
+</tr>
+<tr>
+<td>API controller namespace</td>
+<td><code>Http/Controllers/Api</code> with Sanctum-protected routes</td>
+</tr>
+<tr>
+<td>Storage isolated behind service/config</td>
+<td>Active <code>PhotoStorage</code> and configured local/R2 disk</td>
+</tr>
+<tr>
+<td>Shared frontend API configuration and services</td>
+<td><code>config/api.ts</code>, <code>services/api.ts</code>, device integration services</td>
+</tr>
+<tr>
+<td>Reusable frontend logic and components</td>
+<td><code>composables/useDashboard.ts</code>, components, workspace view</td>
+</tr>
+<tr>
+<td>Role checks and security feature tests</td>
+<td>Owner/admin privacy, role enforcement, token and workflow tests</td>
+</tr>
+<tr>
+<td>Migrations and operational handover</td>
+<td>Versioned schema, deployment guide, task/release records</td>
+</tr>
+</tbody>
+</table>
+<p>PDEA's domain-specific museum modules, data, credentials, DigitalOcean settings, legacy bootstrap layout, and historical deployment details were not copied. Bantay uses the Laravel 12 application skeleton and its accepted R2/MySQL design. The single workspace uses local view state rather than PDEA's larger multi-page router structure.</p>
+<h2>Report submission sequence</h2>
+<pre><code class="language-mermaid">sequenceDiagram
+    actor C as Citizen
+    participant V as Vue / Capacitor
+    participant A as Laravel API
+    participant S as Photo storage
+    participant D as MySQL
+    C-&gt;&gt;V: Add category, photos and description
+    V-&gt;&gt;V: Compress photo; get GPS or manual pin
+    C-&gt;&gt;V: Confirm selected location
+    V-&gt;&gt;A: Look for same-category nearby reports
+    A-&gt;&gt;D: Active reports within six-hour/latitude filter
+    A--&gt;&gt;V: Candidates within 100 meters
+    C-&gt;&gt;V: Confirm duplicate or submit new report
+    V-&gt;&gt;A: Authenticated multipart submission
+    A-&gt;&gt;A: Validate fields, GPS source, confirmation, files
+    A-&gt;&gt;S: Re-encode and store WebP photos
+    A-&gt;&gt;D: Transaction: report, photo metadata, history, audit
+    A--&gt;&gt;V: Reference number and submitted status
+</code></pre>
+<p>If persistence fails after photos are stored, the application attempts to delete those newly stored objects. Operational monitoring should check for orphaned objects if a storage provider is unavailable during cleanup.</p>
+<h2>Interview-aligned records and privacy ? 8 November 2026</h2>
+<p>Android phones are the primary client; responsive web remains supported. The existing custom Vue UI is retained; Vuetify is not installed or required. The Filipino interview supports private evidence, simple instructions, safe emergency calling and periodic incident records. See the <a href="INTERVIEW_ALIGNMENT_2026-11-08.md">source-by-source review</a>.</p>
+<p>Raw titles/descriptions, exact addresses/coordinates, incident observations, evidence and response history are restricted to the reporter and authorized administrators. Public lists show generic or reviewed titles, separate reviewed summaries, barangay and coordinates rounded to two decimals. Public search does not search private title/address fields. Public news requires explicit summary publication even after verification. Evidence is fetched with the existing cookie or Android bearer credential and displayed through temporary blob URLs; no token is embedded in an image URL.</p>
+<p><code>EvidenceController</code> validates and saves up to three resolution photos separately from incident evidence, locks the report before checking status/count, and records an audit. <code>AnalyticsController</code> aggregates all matching records in SQL by PHT day, then regroups at most 366 daily rows into weeks/months. Incident time is used when supplied; otherwise submission time is explicitly identified as a fallback. Summaries count reports, including unverified ones, and exclude rejected/deleted records. They do not establish unique incidents, injuries or causes.</p>
+<h2>State model</h2>
+<pre><code class="language-mermaid">stateDiagram-v2
+    [*] --&gt; submitted
+    submitted --&gt; under_verification
+    submitted --&gt; rejected
+    under_verification --&gt; verified
+    under_verification --&gt; rejected
+    verified --&gt; assigned
+    verified --&gt; rejected
+    assigned --&gt; responding
+    responding --&gt; resolved
+    resolved --&gt; closed
+    rejected --&gt; [*]
+    closed --&gt; [*]
+</code></pre>
+<p>An administrator may add notes or adjust nonterminal records without changing the current status. Closed and rejected reports are terminal. Verification requires verified coordinates; assignment requires a responder/team. Updates lock the database row, validate the transition, and write history, audit and the citizen notification transactionally. When FCM is configured, one database job per registered device is inserted on the same database before commit. Report changes, history, audit, inbox and queue insertion therefore commit or roll back together. The report-push worker retries each device independently; delivery remains at least once across a provider-accepted/worker-crash boundary.</p>
+<h2>Location model</h2>
+<p><code>gps_latitude</code>, <code>gps_longitude</code>, and <code>gps_accuracy</code> describe one requested device reading. <code>selected_latitude</code>/<code>selected_longitude</code> describe the citizen's hazard pin. <code>verified_latitude</code>/<code>verified_longitude</code> describe the administrator's review. These are not continuous device tracking.</p>
+<p><code>location_source</code> is <code>gps</code>, <code>gps_adjusted</code>, or <code>manual</code>. The server rejects a <code>gps</code> label when the pin differs from GPS beyond a one-millionth-degree tolerance. A GPS-to-pin distance above 250 meters or reported GPS accuracy worse than 100 meters prompts review. These configurable heuristics do not prove accuracy, fraud, or invalidity.</p>
+<p>The Haversine formula calculates approximate distance in meters. A latitude-band/category/time query reduces nearby candidates before distance filtering. There is no PostGIS dependency and no claim of survey-grade precision.</p>
+<h2>Authentication boundaries</h2>
+<p>Web clients obtain Laravel's CSRF cookie and use persistent HttpOnly session/remember cookies. The default web session inactivity window is 90 days (129600 minutes). Native Android clients persist a Sanctum token with Capacitor secure-storage 7.1.3 and Android Keystore; authenticated use renews its configurable 90-day expiry at most hourly. Expired/revoked tokens are rejected before renewal. Logout clears/revokes the device credential. Password changes revoke other mobile tokens and rotate remember credentials; Sanctum rejects browser sessions containing the old password hash. The current device remains signed in. Login and password changes lock the user row to serialize credential issuance with password changes. Public registration cannot set an administrator role. Private history and original GPS are limited to the reporter and administrators. This follows the separation described in <a href="https://laravel.com/docs/12.x/sanctum">Laravel Sanctum's SPA and mobile authentication documentation</a>.</p>
+<h2>Scheduled push on the selected hosting plan</h2>
+<p>With <code>HAZARD_SCHEDULED_PUSH=true</code>, the hPanel scheduler cron runs a CLI-only <code>hazard:work-push</code> batch every permitted minute. A database lock prevents overlapping scheduled workers; each batch exits after three jobs or a 30-second between-job budget. Jobs remain durable in the same application database. The 180-second worker lock recovers after a killed process; reserved jobs can retry after 90 seconds. Missing Firebase configuration preserves pending jobs. OAuth requests are bounded independently of optional PHP signal timeouts. This mode needs no persistent daemon. In-app inbox persistence remains independent of delayed FCM delivery. The real account's limits and accepted latency must still be measured.</p>
+<h2>Google and Facebook authentication</h2>
+<p>Laravel Socialite performs provider redirects and code exchange; server-only credentials live in services configuration. Web returns to an allowlisted origin and uses Sanctum-compatible HttpOnly session/remember cookies. Android uses Capacitor App/Browser plugins, an external browser, a fixed custom-scheme callback and a 90-second one-use code protected by an S256 verifier held in native secure storage. No provider access/refresh token or Sanctum token is placed in client redirect URLs. Google also uses PKCE on the server-to-provider authorization flow. Accounts link only through explicit password confirmation and authenticated identity proof. This adds no permanent worker requirement to Hostinger Web/Cloud. See <a href="SOCIAL_AUTH_SETUP.md">setup and acceptance</a>.</p>
+<h2>MuniAlert identity, local guidance and promotional authoring</h2>
+<p>The user approved the full capstone title: <strong>Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking</strong>. The selected short application name is <strong>MuniAlert</strong>, with subtitle <strong>Emergency &amp; Public Hazard Reporting</strong>. Display names and current documentation are updated; stable Android package/auth identifiers stay compatible with existing installations and callbacks. Client identity lives in <code>src/config/identity.json</code>.</p>
+<p>The default browser-session cookie remains <code>bantay_session</code>, independently of <code>APP_NAME</code>, so a display-name change preserves existing browser sessions. An explicitly configured <code>SESSION_COOKIE</code> is still respected. Native package ID, deep-link callback and secure-storage keys also retain their established values.</p>
+<p><code>?view=guide</code> loads a bundled static, searchable citizen/admin manual. It needs no new API, database, account privilege or external service. The six-step <code>FeatureTour</code> uses a native dialog, highlights real overview controls, supports back/next/skip/ESC, and can be replayed. Instructions describe only implemented behavior; public reading of administrator instructions grants no administrative access. Browser print support produces an expanded manual.</p>
+<p>The requested Remotion video is a separate <strong>React + TypeScript</strong> authoring artifact under <code>promo-video/</code>, with its own lockfile and local Studio. This stack is explicitly supplied by the user through the Remotion request; it does not migrate the Vue application. The video has no backend/database/hosting requirement. The user explicitly requested <strong>MP4 plus editable preview</strong>. Use synthetic demonstration screens and locally generated narration/music, with no credentials or real incident evidence in public video assets. Local source, rendered media, deployment and physical-device acceptance remain distinct.</p>
+<h2>Basista map and service area — 9 November 2026</h2>
+<p>The user confirmed <strong>Basista Municipal Hall, Pangasinan</strong>, covering Anambongan, Bayoyong, Cabeldatan, Dumpay, Malimpec East, Mapolopolo, Nalneran, Navatat, Obong, Osmeña Sr., Palma, Patacbo and Poblacion. Client <code>config/municipality.json</code> and server <code>config/municipality.php</code> define the same 13 names, verified by the integration documentation check. New reports use this allowlist; case/ASCII variants normalize to the canonical spelling. Existing incident records are preserved. Reference geometry is not a legal geofence: the form warns about pins outside the reference extent but does not infer legal jurisdiction or overwrite GPS.</p>
+<p>The existing MapLibre renderer now offers Clear (OpenFreeMap Positron), Streets (OpenStreetMap raster), Dark (OpenFreeMap Dark), and an optional configured municipal style. Preferences store only display mode and boundary booleans in guarded browser storage. Changing style retains the map camera, report markers, selected incident pin and original GPS; <code>style.load</code> reinstalls enabled boundary layers. Quiet report refreshes with unchanged locations retain the camera. The map's category selector shares the dashboard filter/query, and overview/map expansion preserves filters. Map pagination explicitly covers report pages rather than implying all database records are loaded.</p>
+<p>Bundled GeoJSON provides 13 detailed Basista barangays, six nearby city/municipality outlines and Pangasinan province context (approximately 102 KB total uncompressed). These public geographic assets are separate from private incident evidence. Names appear as zoom-dependent labels; overlays have separate switches, colors and line styles. The worker requests local files only when enabled, while basemap tiles/fonts still need network access. <code>VITE_BARANGAY_GEOJSON_URL</code>, <code>VITE_CITY_GEOJSON_URL</code> and <code>VITE_PROVINCE_GEOJSON_URL</code> can replace the reference files with approved data. See <a href="BASISTA_MAP_2026-11-09.md">map source and acceptance notes</a>.</p>
+<p>The camera migration changes only the former generic Manila center to Basista; it retains customized camera settings and never edits users or reports. This is source implementation and local verification, not field boundary acceptance or Android hardware certification.</p>
+<h2>Compact header and team publication — 9 November 2026</h2>
+<p>Compact widths (up to 1023 CSS pixels) use bottom <strong>More</strong> as their navigation entry; the redundant header menu is removed. The header shows the app name, guide action, connection indicator and account. Clock/page context remains in the content heading, and desktop utilities use a content-sized header. The header uses a solid reading surface so scrolling manual text does not bleed through the decorative material. Keyboard drawer dismissal restores focus to More.</p>
+<p>The root pre-push hook runs the complete gate and rejects an uncommitted publication state. CI checks the same workspace using PHP 8.5 and Node 22, including source-publication safety and the separate Remotion lint/audit. A manual Android debug-APK workflow accepts only a public HTTPS API origin without credentials. GitHub source access does not host the API or establish physical-device acceptance. The fraud guide separates existing verification/rate-limit controls from proposed contact verification and account moderation; no automatic fraud classifier was introduced.</p>
+</section>
+<section id="03-database-design"><h1>03 — Database design and data dictionary</h1>
+<h2>Database baseline</h2>
+<p>Production target: MySQL with <code>utf8mb4</code>. Schema source: <code>hazard-server/database/migrations</code>. SQLite is a portable automated-test substitute; a separate MariaDB database is also used for local MySQL-compatible testing. Do not use test reset commands against a real municipal database.</p>
+<pre><code class="language-mermaid">erDiagram
+    users ||--o{ hazard_reports : submits
+    departments ||--o{ categories : routes
+    categories ||--o{ hazard_reports : classifies
+    departments ||--o{ hazard_reports : assigned_to
+    hazard_reports ||--o{ hazard_photos : includes
+    hazard_reports ||--o{ report_status_history : records
+    users ||--o{ report_status_history : acts
+    hazard_reports ||--o{ report_confirmations : receives
+    users ||--o{ report_confirmations : confirms
+    hazard_reports ||--o{ audit_logs : audits
+    users ||--o{ audit_logs : performs
+    users ||--o{ notifications : receives
+    users ||--o{ device_tokens : registers
+    users ||--o{ personal_access_tokens : authenticates
+    users ||--o{ social_accounts : connects
+    users ||--o{ social_auth_attempts : authorizes
+    hazard_reports ||--o{ news_reactions : receives
+    users ||--o{ news_reactions : reacts
+    hazard_reports ||--o{ news_comments : receives
+    users ||--o{ news_comments : comments
+</code></pre>
+<p>Notifications and personal access tokens use Laravel's polymorphic owner fields. Notification report identifiers are stored inside JSON data; they are not separate foreign-key columns.</p>
+<h2>Business tables</h2>
+<h3>users</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type / rule</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>Unsigned bigint primary key</td>
+<td>Account identifier</td>
+</tr>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>Display name</td>
+</tr>
+<tr>
+<td>email</td>
+<td>String, unique</td>
+<td>Login identifier, normalized to lowercase on registration</td>
+</tr>
+<tr>
+<td>password</td>
+<td>String, hidden</td>
+<td>Password hash via Laravel's hashed cast</td>
+</tr>
+<tr>
+<td>role</td>
+<td>String, default <code>citizen</code></td>
+<td><code>citizen</code> or <code>admin</code>; not mass-assignable from registration</td>
+</tr>
+<tr>
+<td>email_verified_at</td>
+<td>Nullable timestamp</td>
+<td>Framework field; email verification workflow not implemented</td>
+</tr>
+<tr>
+<td>remember_token</td>
+<td>Nullable, hidden</td>
+<td>Framework authentication field</td>
+</tr>
+<tr>
+<td>created_at / updated_at</td>
+<td>Timestamps</td>
+<td>Account lifecycle</td>
+</tr>
+</tbody>
+</table>
+<h3>departments and categories</h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Fields</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>departments</td>
+<td><code>id</code> string PK; <code>name</code> string</td>
+<td>Routing departments</td>
+</tr>
+<tr>
+<td>categories</td>
+<td><code>id</code> string PK; <code>name</code>; <code>department_id</code> FK</td>
+<td>Ten hazard categories and default department routing</td>
+</tr>
+</tbody>
+</table>
+<p>Seeded categories: road accident, fallen tree, flooding, fire, road damage, overgrown vegetation, broken streetlight, electrical hazard, waste/obstruction, other hazard. Department names are provisional defaults requiring municipal confirmation.</p>
+<h3>hazard_reports</h3>
+<table>
+<thead>
+<tr>
+<th>Field(s)</th>
+<th>Type / rule</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>UUID primary key</td>
+<td>Internal report identifier</td>
+</tr>
+<tr>
+<td>reference_number</td>
+<td>Unique string</td>
+<td>Human-facing <code>HZ-{year}-{random}</code> reference</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>FK users</td>
+<td>Reporter; private</td>
+</tr>
+<tr>
+<td>category_id</td>
+<td>FK categories</td>
+<td>Hazard classification</td>
+</tr>
+<tr>
+<td>title</td>
+<td>String ≤120</td>
+<td>Short title</td>
+</tr>
+<tr>
+<td>description</td>
+<td>Text; API ≤2000</td>
+<td>Citizen description</td>
+</tr>
+<tr>
+<td>address</td>
+<td>String ≤200</td>
+<td>Street/landmark</td>
+</tr>
+<tr>
+<td>barangay</td>
+<td>String ≤80</td>
+<td>Citizen-entered barangay; not yet a boundary-validated lookup</td>
+</tr>
+<tr>
+<td>selected_latitude / selected_longitude</td>
+<td>Double, required</td>
+<td>Citizen hazard pin; latitude −90..90, longitude −180..180</td>
+</tr>
+<tr>
+<td>gps_latitude / gps_longitude</td>
+<td>Nullable double, paired</td>
+<td>Original phone GPS, private</td>
+</tr>
+<tr>
+<td>gps_accuracy</td>
+<td>Nullable double, 0..100000</td>
+<td>Device-reported radius in meters; private</td>
+</tr>
+<tr>
+<td>location_source</td>
+<td><code>gps</code>, <code>gps_adjusted</code>, <code>manual</code></td>
+<td>Location acquisition method</td>
+</tr>
+<tr>
+<td>location_difference_meters</td>
+<td>Nullable double</td>
+<td>Server-computed GPS-to-pin distance</td>
+</tr>
+<tr>
+<td>verified_latitude / verified_longitude</td>
+<td>Nullable paired doubles</td>
+<td>Administrator-reviewed coordinates</td>
+</tr>
+<tr>
+<td>severity</td>
+<td><code>low</code>, <code>moderate</code>, <code>high</code>, <code>critical</code></td>
+<td>Current priority</td>
+</tr>
+<tr>
+<td>status</td>
+<td>Valid workflow string</td>
+<td>Submitted through closed, or rejected</td>
+</tr>
+<tr>
+<td>department_id</td>
+<td>FK departments</td>
+<td>Current responsible department</td>
+</tr>
+<tr>
+<td>assigned_responder</td>
+<td>Nullable string</td>
+<td>Team/person name; no responder-account relationship yet</td>
+</tr>
+<tr>
+<td>verified_at / responded_at / resolved_at</td>
+<td>Nullable timestamps</td>
+<td>First arrival at each lifecycle milestone</td>
+</tr>
+<tr>
+<td>created_at / updated_at</td>
+<td>Timestamps</td>
+<td>Record lifecycle</td>
+</tr>
+</tbody>
+</table>
+<p>Reports also have nullable <code>deleted_at</code>. Only the owner can soft-delete a submitted or under-verification report. Soft-deleted reports leave public, personal and news queries; audit and evidence records remain for administrative retention review.</p>
+<p><code>location_confirmed</code> is an accepted submission assertion, not a separate stored coordinate or timestamp. The report's original submission time is retained. Private map markers prefer verified coordinates when present; originals remain unchanged. Public coordinates are rounded to two decimal places and must not be used for directions.</p>
+<h3>Community content and achievements</h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Fields</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>municipal_settings</code></td>
+<td><code>key</code> PK, JSON <code>value</code>, timestamps</td>
+<td>Admin-managed <code>map</code> center/zoom and <code>hotlines</code> list. Default hotlines are empty until approved locally.</td>
+</tr>
+<tr>
+<td><code>badges</code></td>
+<td>ID, unique <code>threshold</code>, <code>name</code>, <code>color</code>, <code>description</code>, <code>reward_type</code>, nullable <code>cash_amount</code>/<code>reward_description</code>, timestamps</td>
+<td>Fixed milestones: 50 bronze, 100 silver, 1,000 gold, 10,000 platinum. Admins edit display/reward metadata.</td>
+</tr>
+<tr>
+<td><code>news_reactions</code></td>
+<td>ID, report FK, user FK, <code>type</code>, timestamps, unique report/user pair</td>
+<td>A citizen has at most one active reaction per confirmed report.</td>
+</tr>
+<tr>
+<td><code>news_comments</code></td>
+<td>ID, report FK, user FK, <code>body</code>, timestamps</td>
+<td>Citizen comments with owner/admin deletion.</td>
+</tr>
+</tbody>
+</table>
+<p>Achievement status is calculated from each user's current confirmed-report count rather than stored in a separate award table. This avoids stale awards when a report is rejected or deleted. Reward metadata records a possible municipal benefit; it is not a payout or gift fulfillment ledger.</p>
+<h3>Interview-aligned incident fields</h3>
+<p>Migration <code>2026_11_08_000001_align_interview_records</code> adds nullable indexed <code>occurred_at</code> (UTC), <code>injuries</code> (<code>unknown</code> by default; API accepts <code>yes</code>/<code>no</code>/<code>unknown</code>), nullable integer <code>people_affected</code> (0?1,000,000, reporter estimate), nullable <code>public_title</code> (120 characters) and <code>public_summary</code> (API maximum 1,000 characters). Existing reports retain unknown incident time/observations and no public summary; migration never copies private descriptions into public fields. Personal victim names, ages, addresses and diagnoses are not introduced.</p>
+<h3>hazard_photos</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type / rule</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>UUID PK</td>
+<td>Photo identifier</td>
+</tr>
+<tr>
+<td>hazard_report_id</td>
+<td>FK, cascade on report deletion</td>
+<td>Parent report</td>
+</tr>
+<tr>
+<td>disk / path</td>
+<td>Strings</td>
+<td>Local/R2 disk and UUID-based object key</td>
+</tr>
+<tr>
+<td>original_name</td>
+<td>String</td>
+<td>Filename received by the API; client compression may have changed it</td>
+</tr>
+<tr>
+<td>sha256</td>
+<td>64-character string</td>
+<td>Hash of uploaded compressed bytes before server re-encoding</td>
+</tr>
+<tr>
+<td>bytes</td>
+<td>Unsigned integer</td>
+<td>Size of the stored WebP</td>
+</tr>
+<tr>
+<td>photo_type</td>
+<td>String, defaults to <code>incident</code></td>
+<td><code>incident</code> or <code>resolution</code>; independent three-photo limits</td>
+</tr>
+<tr>
+<td>created_at / updated_at</td>
+<td>Timestamps</td>
+<td>Upload record times</td>
+</tr>
+</tbody>
+</table>
+<p>The system does not retain the original full-resolution phone image. The stored hash must not be described as a forensic hash of an original camera file. Public JSON returns an empty photo array. Owner/admin JSON returns photo ID, type and an authenticated API media path; disk, original filename, hash and object key remain internal.</p>
+<h3>Other application tables</h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Core fields and constraints</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>report_status_history</td>
+<td>bigint PK; report FK; actor user FK; status; note; timestamps</td>
+<td>Ordered response history</td>
+</tr>
+<tr>
+<td>report_confirmations</td>
+<td>bigint PK; report FK; user FK; unique <code>(hazard_report_id,user_id)</code>; timestamps</td>
+<td>Idempotent community confirmation</td>
+</tr>
+<tr>
+<td>audit_logs</td>
+<td>bigint PK; actor FK; report FK; action; JSON data; timestamps</td>
+<td>Administrative/application traceability</td>
+</tr>
+<tr>
+<td>notifications</td>
+<td>UUID PK; type; polymorphic owner; text JSON data; read_at; timestamps</td>
+<td>Reporter inbox</td>
+</tr>
+<tr>
+<td>device_tokens</td>
+<td>bigint PK; user FK; token; unique SHA-256 token_hash; platform; timestamps</td>
+<td>FCM recipient registration</td>
+</tr>
+<tr>
+<td>personal_access_tokens</td>
+<td>bigint PK; polymorphic owner; name; unique token hash; abilities; last_used_at; expires_at; timestamps</td>
+<td>Sanctum mobile sessions</td>
+</tr>
+</tbody>
+</table>
+<h3>Framework tables</h3>
+<p><code>sessions</code> supports web login sessions; <code>password_reset_tokens</code> is scaffold infrastructure without a password-reset user flow; <code>cache</code> and <code>cache_locks</code> support configured caching; <code>jobs</code>, <code>job_batches</code>, and <code>failed_jobs</code> support queues; <code>migrations</code> records applied schema versions.</p>
+<h2>Indexing and integrity</h2>
+<ul>
+<li>Unique email, reference number, mobile-token hash, device-token hash and citizen/report confirmation keys prevent duplicate identities and confirmation rows.</li>
+<li><code>hazard_reports(status, created_at)</code> supports status browsing; <code>(category_id, created_at)</code> supports duplicate candidates; selected coordinate indexes are provided for future geographic filters.</li>
+<li>Foreign keys preserve report/user/category/department relationships. Application transactions bundle related writes.</li>
+<li>Photo objects are outside MySQL; their storage metadata remains inside the database.</li>
+<li>GPS values are not overwritten during admin verification. API validation restricts ranges and source semantics.</li>
+<li>Database and object-storage backups must correspond to the same restore point. A database backup alone does not contain photographs.</li>
+</ul>
+<h2>Social authentication migration</h2>
+<p><code>2026_11_04_000001_add_social_authentication</code> adds <code>users.password_enabled</code> (boolean, default true); the user response exposes computed <code>has_password</code>, while hiding the underlying flag and hash. Social-only accounts store a random disabled password hash, preserving the established non-null password schema.</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Fields and invariants</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>social_accounts</td>
+<td>id; user_id FK/cascade; provider (16); provider_id (255); timestamps. Unique (provider, provider_id) and (user_id, provider). Stores identity only, no provider tokens.</td>
+</tr>
+<tr>
+<td>social_auth_attempts</td>
+<td>UUID id; provider/platform/mode; allowlisted return_origin; intent; code_challenge (43); link_user_id/user_id FKs/null-on-delete; auth_fingerprint (64); access_token_id; exchange_code_hash (64); failures; expires_at index; started_at/completed_at/consumed_at; timestamps. Start lifetime 10 minutes; completed Android code lifetime 90 seconds; row-locked one-use consumption.</td>
+</tr>
+</tbody>
+</table>
+<p>Both tables relate to users. Link proof includes a password/remember-token fingerprint and optional mobile credential ID; it is rechecked at callback. No foreign key is attached to access_token_id so expired/revoked tokens may be pruned and detected as absent. Schedule cleanup removes attempts expired for more than a day. Additive migration preserves existing user/report data; do not reset/reseed a normal database. Schema rollback drops social identities and would strand social-only accounts: plan recovery before any production rollback.</p>
+</section>
+<section id="04-api-reference"><h1>04 — REST API reference</h1>
+<h2>Conventions and authentication</h2>
+<p>Development API origin: <code>http://localhost:8000</code>. Vite proxies <code>/api</code>, <code>/auth</code>, <code>/sanctum</code>, and <code>/storage</code>. Production should use one HTTPS origin for the frontend and Laravel routes. Set <code>VITE_API_BASE_URL</code> to the HTTPS server origin for Android; it must not include a trailing <code>/api</code>.</p>
+<p>Send <code>Accept: application/json</code>. JSON mutations use <code>Content-Type: application/json</code>; uploads use multipart form data with repeated <code>photos[]</code> parts. Single-report responses use <code>{ &quot;data&quot;: { ... } }</code>. Lists use Laravel's <code>data</code>, <code>links</code>, and <code>meta</code> pagination envelope, with 100 reports per page.</p>
+<p>For web authentication: <code>GET /sanctum/csrf-cookie</code>, then <code>POST /auth/register</code> or <code>/auth/login</code>, sending the decoded <code>XSRF-TOKEN</code> cookie as <code>X-XSRF-TOKEN</code> and including cookies. For Android: <code>POST /api/auth/register</code> or <code>/api/auth/login</code> returns a Sanctum token. Send it as <code>Authorization: Bearer &lt;token&gt;</code>. Tokens expire after 90 days without authenticated use by default (AUTH_SESSION_DAYS); middleware renews valid mobile tokens at most hourly. They are revoked at logout and removed from secure native storage. Web sign-in issues an HttpOnly remember cookie and a persistent session cookie; SESSION_LIFETIME defaults to 129600 minutes and SESSION_EXPIRE_ON_CLOSE=false. Clearing site/app data, revocation or prolonged inactivity requires sign-in again.</p>
+<p>The health endpoint returns <code>{ &quot;status&quot;: &quot;ok&quot; }</code> after a successful database query, or HTTP 503 with <code>{ &quot;status&quot;: &quot;unavailable&quot; }</code> when that query fails. It does not return database error details. Local development adds a hashed workspace identity header for safe launcher reuse; production omits it.</p>
+<h2>Endpoint inventory</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Access</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/health</code></td>
+<td>Public</td>
+<td>Database-backed API health check</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/catalog</code></td>
+<td>Public</td>
+<td>Categories and departments</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/stats</code></td>
+<td>Public</td>
+<td>Total, active, pending, responding, resolved counts</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/admin/analytics</code></td>
+<td>Administrator</td>
+<td>Bounded weekly/monthly record totals by PHT date and optional category</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/reports/{report}/photos/{photo}</code></td>
+<td>Owner/admin</td>
+<td>Authorized WebP bytes; private/no-store; scoped photo ID</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/reports/{report}/resolution-photos</code></td>
+<td>Administrator</td>
+<td>One to three private resolution uploads; three total per report</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/reports</code></td>
+<td>Public</td>
+<td>Report list; rejected reports excluded</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/reports/nearby</code></td>
+<td>Public</td>
+<td>Recent duplicate candidates</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/settings</code></td>
+<td>Public</td>
+<td>Municipal map center/zoom and emergency hotlines</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/badges</code></td>
+<td>Public</td>
+<td>Badge definitions and reward descriptions</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/news</code></td>
+<td>Public</td>
+<td>Confirmed-report news, 20 per page; optional <code>report</code> UUID</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/news/{report}/comments</code></td>
+<td>Public</td>
+<td>25 comments per page; optional nonnegative <code>after</code> comment ID</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/register</code></td>
+<td>Web/CSRF</td>
+<td>Register a citizen and start a session</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/login</code></td>
+<td>Web/CSRF</td>
+<td>Start a web session</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/auth/register</code></td>
+<td>Public/mobile</td>
+<td>Register and issue a mobile token</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/auth/login</code></td>
+<td>Public/mobile</td>
+<td>Issue a mobile token</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/auth/me</code></td>
+<td>Authenticated</td>
+<td>Current user</td>
+</tr>
+<tr>
+<td>GET/PATCH</td>
+<td><code>/api/profile</code></td>
+<td>Authenticated</td>
+<td>Profile, verified-report count and earned badges; edit name/email/password</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/auth/logout</code></td>
+<td>Authenticated</td>
+<td>Revoke current mobile token or invalidate session</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/reports/mine</code></td>
+<td>Authenticated</td>
+<td>Current reporter's records, including rejected</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/admin/reports</code></td>
+<td>Administrator</td>
+<td>Municipal list including rejected</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/reports</code></td>
+<td>Citizen</td>
+<td>Submit report and photos</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/reports/{report}</code></td>
+<td>Owner/admin</td>
+<td>Full report and private history/evidence</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/api/reports/{report}</code></td>
+<td>Administrator</td>
+<td>Verify location, route and update workflow</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/reports/{report}/confirm</code></td>
+<td>Authenticated</td>
+<td>Confirm someone else's active report</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/reports/{report}</code></td>
+<td>Owner, before verification</td>
+<td>Soft-delete an unverified report; audited and removed from public lists</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/api/admin/settings</code></td>
+<td>Administrator</td>
+<td>Publish map center, zoom and up to 20 hotlines</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/api/admin/badges/{badge}</code></td>
+<td>Administrator</td>
+<td>Edit badge name, description, and cash/gift information</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/news/{report}/reactions</code></td>
+<td>Citizen</td>
+<td>Toggle one <code>helpful</code> or <code>support</code> reaction</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/news/{report}/comments</code></td>
+<td>Citizen</td>
+<td>Post a 2–1000 character comment</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/news/{report}/comments/{comment}</code></td>
+<td>Comment owner/admin</td>
+<td>Remove a comment</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/notifications</code></td>
+<td>Authenticated</td>
+<td>Latest 50 private notifications</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/api/notifications/read</code></td>
+<td>Authenticated</td>
+<td>Mark the user's unread inbox items as read</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/devices</code></td>
+<td>Authenticated</td>
+<td>Register/reassign a push token to the current user</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/devices</code></td>
+<td>Authenticated</td>
+<td>Remove a token owned by the current user</td>
+</tr>
+</tbody>
+</table>
+<p>Public list queries accept <code>search</code> (maximum 120 characters), <code>category</code> (category ID), <code>status</code>, and <code>page</code> (positive integer). Statistics are municipality-wide, not the filtered page's counts. Nearby queries require <code>category</code>, <code>latitude</code>, and <code>longitude</code> and return at most five matches with <code>distance</code> in meters.</p>
+<p><code>/api/news</code> includes only <code>verified</code>, <code>assigned</code>, <code>responding</code>, <code>resolved</code>, and <code>closed</code> reports with both an admin-reviewed <code>public_title</code> and <code>public_summary</code>. Verification alone does not publish news. Each item contains a report, reaction counts, comment count, and the signed-in user's reaction. A shared news link uses <code>?news=&lt;report UUID&gt;</code> in the client and the API's <code>report</code> filter. Reporter identity and original GPS stay private in guest and other-citizen responses. The profile endpoint counts reports currently in those confirmed states; deleted/rejected reports do not count. Badge milestones are fixed at 50, 100, 1,000, and 10,000. Admin reward metadata is informational and never sends payment or dispatches a gift.</p>
+<p>Profile password changes require <code>current_password</code>, a new password of at least 12 characters, and <code>password_confirmation</code>. Map values are validated as latitude −90..90, longitude −180..180 and zoom 3..19. Hotline numbers permit digits, spaces, parentheses, hyphens and <code>+</code>. CMS and profile mutations require explicit confirmation in the supplied client. Authentication, report submission, news comments, and reactions use separate rate-limit buckets so browsing does not exhaust the registration limit.</p>
+<h2>Comment pagination</h2>
+<p><code>GET /api/news/{report}/comments?after=123</code> returns <code>{ &quot;data&quot;: [...], &quot;meta&quot;: { &quot;has_more&quot;: true, &quot;next_cursor&quot;: 148 } }</code>. Omit <code>after</code> for the first page; supply <code>next_cursor</code> to continue. Ordering is ascending by comment ID, limited to 25. IDs from another report never expose its comments. Negative/noninteger cursors return 422. The client offers Load more comments; posting/deleting reloads the first page and retains the draft on failure.</p>
+<h2>Account payloads</h2>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;Example Citizen&quot;,
+  &quot;email&quot;: &quot;citizen@example.test&quot;,
+  &quot;password&quot;: &quot;at-least-twelve-characters&quot;
+}
+</code></pre>
+<p>Login uses only email and password. Registration ignores unsupported privilege fields; it never creates an administrator. Provision administrators with <code>php artisan hazard:admin &lt;email&gt;</code> and the hidden password prompt.</p>
+<h2>Report submission</h2>
+<p>The following scalar fields are multipart fields, not a single JSON <code>data</code> part:</p>
+<pre><code class="language-json">{
+  &quot;category_id&quot;: &quot;tree&quot;,
+  &quot;title&quot;: &quot;Fallen tree along Riverside Road&quot;,
+  &quot;description&quot;: &quot;A fallen tree blocks half of the road near the school entrance.&quot;,
+  &quot;address&quot;: &quot;Riverside Road, beside the school&quot;,
+  &quot;barangay&quot;: &quot;Anambongan&quot;,
+  &quot;severity&quot;: &quot;high&quot;,
+  &quot;selected_latitude&quot;: 14.59963,
+  &quot;selected_longitude&quot;: 120.98431,
+  &quot;gps_latitude&quot;: 14.599512,
+  &quot;gps_longitude&quot;: 120.984221,
+  &quot;gps_accuracy&quot;: 9.2,
+  &quot;location_source&quot;: &quot;gps_adjusted&quot;,
+  &quot;location_confirmed&quot;: &quot;1&quot;
+}
+</code></pre>
+<p>Append one to three image files under <code>photos[]</code>. JPEG, PNG, and WebP are accepted only when decoding succeeds. Each upload must already be at most 1 MB and 1920 pixels per side; the server re-encodes it to WebP and enforces the final size again. The provided frontend compresses larger camera photos before sending.</p>
+<p>For <code>manual</code>, omit all GPS fields. For <code>gps</code> or <code>gps_adjusted</code>, provide the complete GPS trio. A <code>gps</code> source requires the selected point to equal the GPS point within the documented tolerance. Administrator-only fields such as status, verified coordinates and reporter ID are not accepted from the citizen payload.</p>
+<p>Successful creation returns HTTP 201 with a unique reference, the submitted status and authenticated photo API paths (not public object URLs). The client does not claim success until the API responds successfully. A nearby-check failure does not silently bypass the duplicate check in the supplied frontend.</p>
+<h2>Administrator update</h2>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;verified&quot;,
+  &quot;severity&quot;: &quot;high&quot;,
+  &quot;department_id&quot;: &quot;engineering&quot;,
+  &quot;assigned_responder&quot;: null,
+  &quot;note&quot;: &quot;Location reviewed; tree is obstructing the northbound lane.&quot;,
+  &quot;verified_latitude&quot;: 14.59964,
+  &quot;verified_longitude&quot;: 120.98432
+}
+</code></pre>
+<p>Both verified coordinates are required when transitioning to <code>verified</code>. A team/responder is required when transitioning to <code>assigned</code>. The allowed progression is documented in the architecture attachment. The caller supplies a response note of 5–1000 characters. Updates preserve original selected/GPS values.</p>
+<h2>Push token payload</h2>
+<pre><code class="language-json">{ &quot;token&quot;: &quot;device-token-returned-by-firebase&quot;, &quot;platform&quot;: &quot;android&quot; }
+</code></pre>
+<p>Use <code>web</code> for browser messaging. Native iOS packaging/FCM registration is outside this release; do not pass a raw APNs token as an FCM token. Logout unregisters the locally remembered push token before ending the session.</p>
+<h2>Errors and limits</h2>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>Client action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>401</td>
+<td>Missing/expired login</td>
+<td>Sign in again</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Wrong role or private record</td>
+<td>Do not retry with the same permissions</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Report missing</td>
+<td>Refresh the list</td>
+</tr>
+<tr>
+<td>419</td>
+<td>Web session/CSRF expired</td>
+<td>Reload and sign in again</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Invalid fields, workflow or inactive confirmation</td>
+<td>Display <code>errors</code> or <code>message</code> and correct input</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Rate limit</td>
+<td>Wait before retrying</td>
+</tr>
+<tr>
+<td>500/503</td>
+<td>Storage, database or service failure</td>
+<td>Show failure; inspect server logs; do not report success</td>
+</tr>
+</tbody>
+</table>
+<p>The API route group allows 120 requests/minute per throttle identity; login and report creation have additional 10/minute limits and registration 5/minute. Enforce infrastructure body limits of at least 4 MB for three permitted images plus fields. Never expose production stack traces; set <code>APP_DEBUG=false</code>.</p>
+<h2>Social signup and login (FR-02)</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Access and behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/auth/providers</code></td>
+<td>Public; enabled flags for google/facebook only; no credentials.</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/auth/social/{provider}/attempts</code></td>
+<td>Public for login; authenticated plus current_password for link. Provider limited to google/facebook; 10/minute plus global throttle.</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/auth/social/exchange</code></td>
+<td>Public Android code/verifier exchange, 10/minute plus global throttle; one-use, no-store.</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/auth/social/accounts</code></td>
+<td>Authenticated; connected provider names only.</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/auth/social/{provider}/redirect</code></td>
+<td>Session-bound browser redirect; one-use prepared attempt, 20/minute.</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/auth/social/{provider}/callback</code></td>
+<td>Stateful provider callback, 20/minute; web cookie sign-in or fixed Android deep link.</td>
+</tr>
+</tbody>
+</table>
+<p>Prepare body: <code>platform</code> web/android; <code>mode</code> login/link; optional whitelisted <code>intent</code> (overview/report/profile/mine/activity/news/reports/map). Web requires <code>return_origin</code> with no path/query/userinfo and exact origin allowlisting. Android requires URL-safe 43-character S256 <code>code_challenge</code>. Linking requires current_password and an authenticated account with password enabled. Returns 201 <code>{attempt,redirect_url}</code>; navigate top-level or use the Android system browser. Credentials missing =&gt; 503, invalid input/origin =&gt; 422, missing link session =&gt; 401. Browser POSTs retain the normal CSRF cookie/header requirements.</p>
+<p>Exchange body: attempt UUID, code (64 characters), code_verifier (43?128 RFC 7636 characters). Returns <code>{user,intent,linked,token?}</code>; token exists for Android login, not link. Replays, expiration, incorrect proof or exhausted five-try limit =&gt; 422. Provider denial/errors return safe reason codes; email collisions require explicit linking. Browser query status is never trusted as authentication: client confirms the real session with <code>/api/auth/me</code>. See <a href="SOCIAL_AUTH_SETUP.md">configuration and security</a>.</p>
+<h2>Interview-aligned fields, private media and consolidation ? 8 November 2026</h2>
+<p>Submission optionally accepts <code>occurred_at</code> (ISO timestamp with offset, no future time), <code>injuries</code> (<code>unknown</code>, <code>yes</code>, <code>no</code>) and nullable integer <code>people_affected</code> (0?1,000,000, an estimate). The phone converts local incident time to UTC. Omitted incident time stays null; it is never invented during migration. Citizen-supplied publication fields are not accepted.</p>
+<p>Admin PATCH additionally accepts nullable <code>public_title</code> (5?120 characters) and <code>public_summary</code> (15?1,000 characters). They must be supplied together and may be nonempty only for confirmed statuses. Both null unpublishes news; rejection clears them. Raw report text and evidence are never copied automatically into publication fields. Public lists/news always omit private fields even if an administrator is signed in; public locations are rounded to two decimal places. Private record endpoints retain exact coordinates and original text.</p>
+<p>Private photo GET returns authorized <code>image/webp</code> bytes with <code>Cache-Control: private, no-store</code>, <code>nosniff</code> and no-referrer. Guests receive 401, other citizens 403, and a mismatched report/photo pair 404. Android sends its bearer credential on the image request and uses a temporary blob URL, never a token URL. Resolution-photo POST uses multipart <code>photos[]</code>, the same image limits as incident uploads, and a separate maximum of three resolution photos per report. Only an administrator on assigned/responding/resolved records may upload; invalid writes clean up newly stored files. It adds an audit entry but does not independently claim dispatch or change the report status.</p>
+<p>Admin analytics GET requires <code>from</code>/<code>to</code> as <code>YYYY-MM-DD</code>, <code>group=week|month</code>, and optional category ID. The range is at most 366 calendar days, inclusive in Asia/Manila; weeks begin Monday. It aggregates all matching records in SQL rather than the displayed report page. Response: <code>from</code>, <code>to</code>, <code>group</code>, <code>timezone</code>, <code>date_basis</code>, <code>total</code>, <code>known_time</code>, and <code>periods[{period,total,accidents,known_time}]</code>. Incident time is used when known and submission time otherwise. First/last periods may be partial. Unverified reports count; rejected and deleted records do not. The aggregate has no victim identity, injury totals or diagnosis, and does not prove unique incidents or causation. Invalid input returns 422, and non-admin access fails. The client exports the returned summary as CSV with its dates/group in the filename.</p>
+<h2>Basista reporting scope</h2>
+<p>New report submissions accept only the 13 barangays in server <code>config/municipality.php</code>, matching Basista Municipal Hall’s user-approved coverage. Case and ASCII spelling variants normalize to the canonical name (for example, <code>Osmena Sr.</code> becomes <code>Osmeña Sr.</code>). Unknown barangays receive 422 with a <code>barangay</code> validation error. Coordinates remain confirmed incident evidence; the reference boundary is not a legal geofence. Existing records are preserved.</p>
+</section>
+<section id="05-testing-and-validation"><h1>05 — Testing and validation</h1>
+<h2>Latest confirmed-hosting follow-up</h2>
+<p>The user selected Hostinger Web/Cloud with Android plus responsive web. <a href="HOSTINGER_WEB_CLOUD.md">The hosting guide</a> records the bounded scheduled worker and relocated public entry; its final verification record supersedes the earlier UI baseline for these changes. Scheduler tests cover bounded batches, overlap, expired-lock recovery, preservation without Firebase and environment-controlled registration.</p>
+<h2>Latest UI / stack review</h2>
+<p>See <a href="UI_STACK_REVIEW_2026-11-04.md">4 November 2026 review</a> for current PHP 8.5, liquid-glass/responsive UI, comments, push durability, dependency and combined-hosting verification. Earlier records below describe their stated dates and must not override the latest result. No signed Android or real cloud-service result is claimed.</p>
+<h2>Mandatory release rule</h2>
+<p>The user requires <strong>all tests to pass before a GitHub push</strong>. Run parent <code>npm run verify</code> on the exact code intended for the push and run each application's own verification command. Each repository has a pre-push hook and CI workflow. Do not bypass the hooks, skip failing tests, or describe incomplete execution as a pass. Any subsequent change invalidates affected results.</p>
+<p>The gate covers Composer validation, PHP formatting, Vue type checking, production build, Laravel tests, browser integration, Capacitor synchronization, dependency audits, and documentation consistency. Its local record is <code>.cache/verification-last.json</code>. GitHub submission still requires a user request.</p>
+<h2>Automated test environment</h2>
+<ul>
+<li>Windows development workspace; Node 22.21.0; PHP 8.2.30 with GD/WebP, PDO MySQL and PDO SQLite.</li>
+<li>Laravel 12, Sanctum 4, PHPUnit 11; Vue 3 with Vite and TypeScript; Playwright Chromium.</li>
+<li>SQLite in memory for the default Laravel suite.</li>
+<li>Isolated local MariaDB/MySQL-compatible databases on a separate port for migration/workflow and browser verification. These are not existing municipal databases.</li>
+<li>Browser tests start their own API and Vite processes and shut them down after testing. They use ports 18000 and 15173 by default so normal development servers can stay running. The default browser database is <code>.cache/e2e.sqlite</code>; the optional MySQL database is explicitly named <code>municipal_hazards_e2e</code>.</li>
+</ul>
+<h2>Feature tests</h2>
+<p>Source: <code>hazard-server/tests/Feature/HazardWorkflowTest.php</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Verified behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Manual submission</td>
+<td>Unconfirmed location rejected; valid manual submission persists a compressed photo, history and audit</td>
+</tr>
+<tr>
+<td>Adjusted GPS</td>
+<td>Distant GPS is preserved and flagged while the report remains submitted</td>
+</tr>
+<tr>
+<td>Source and coordinate validation</td>
+<td>Incorrect <code>gps</code> labels, missing coordinates and out-of-range values rejected</td>
+</tr>
+<tr>
+<td>Photo safety</td>
+<td>More than three photos, oversized images, invalid content and excessive dimensions rejected</td>
+</tr>
+<tr>
+<td>Authorization/privacy</td>
+<td>Citizens cannot update reports or access another reporter's private evidence; public data excludes private GPS/identity</td>
+</tr>
+<tr>
+<td>Admin progression</td>
+<td>Invalid skipping rejected; full workflow, independent verified coordinates, history, notifications and audits retained</td>
+</tr>
+<tr>
+<td>Nearby and confirmations</td>
+<td>Same-category/radius filtering; unique confirmations; resolved reports cannot be confirmed</td>
+</tr>
+<tr>
+<td>Account/token controls</td>
+<td>Registration cannot assign admin privileges; logout revokes the mobile token</td>
+</tr>
+<tr>
+<td>Distance calculation</td>
+<td>Zero and known-distance cases remain correct</td>
+</tr>
+</tbody>
+</table>
+<h2>Browser tests</h2>
+<p>Source: <code>tests/reporting.spec.ts</code>.</p>
+<ol>
+<li>Explicit demo dashboard, category filtering, report detail, CSV download, phone viewport, navigation drawer and absence of page-wide horizontal overflow.</li>
+<li>Real web signup through CSRF/session authentication, client-side photo compression, manual coordinates, explicit confirmation, API submission, photo retrieval, private history, session persistence after reload, own-report list and logout.</li>
+<li>GPS capture with browser permission, confirmation requirement, pin adjustment, <code>gps_adjusted</code> source and invalidation of previous confirmation.</li>
+</ol>
+<h2>Current execution record</h2>
+<p>Executed on <strong>2 October 2026</strong> in the local environment described above:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Recorded result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Composer manifest and lockfile</td>
+<td>Passed strict validation</td>
+</tr>
+<tr>
+<td>PHP formatting</td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>Vue TypeScript validation</td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>Production frontend build</td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>Laravel tests, SQLite</td>
+<td>11 passed / 71 assertions</td>
+</tr>
+<tr>
+<td>Browser tests, isolated SQLite API</td>
+<td>3 passed</td>
+</tr>
+<tr>
+<td>Laravel tests, isolated MariaDB/MySQL-compatible engine</td>
+<td>11 passed / 71 assertions</td>
+</tr>
+<tr>
+<td>Browser tests, isolated MariaDB/MySQL-compatible API</td>
+<td>3 passed</td>
+</tr>
+<tr>
+<td>Capacitor Android synchronization</td>
+<td>Passed; not an APK build</td>
+</tr>
+<tr>
+<td>npm dependency audit</td>
+<td>Zero vulnerabilities reported</td>
+</tr>
+<tr>
+<td>Composer dependency audit</td>
+<td>No vulnerability advisories reported</td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>Local links, 15 requirements, API-route coverage and generated appendix freshness passed</td>
+</tr>
+</tbody>
+</table>
+<p>The two Laravel scaffold smoke tests are included in the 11-test count. The <a href="evidence/verification-baseline.json">baseline gate record</a> preserves a successful consolidated run. Subsequent evidence/documentation cleanup is verified again with the same gate; <code>.cache/verification-last.json</code> is the current local result. Before every push, rerun the full gate on the exact project state. A historical pass does not authorize a later push.</p>
+<p>GitHub Actions is configured but has not run remotely because this project has not been pushed. The local compatibility run used MariaDB; the workflow separately specifies MySQL 8.4, whose remote execution remains unobserved.</p>
+<h2>Interface evidence</h2>
+<h3>Local setup regression follow-up</h3>
+<p>After the split into <code>hazard-client</code> and <code>hazard-server</code>, the user's local MySQL instance authenticated successfully. <code>php artisan migrate:status</code> showed all application migrations as run. The explicit <code>DemoAccountSeeder</code> created one administrator and two citizens, and local read-only checks verified each role and distinct password hash. The Laravel suite now passes <strong>14 tests / 83 assertions</strong>, including two seeder cases. No phone APK or real-device result is claimed.</p>
+<p>Initially, the local MySQL instance rejected the example's empty password. The correct account password was added to the ignored <code>.env</code>, and migrations subsequently completed. <code>AdminCommandTest</code> still checks that a pasted Markdown email link is rejected before any database connection. The full release gate must be rerun before a future push.</p>
+<p>The following screenshots were captured by the browser test using <strong>fictional, read-only demo records</strong>. They demonstrate interface layout, not real municipal incident collection or field evaluation.</p>
+<p><img src="evidence/dashboard-desktop.png" alt="Desktop demo dashboard"></p>
+<p><img src="evidence/dashboard-mobile.png" alt="Phone demo dashboard, 390-pixel viewport"></p>
+<h2>Reproduction</h2>
+<pre><code class="language-sh">npm ci
+composer --working-dir=hazard-server install
+# Copy hazard-server/.env.example to hazard-server/.env if missing; generate APP_KEY.
+php hazard-server/artisan key:generate
+npx playwright install chromium
+npm run verify
+</code></pre>
+<p>For the optional MySQL test run, create dedicated empty <code>municipal_hazards_test</code> and <code>municipal_hazards_e2e</code> databases. Set <code>DB_CONNECTION=mysql</code>, <code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_USERNAME</code>, <code>DB_PASSWORD</code>, and <code>DB_DATABASE=municipal_hazards_test</code> for the Laravel suite; set <code>HAZARD_E2E_MYSQL=1</code> for browser tests. Never point either at a production database. CI provides an isolated MySQL 8.4 service.</p>
+<h2>External validation still required</h2>
+<h3>Responsive layouts and persistent sessions follow-up</h3>
+<p>The <a href="RESPONSIVE_SESSIONS_2026-11-03.md">follow-up record</a> supersedes the earlier
+memory-only Android policy and closes the password-change credential-revocation
+finding. It documents the responsive changes, 90-day configurable persistent-login
+policy and <a href="ANDROID_TESTING.md">Android phone testing procedure</a>. Final executed
+results and source hashes are in its linked evidence. Browser device emulation
+and a simulated Capacitor secure-storage bridge are separate from physical
+Android testing; no APK compilation or real-device acceptance is claimed.</p>
+<p>Follow-up final result: <strong>23 Laravel tests / 150 assertions and 16 browser tests
+passed</strong>. Production build, type checking, PHP formatting, Android sync and
+documentation checks passed. A normal-runtime smoke check also passed. The
+release script stops at the nine-vulnerability npm audit; the separately run
+Composer audit still fails on <code>symfony/mime</code>. Earlier 19/nine counts below remain
+historical. See the dated follow-up evidence for source hashes and exact results.</p>
+<h3>Runtime and feature review - 3 November 2026</h3>
+<p>The <a href="FEATURE_AUDIT_2026-11-03.md">current feature audit</a> records the PHP 8.5/API
+rendering repair, moved photo-storage junction, CMS loading repair, feature
+inventory and remaining implementation gaps. Historical clean dependency audits
+above no longer represent the current state: npm reports nine vulnerabilities
+and Composer reports one advisory. The release gate is not currently passing.</p>
+<p>The normal running Vue/Laravel application passed a read-only browser smoke check
+at 375px with no page errors. Laravel passed 19 tests / 133 assertions on isolated
+in-memory SQLite. The production client build and Android asset/plugin sync
+passed; no signed APK or physical-device claim is made. New browser coverage
+checks malformed/partial API responses and recovery, municipal response through
+closure, citizen inbox/mark-read, profile persistence and unverified deletion.</p>
+<p>Final combined browser result: <strong>9 tests passed (23.2 seconds)</strong>. <code>npm run verify</code>
+passed manifest, formatting, type checking, build, 19 Laravel tests, nine browser
+tests and Capacitor synchronization, then stopped at the npm audit. Composer
+audit separately failed on one advisory; documentation checks separately passed.
+The <a href="evidence/feature-review-2026-11-03.json">review evidence</a> retains these
+results and source hashes. No passing release gate, deployment, field validation
+or workload acceptance is claimed.</p>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Evidence required before claiming completion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloudflare R2</td>
+<td>Actual upload, URL retrieval, error handling, deletion/retention, configured access control</td>
+</tr>
+<tr>
+<td>Firebase web and Android</td>
+<td>Real-device permission, token registration, foreground/background receipt, invalid-token cleanup</td>
+</tr>
+<tr>
+<td>Native Android</td>
+<td>Signed APK/AAB, SDK/JDK build log, physical device camera/GPS tests</td>
+</tr>
+<tr>
+<td>Municipal geography</td>
+<td>Approved boundary source, coordinates within/near actual covered barangays</td>
+</tr>
+<tr>
+<td>Hostinger Web/Cloud</td>
+<td>HTTPS, session/cookie behavior, bounded scheduled push, permissions and backup/restore</td>
+</tr>
+<tr>
+<td>Usability and field accuracy</td>
+<td>Approved participant procedure, observed completion time/errors and actual GPS results</td>
+</tr>
+<tr>
+<td>Capacity and reliability</td>
+<td>Defined workload, measured throughput/latency, outage and recovery tests</td>
+</tr>
+</tbody>
+</table>
+<p>Automated simulated GPS is not a measurement of real phone GPS accuracy. A successful database notification is not proof that a push reached a device. Map rendering requires network tiles and compatible WebGL.</p>
+<h2>UAT record template</h2>
+<p>Record: case ID, requirement, software commit, tester role, date, device/OS/browser, network, prerequisites, steps, expected result, actual result, pass/fail, screenshot/log reference, defect ID, retest date, and evaluator approval. Use the cases and blank acceptance form in <a href="#10-traceability-and-acceptance">Traceability and acceptance</a>. Do not fabricate respondent counts, satisfaction scores, performance percentages or deployment evidence.</p>
+<h2>Community-feature verification (2026-10-02)</h2>
+<p>The isolated Laravel feature suite now checks CMS authorization/validation, confirmed-only news privacy, reactions and comments, badge thresholds, profile password checks, soft deletion, and separation of browsing and registration rate limits. The Playwright suite checks citizen submission and logout confirmations, profile badge visibility, an administrator publishing a hotline through the CMS, and confirmed-news reactions, comments and sharing links. The test runner creates random-password accounts only in its isolated test database. Real emergency numbers, map coordinates, physical-device behavior, and reward fulfillment remain to be validated by the municipality.</p>
+<h2>Social authentication follow-up</h2>
+<p><code>SocialAuthenticationTest</code> uses isolated SQLite and mocked provider identities. It verifies real Google redirect state/PKCE generation and invalid-state rejection, safe creation/repeat identity, collisions, explicit linking, stale proof, HttpOnly remembered sessions, native verifier binding, expiration, replay and five-failure exhaustion. <code>social-auth.spec.ts</code> covers both provider buttons, availability, cancellation, return intent, forged return queries and a simulated Android cold launch. Ordinary email/password, reporting and profile regression tests remain required. Browser-runner environments explicitly disable real provider credentials. Real Google/Facebook consent and physical-device/Hostinger acceptance remain pending; see <a href="SOCIAL_AUTH_SETUP.md">the setup checklist</a>.</p>
+<p>Social-auth local evidence (4 November): 52 Laravel tests / 390 assertions, 28 browser tests and five launcher tests; the twelve-check parent gate passes. Both npm dependency lockfiles have zero findings; Composer has no advisories and the locked platform requirements pass on PHP 8.5.1. These results use isolated test data/mocked identity providers, including simulated Android cold launch/cancellation. Actual Google/Facebook, physical Android and target hosting acceptance remain pending. See <a href="SOCIAL_AUTH_2026-11-04.md">the dated record</a>.</p>
+<h2>Interview and Android alignment ? 8 November 2026</h2>
+<p>See the <a href="INTERVIEW_ALIGNMENT_2026-11-08.md">dated review</a> and <a href="evidence/interview-alignment-2026-11-08.json">evidence record</a>. Added API coverage checks private projections and search, owner/admin media access and no-store headers, reviewed publication, incident observation/time validation, resolution-photo limits/cleanup, more-than-one-page PHT period totals and legacy evidence repair. Browser coverage exercises the full lifecycle with distinct resolution evidence, reviewed news, phone reporting with denied-GPS fallback, and phone summary CSV. These are local automated results; no physical Android, actual R2/FCM/OAuth, deployment or municipal UAT is implied.</p>
+<p>The new alignment suite additionally passed on isolated MySQL 8.0.44 (eight tests, 85 assertions). A pre-migration test-database guard rejects unapproved schemas. Normal startup/browser/database smoke and simulated 200% text enlargement at 320px passed; OS scaling and physical hardware remain untested. The initial Composer audit failure is preserved in the dated review; five minimal Symfony 7.4.23 patches address the reported findings without a framework migration.</p>
+<p>Final local result: <strong>all 12 release checks passed</strong>, including <strong>60 backend tests / 475 assertions, 31 browser tests and five launcher tests</strong>, with zero npm findings and no Composer advisories. The separate MySQL alignment suite passed eight tests / 85 assertions. See <a href="evidence/interview-gate-final-2026-11-08.json">the final gate</a>. This records local verification, not physical Android, live cloud delivery, deployment, workload acceptance or municipal UAT.</p>
+<h2>MuniAlert identity, guidance and promotion — 9 November 2026</h2>
+<p>The branding/guide follow-up passed 61 backend tests / 487 assertions, 36 browser tests and five launcher tests. Coverage includes the unchanged browser-session cookie, guide return after social sign-in, the complete highlighted tour, manual search and phone reflow. A separate normal-runtime guide smoke passed at 320px with simulated 200% text enlargement. Final gate, video lint/audit, MP4 audio/metadata/playback and preview results are recorded in <a href="evidence/branding-guide-promo-2026-11-09.json">dated evidence</a> and the <a href="BRANDING_GUIDE_PROMO_2026-11-09.md">handover</a>. These results supersede earlier local test counts and retain physical-device/cloud/municipal limitations.</p>
+<h2>Basista map follow-up — 9 November 2026</h2>
+<p><code>BasistaScopeTest</code> covers the 13-name allowlist, ASCII/case normalization, rejection outside the list and the count-preserving conditional camera migration. <code>maps.spec.ts</code> uses real MapLibre rendering and the actual local boundary files with deterministic base styles, covering geometry visibility, Fire/accident filtering, synchronized expansion, persisted modes/layers, retry recovery, packaged paths, 320–1440px reflow, simulated 200% text and retained confirmed pins. A separate real-provider review loads Clear/Streets/Dark and attributed labels with synthetic reports. Final results and source hashes are in <a href="evidence/basista-map-2026-11-09.json">the Basista map evidence</a> and <a href="BASISTA_MAP_2026-11-09.md">handover</a>. Reference boundaries and browser simulation do not establish physical-device or municipal operational acceptance.</p>
+</section>
+<section id="06-user-manual"><h1>06 — Citizen and administrator user manual</h1>
+<p><strong>MuniAlert — Emergency &amp; Public Hazard Reporting</strong> is the shortened application name for <strong>Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking</strong>.</p>
+<h2>Before starting</h2>
+<p>Use the municipality's published HTTPS address. The web application supports phone and desktop browsers. A configured Android build can use the same API. A <strong>Demo workspace</strong> banner means the visible incidents are fictional; preview mode does not submit reports.</p>
+<p>If someone is in immediate danger, contact local emergency services directly. A municipal report is not an emergency call. The application shows a call link only when a verified local number has been configured.</p>
+<h2>Citizen: create an account</h2>
+<ol>
+<li>Select <strong>Sign in</strong>, then <strong>Create an account</strong>.</li>
+<li>Enter your name, email and a password of at least 12 characters.</li>
+<li>Submit. A successful login identifies your account in the sidebar.</li>
+</ol>
+<p>Passwords are not displayed or returned by the API. This version has no self-service password-reset or email-verification flow; use the municipality's approved support process for account problems. Never share an administrator login with citizens.</p>
+<h2>Citizen: report a hazard</h2>
+<ol>
+<li>Tap <strong>Report a hazard</strong>. Sign in if prompted.</li>
+<li>Choose the hazard category.</li>
+<li>Take or select one to three photos from a safe position. The client resizes and compresses them before upload. Review the thumbnails; remove an incorrect image with its close button.</li>
+<li>Choose <strong>Use current location</strong> or <strong>Choose location on map</strong>.</li>
+<li>With GPS, inspect the reported accuracy and green hazard pin. Use <strong>Adjust pin</strong> if needed. The blue dot retains the original phone location.</li>
+<li>With manual selection, tap the map or enter known coordinates. A manually pinned report does not require granting GPS permission.</li>
+<li>Select <strong>Confirm location</strong>. Changing the point invalidates the previous confirmation.</li>
+<li>Choose one of the 13 Basista barangays, then enter the street/landmark, title, description and apparent severity.</li>
+<li>Submit. If similar recent hazards appear, use <strong>Same hazard</strong> when appropriate. Otherwise explicitly choose to submit a different hazard and submit again. Review the submission confirmation before sending. Closing the form asks whether to discard it.</li>
+<li>Wait for a reference number. A network failure or preview message means a real submission has not been confirmed.</li>
+</ol>
+<p>Your original description, exact incident location, observations, photos, account identity, device GPS and response history are private to you and authorized municipal administrators. Public views use a separate reviewed summary and approximate area. Avoid including faces, unrelated people, contact details or victim identities even in private evidence. Do not delay calling for emergency help to capture a photo.</p>
+<h2>Citizen: follow the response</h2>
+<ul>
+<li>Open <strong>My reports</strong>, then select a report to see status notes and timestamps.</li>
+<li>Open <strong>Notifications</strong> for updates. <strong>Mark all read</strong> changes only your inbox.</li>
+<li><strong>Enable push</strong> requests notification permission when Firebase is configured. If configuration or permission is missing, the in-app inbox still works.</li>
+<li>Confirm another active report when you observed the same hazard. Repeated taps do not add multiple confirmations.</li>
+<li>Use <strong>Sign out</strong> when finished, especially on a shared device. Android retains a protected device credential across normal application restarts; clearing app data, revocation or expiry requires sign-in again.</li>
+</ul>
+<h2>Citizen: news, profile and achievements</h2>
+<p>Open <strong>Verified news</strong> to read separately reviewed community summaries. Citizens can react, comment, and share using the Share button, Facebook, X, or a copied link. Comments show your account name. Publication requires a confirmed report and an administrator's reviewed public title and summary; verification alone does not publish a report. Rejected and unverified reports are excluded.</p>
+<p>Open <strong>My profile</strong> to change your name, email, or password. Password changes require the current password. Bronze, silver, gold and platinum badges are earned at 50, 100, 1,000 and 10,000 of your reports currently in confirmed states. Cash and gift descriptions are municipal offers; the app does not pay or deliver them automatically.</p>
+<p>For a report still <strong>Submitted</strong> or <strong>Under verification</strong>, open it and choose <strong>Delete unverified report</strong>. Confirm the deletion. It disappears from listings; an audit record remains. A reporter cannot delete a verified report.</p>
+<h2>Administrator: review and respond</h2>
+<ol>
+<li>Sign in using an administrator account provisioned by the maintainer.</li>
+<li>Use the map, list, search, category and status filters to locate reports. Marker position uses the verified location when available.</li>
+<li>Open a report and review its description, photos, reporter information and timeline.</li>
+<li>Compare selected coordinates with phone GPS, accuracy, source and distance. A large difference is a review flag, not an automatic rejection.</li>
+<li>Move the verified pin if necessary. This does not alter the citizen's original location evidence.</li>
+<li>Move <strong>Submitted → Under verification → Verified</strong>; document the reason when rejecting an unverified/verified report.</li>
+<li>Choose the responsible department and response team, then mark <strong>Assigned</strong>.</li>
+<li>Mark <strong>Responding</strong> when the team starts the response, <strong>Resolved</strong> when the hazard has been addressed, and <strong>Closed</strong> after final review.</li>
+<li>Add a meaningful note for every update. The reporter receives a private notification and the system records an audit entry.</li>
+</ol>
+<p>Use <strong>Content management</strong> to set the initial map center and zoom, add approved emergency hotlines, and edit badge descriptions and cash/gift information. Confirm each publication. Hotline changes become visible to citizens immediately. Test the numbers with the municipality before publishing them.</p>
+<p>Administrators see operations navigation and cannot submit citizen reports. All roles can edit their profile and see their badges. The header displays live Philippine time.</p>
+<p>Closed and rejected records cannot be reopened in this version. The application blocks skipping workflow stages. Responder assignment identifies a team/person by name; it is not a live dispatch or responder-tracking subsystem.</p>
+<h2>Filters, exports and maps</h2>
+<p>Private search matches the original title, reference, barangay or address. Public search matches reviewed public titles, reference and barangay only; it cannot reveal private text through search. Category and status filters affect the current list query. Use page controls to view additional records. <strong>Export page</strong> downloads the displayed result page as CSV; it is not a full database backup. Spreadsheet formula-like fields are escaped.</p>
+<p>Base-map roads and labels come from the configured tile provider. Supplied barangay boundaries are an optional overlay. Do not assume a default map center establishes the municipality's jurisdiction.</p>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPS denied/unavailable</td>
+<td>Allow location on HTTPS, or manually choose and confirm the hazard pin</td>
+</tr>
+<tr>
+<td>GPS accuracy is poor</td>
+<td>Inspect landmarks and adjust the selected pin; preserve the displayed accuracy</td>
+</tr>
+<tr>
+<td>Map unavailable</td>
+<td>Use coordinate entry where offered and contact support; check WebGL and tile connectivity</td>
+</tr>
+<tr>
+<td>Photo rejected</td>
+<td>Select a valid JPEG/PNG/WebP; wait for compression; use a smaller image if necessary</td>
+</tr>
+<tr>
+<td>Server unavailable</td>
+<td>Check connectivity, retry, and do not assume the report was submitted</td>
+</tr>
+<tr>
+<td>Duplicate suggestion</td>
+<td>Confirm the matching report or explicitly submit a different hazard</td>
+</tr>
+<tr>
+<td>Expired session</td>
+<td>Reload and sign in again</td>
+</tr>
+<tr>
+<td>Push not configured</td>
+<td>Continue using Notifications; a maintainer must supply Firebase configuration</td>
+</tr>
+<tr>
+<td>No real incidents in demo</td>
+<td>Exit preview and connect to the configured municipal API</td>
+</tr>
+</tbody>
+</table>
+<p>Screenshots in the documentation evidence folder are generated from clearly labeled demo data. Replace them with approved deployment screenshots only after removing private information.</p>
+<h2>Returning to MuniAlert</h2>
+<p>Sign in once on your personal browser or Android app. Normal closing/reopening retains the account; the default inactivity window is 90 days. Use Sign out on shared devices. Clearing cookies/app data, uninstalling, a revoked credential or prolonged inactivity requires sign-in again. A password change keeps this device signed in and signs other devices out. Existing accounts should sign in once after this update. See <a href="ANDROID_TESTING.md">Android testing</a> for phone access.</p>
+<h2>Sign up or sign in with Google or Facebook</h2>
+<p>Choose <strong>Continue with Google</strong> or <strong>Continue with Facebook</strong> on the sign-in/create-account form. Allow the provider to share your name and email, then return to MuniAlert. Your first successful sign-in creates a citizen account. On Android, complete this in the system browser; MuniAlert resumes when the browser returns to the app. If you were about to report a hazard, the report form opens after sign-in. Cancel sign-in in MuniAlert if you closed the browser.</p>
+<p>Unavailable buttons mean the municipality has not enabled that provider; use email. If the provider does not share an email, allow email access or register using email. If your email already belongs to an account, sign in using its existing method. For an email/password account, open My profile and confirm your MuniAlert password under Connected sign-in accounts before connecting a provider. Social-only accounts continue using their original provider; manage that provider's password through its own account settings.</p>
+<h2>Incident observations, resolution and period records</h2>
+<p>In <strong>A few details</strong>, enter incident time only if known, choose whether injuries are observed (or <strong>Not sure / Hindi tiyak</strong>) and optionally estimate the number of people affected. Unknown is different from zero or “none observed.” Do not include victim identity or clinical diagnoses. These observations remain private. Call emergency services before trying to gather evidence when someone is in danger.</p>
+<p>Administrators can use <strong>Add resolution photos</strong> on assigned/responding/resolved reports. Select up to three photos, wait for compression and choose <strong>Upload resolution photos</strong>. These remain separate from the three incident photos. The reporter sees both labeled evidence groups in their private report; public news contains no raw evidence. Add action taken in the private response update. Do not make unsafe photography a prerequisite for field response.</p>
+<p>Verification alone does not publish news. In a confirmed report, select <strong>Publish a separate community summary</strong>, write a privacy-reviewed public title and summary, then save the response. Remove the check and save to unpublish. Avoid names, injury details, precise addresses and other identifying information. Private evidence is never attached to the public summary.</p>
+<p>Use <strong>Incident summary</strong> in the admin navigation (on a phone, <strong>More → Incident summary</strong>). Set dates/category and weekly or monthly grouping, then update the summary. <strong>Export summary</strong> covers the complete filtered period; <strong>Export page</strong> remains limited to the displayed report page. Dates use Philippine time. Records without a supplied incident time use their submission time and are counted explicitly as a fallback. Counts describe reports, including unverified reports, not confirmed casualties or unique incidents.</p>
+<h2>In-app feature guide and searchable manual</h2>
+<p>Open <strong>Guide &amp; user manual</strong> from the navigation, the help button, or <strong>More</strong> on a phone. The page is also linked by <code>?view=guide</code>. Choose <strong>Citizen guide</strong> or <strong>Administrator guide</strong>, then open a topic or search for GPS, photos, privacy, updates or summary exports. A no-match message lets you clear the search and recover. The manual text is bundled with the application and can be read even if API requests fail after the app loads; this does not imply offline submission or offline web installation.</p>
+<p>Choose <strong>Start feature tour</strong> for a highlighted walkthrough of the overview, reporting/metrics, filters, map, report list and account area. Use Back/Next, Skip tour, the close button or Escape. The final step returns to the manual. The tour reads the interface and does not submit or modify a report. On the web, <strong>Print / save PDF</strong> expands the currently displayed topics for printing; clear the search first to print the selected audience’s complete instructions. Standalone exports are available as the <a href="MUNIALERT-CITIZEN-MANUAL.pdf">citizen manual PDF</a> and <a href="MUNIALERT-ADMIN-MANUAL.pdf">administrator manual PDF</a>.</p>
+<h2>Map styles, boundaries and hazard types</h2>
+<p>On phones/tablets, <strong>More</strong> in the bottom dock opens the full navigation. The header has no second menu button. Its guide/account actions remain available while reading, with a solid background. Desktop uses a compact utility header.</p>
+<p>Beside the map, choose <strong>Clear</strong>, <strong>Streets</strong> or <strong>Dark</strong>. Open <strong>Boundaries</strong> to switch the Basista barangays, Basista/nearby municipalities or Pangasinan province outlines. Labels appear as you zoom in. These are reference boundaries, not proof of legal jurisdiction. Mode and boundary choices are remembered on this device.</p>
+<p>Use <strong>Show hazard type</strong> to see only Fire, Road accident or another category. This stays synchronized with the report category filter; status and search still apply. <strong>Show all hazard types</strong> clears only the category choice. <strong>Fit reports</strong> fits the currently loaded page; <strong>Basista area</strong> returns to the covered area. Map counts and page controls identify partial pages rather than implying every record is shown at once. If map content fails, use <strong>Retry map</strong>, another mode, or the report list.</p>
+<p>Administrators should follow <a href="FRAUD_PREVENTION.md">the false-report review guide</a>. Sign-in, rate limits and evidence review reduce abuse but do not prove a report genuine. Verified contact enrollment, account suspension and automated image/fraud detection are not implemented. Do not delay urgent assistance while completing documentary review.</p>
+</section>
+<section id="07-deployment-and-maintenance"><h1>07 — Deployment, Android build and maintenance</h1>
+<h2>Prerequisites</h2>
+<p>Development: Node 22.12 or later compatible with the lockfile, npm, PHP 8.2+ with <code>gd</code> (WebP), <code>fileinfo</code>, <code>mbstring</code>, <code>openssl</code>, PDO MySQL and PDO SQLite, Composer 2, and MySQL. SQLite is required for default tests, not the production database. PHP upload limits must permit the accepted multipart request: <code>upload_max_filesize=2M</code>, <code>post_max_size=8M</code> are sufficient for three 1-MB photos.</p>
+<p>Production target: <strong>Hostinger Web/Cloud hosting</strong>, one HTTPS origin, PHP/MySQL, compiled Vue assets and one hPanel scheduler cron with bounded push batches. Clients are <strong>Android app + responsive web</strong>. Node is needed only at build time. Follow <a href="HOSTINGER_WEB_CLOUD.md">the concrete Web/Cloud guide</a>, including the private Laravel/public_html split and relocated entry point. No hosting account is provisioned by this repository.</p>
+<h2>Local setup</h2>
+<p>From the <code>BANTAY</code> parent folder:</p>
+<pre><code class="language-sh">npm ci --prefix hazard-client
+composer --working-dir=hazard-server install
+</code></pre>
+<p>Copy <code>hazard-server/.env.example</code> to <code>hazard-server/.env</code> and <code>hazard-client/.env.example</code> to <code>hazard-client/.env</code>. On PowerShell use <code>Copy-Item</code>; on Linux/macOS use <code>cp</code>. Generate the Laravel key:</p>
+<pre><code class="language-sh">php hazard-server/artisan key:generate
+</code></pre>
+<p>Create a new MySQL database named <code>municipal_hazards</code>, configure its credentials in <code>hazard-server/.env</code>, then:</p>
+<pre><code class="language-sh">php hazard-server/artisan migrate --seed
+php hazard-server/artisan storage:link
+php hazard-server/artisan hazard:admin admin@example.test
+</code></pre>
+<p>Start both services from BANTAY with <code>npm run dev</code> (<code>npm.cmd run dev</code> in PowerShell). It checks/reuses existing matching instances and verifies the client-to-API proxy before reporting success. The separate <code>composer run serve</code> and client <code>npm run dev</code> commands remain available. Use the PHP 8.5 PATH prefix for Composer in Git Bash. See <a href="STARTUP_REPAIR_2026-11-04.md">the startup repair</a>.</p>
+<p>The administrator command prompts for the name and a hidden password; no shared password is seeded. Open <code>http://localhost:5173</code>. API: <code>http://localhost:8000/api/health</code>. Use one hostname consistently for browser session cookies. A separate terminal can run <code>php hazard-server/artisan queue:work --tries=3</code>; the default database queue is required for configured FCM delivery.</p>
+<p><code>http://localhost:5173/?demo=1</code> provides an explicitly fictional read-only preview without a backend database. The default map center is Basista, Pangasinan. Local boundaries are reference data and still require municipal review before operational use.</p>
+<h2>Local database troubleshooting</h2>
+<p><code>SQLSTATE[HY000] [1045] Access denied ... (using password: NO)</code> means the server was reached but rejected login without a password. Passing isolated automated tests does not configure credentials for the separately installed local MySQL server.</p>
+<ol>
+<li>Stop the server and client terminals with Ctrl+C before restarting with changed configuration.</li>
+<li>Edit <code>hazard-server/.env</code> locally using the credentials for the intended MySQL server. Do not send passwords through chat or commit them. Preserve the rest of the environment file; copying <code>.env.example</code> over it would erase saved settings.</li>
+</ol>
+<pre><code class="language-dotenv">DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=municipal_hazards
+DB_USERNAME=root
+DB_PASSWORD=&quot;replace-with-your-actual-local-password&quot;
+</code></pre>
+<p><code>root</code> and port <code>3306</code> are examples, not guaranteed settings. If multiple MySQL/MariaDB installations run on the machine, use the port and account belonging to the intended instance. Quote passwords containing spaces or <code>#</code> appropriately for dotenv. Keep the real password out of shell command arguments and documentation.</p>
+<ol start="3">
+<li>Run <code>php hazard-server/artisan config:clear</code> after editing. For an unknown-database error (1049), create <code>municipal_hazards</code> through your database administration client with <code>utf8mb4</code> character set. A permission error requires an account with access to this project's database; resetting the server or changing unrelated databases is unnecessary.</li>
+<li>Run each command separately and stop if it fails:</li>
+</ol>
+<pre><code class="language-sh">php hazard-server/artisan migrate --seed
+php hazard-server/artisan hazard:admin admin@example.test
+</code></pre>
+<p>Start both applications separately as shown above.</p>
+<p>Use a <strong>plain email address</strong>, not <code>[admin@example.test](mailto:admin@example.test)</code>. The command validates the email before database access, then prompts privately for the administrator password. An existing <code>hazard-server/public/storage</code> link does not need to be recreated; the <code>storage:link</code> message saying it already exists is harmless when that link points to <code>hazard-server/storage/app/public</code>.</p>
+<p>The Vite and PHP server startup messages only confirm that HTTP servers started. They do not prove database authentication or migrations succeeded. If the MySQL password is unknown, obtain it from the owner of that local installation or follow that installation's authorized account-recovery process before continuing.</p>
+<p>For local development accounts, set three distinct <code>HAZARD_DEMO_*_PASSWORD</code> values of at least 12 characters in <code>hazard-server/.env</code>, clear configuration, then run <code>php hazard-server/artisan db:seed --class=DemoAccountSeeder</code>. The seeder creates <code>itsajhon@gmail.com</code> as an administrator plus two <code>example.test</code> citizen accounts. It is explicit, local-only, and skips existing accounts without resetting their passwords. Do not deploy these demo credentials.</p>
+<h2>R2 configuration</h2>
+<p>Create a bucket and narrowly scoped credentials in the owning Cloudflare account. Configure:</p>
+<pre><code class="language-dotenv">HAZARD_EVIDENCE_DISK=r2
+R2_ACCESS_KEY_ID=your-access-key
+R2_SECRET_ACCESS_KEY=your-secret
+R2_BUCKET=your-bucket
+R2_ENDPOINT=https://your-account-id.r2.cloudflarestorage.com
+R2_PUBLIC_URL=
+</code></pre>
+<p>Use a <strong>private evidence bucket</strong>: disable r2.dev and public/custom-domain access. Evidence is streamed only through the authenticated report/photo endpoint; <code>R2_PUBLIC_URL</code> is unused for private delivery. The endpoint is the S3 API origin and the SDK uses the R2-compatible <code>auto</code> region; see <a href="https://developers.cloudflare.com/r2/examples/aws/aws-sdk-php/">Cloudflare's PHP S3 example</a>. For local storage use <code>HAZARD_EVIDENCE_DISK=evidence</code>, rooted outside public storage. The old <code>HAZARD_PHOTO_DISK</code> setting no longer selects new-upload storage. The application rejects public or unsupported evidence disks.</p>
+<p>Do not commit credentials or embed them in <code>VITE_*</code> variables. Confirm authenticated retrieval, unauthenticated denial, disabled public-bucket access, billing ownership, retention and cleanup before deployment. Inspect legacy local public evidence with <code>php hazard-server/artisan hazard:secure-evidence</code>; after backup use <code>--apply</code> to copy/verify/private-route the bytes and remove the public copies. The command can recover leftover public copies after interruption. Review R2 and previously cached public files separately. No fixed free-tier or pricing claim is assumed in this documentation.</p>
+<h2>Firebase Cloud Messaging</h2>
+<ol>
+<li>Create/configure the municipality-owned Firebase project and enable the FCM API.</li>
+<li>Place the service-account JSON outside <code>public/</code>, restrict file permissions, and set <code>FCM_PROJECT_ID</code> and the absolute <code>GOOGLE_APPLICATION_CREDENTIALS</code> path on the backend.</li>
+<li>For web push, set all <code>VITE_FIREBASE_*</code> fields and the public VAPID key in the frontend environment, then rebuild. Serve over HTTPS (localhost is suitable for development).</li>
+<li>For Android, register <code>ph.municipal.bantay</code> (or the deliberately changed application ID) in Firebase and place its <code>google-services.json</code> in <code>hazard-client/android/app/</code>. That file is ignored by Git.</li>
+<li>Keep a queue worker running. Enable push from a signed-in client and change one of that citizen's report statuses using a separate administrator account.</li>
+<li>Record real foreground/background delivery and token cleanup results. The in-app inbox is the fallback when push is unavailable.</li>
+</ol>
+<p>The server requests a short-lived OAuth access token and uses <a href="https://firebase.google.com/docs/cloud-messaging/send/v1-api">FCM HTTP v1</a>. Per-device jobs are inserted into the same database transaction as the report update and private inbox row. The <code>report-push</code> database queue avoids the commit-to-enqueue gap; one failed device does not repeat all successful devices. Worker retries are still at least once: a crash after provider acceptance can repeat a push, whose data includes a stable <code>notification_id</code>. Monitor failed jobs and use reviewed <code>queue:retry</code> recovery. Native Android registration uses <a href="https://capacitorjs.com/docs/apis/push-notifications">Capacitor Push Notifications</a>. Native iOS/APNs conversion is outside this release.</p>
+<h2>Map provider and boundaries</h2>
+<p>Set <code>VITE_MAP_STYLE_URL</code> to a compatible provider's style, and <code>VITE_BARANGAY_GEOJSON_URL</code> to an approved GeoJSON FeatureCollection. Publish the actual default center and zoom through the administrator's Content management screen; the map reads these from <code>/api/settings</code>. Configure provider domains/tokens and quotas before operational use.</p>
+<p>The default OpenStreetMap tile endpoint is for small development use; preserve attribution and follow its <a href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>. The code does not bulk-download tiles or offer offline tile caching. A production municipality should approve an appropriate tile provider and capacity plan.</p>
+<h2>Android project</h2>
+<p>See <a href="ANDROID_TESTING.md">Android phone testing</a> for USB forwarding of the running website, persistent-login checks and the installed-app procedure. This workstation has no configured SDK/JDK or attached device.</p>
+<p>The generated native project is in <code>hazard-client/android</code> and installs as <strong>Bantay</strong> (<code>ph.municipal.bantay</code>). Install Android Studio with its bundled JDK and SDK Platform 35, matching <code>hazard-client/android/variables.gradle</code>. Set <code>VITE_API_BASE_URL</code> in <code>hazard-client/.env</code> to a phone-reachable HTTPS Laravel origin. A phone cannot use the computer's <code>localhost</code>; the server must be reachable from the phone. Then:</p>
+<pre><code class="language-sh">npm run android:sync -w hazard-client
+npm run android:open -w hazard-client
+</code></pre>
+<p>Connect an Android phone with USB debugging, select it in Android Studio and click <strong>Run</strong> to install the debug app. <code>npm run android:run -w hazard-client</code> is the command-line alternative once the SDK and device are ready. Android Studio can also build a debug APK for device validation and a signed APK/AAB for release. Keep signing material outside source control. GPS and notification permissions are declared; the camera plugin launches the system capture flow. Browser and native GPS implementations are in <code>services/mediaService.ts</code>; behavior should be checked against <a href="https://capacitorjs.com/docs/v7/apis/geolocation">Capacitor Geolocation</a>.</p>
+<p>Syncing native assets is not evidence of a successful Gradle build or physical-device validation. The development environment used here does not have a configured Android SDK/JDK, so no signed artifact is claimed.</p>
+<p>The client repository also includes a manual GitHub Actions workflow, <strong>Build Android debug APK</strong>, which accepts a public HTTPS API origin and uploads an installable debug APK artifact. It can be run after the private <code>hazard-client</code> repository is published. It has not yet executed remotely and does not replace phone testing or a signed release build.</p>
+<h2>Alternative VPS deployment procedure (not the selected target)</h2>
+<ol>
+<li>Provision the approved domain, TLS certificate, Linux service account, MySQL database/user and PHP-FPM runtime.</li>
+<li>Place an approved, tested release under a path such as <code>/var/www/bantay</code>. Do not expose the repository root through the web server.</li>
+<li>Install backend production dependencies with <code>composer install --no-dev --prefer-dist --optimize-autoloader</code> inside <code>hazard-server</code>.</li>
+<li>Install locked frontend dependencies using <code>npm ci</code>, then run <code>npm run build:web</code> to package same-origin assets inside <code>hazard-server/public/app</code>.</li>
+<li>Configure <code>APP_ENV=production</code>, <code>APP_DEBUG=false</code>, <code>APP_URL=https://your-domain</code>, a unique <code>APP_KEY</code>, MySQL credentials, <code>SESSION_SECURE_COOKIE=true</code>, the exact frontend host in <code>SANCTUM_STATEFUL_DOMAINS</code>, and appropriate <code>FRONTEND_URLS</code>.</li>
+<li>Restrict environment/service-account file permissions. Grant the PHP service account write access only to Laravel's <code>storage</code> and <code>bootstrap/cache</code> as required.</li>
+<li>Back up before schema changes, then run <code>php artisan migrate --force --seed</code>, <code>php artisan storage:link</code> for local images, and <code>php artisan optimize</code>.</li>
+<li>Adapt <code>deployment/nginx/bantay.conf.example</code>, serve only <code>hazard-server/public</code>, with compiled assets at <code>/app/</code> and dynamic requests through <code>index.php</code>, then validate Nginx configuration before reload.</li>
+<li>Install/adapt the queue service example and add the scheduler cron. Restart workers after deploying new code.</li>
+<li>Verify login/CSRF, upload/retrieval, admin authorization, notifications, HTTPS, failed-job handling and a restore rehearsal. Record acceptance before operational use.</li>
+</ol>
+<p>The included Nginx example is an HTTP server block intended to sit behind configured TLS termination or be extended by the operator's certificate configuration. It is not a complete HTTPS deployment by itself.</p>
+<h2>Worker and scheduler</h2>
+<p>For the selected Web/Cloud target, set <code>HAZARD_SCHEDULED_PUSH=true</code> and use the <a href="../deployment/hostinger/cron-command.example">single hPanel cron template</a>. <code>schedule:run</code> invokes the overlap-protected <code>hazard:work-push</code> command; no persistent worker is required. Follow the Web/Cloud guide for soft time limits, delayed push and failed-job monitoring. The systemd example and following persistent-worker commands apply only to the alternative VPS setup with scheduled push disabled.</p>
+<pre><code class="language-sh">php artisan queue:work report-push --sleep=3 --tries=3 --timeout=60
+php artisan schedule:run
+</code></pre>
+<p>Run <code>schedule:run</code> every minute via cron, as shown in <code>deployment/scheduler.cron.example</code>. The registered daily jobs prune expired Sanctum tokens and stale push devices. Queue concepts and process supervision are described in <a href="https://laravel.com/docs/12.x/queues">Laravel queues</a>.</p>
+<h2>Backup, recovery and upkeep</h2>
+<ul>
+<li>Back up the MySQL database and photo objects together under authorized access. Keep <code>APP_KEY</code> and deployment credentials in the operator's secret-management/backup procedure.</li>
+<li>Use a restricted MySQL option file or secret-management tool for backup credentials rather than putting passwords in command arguments. Store dumps outside web roots and source control.</li>
+<li>Restore to an isolated environment first; run migrations/status checks, sample report/photo retrieval, role checks and notification checks, and record the restoration date and result.</li>
+<li>Keep worker logs, failed-job monitoring, storage usage, certificates and dependency updates under an assigned maintainer.</li>
+<li>Do not roll back a database migration containing real evidence without a reviewed backup/restore plan. Redeploy a compatible prior application release when appropriate.</li>
+<li>Complete all automated gates before pushing a maintenance update and update the capstone/change records when behavior changes.</li>
+</ul>
+<h2>Optional Google/Facebook setup</h2>
+<p>Follow <a href="SOCIAL_AUTH_SETUP.md">SOCIAL_AUTH_SETUP.md</a> for server environment keys, exact registered callback URIs, HTTPS/cookie/proxy requirements and Android app return links. Deploy the additive social-auth migration without resets. Keep secrets outside public_html and frontend build variables. The existing scheduler cron cleans expired attempts daily. Complete real-provider and physical Android tests before enabling public sign-in. The source feature can be locally verified while these external credentials/review steps remain pending.</p>
+<h2>Basista map assets</h2>
+<p>The build includes <code>public/boundaries/</code> under the correct Vite base (<code>/app/</code> on the combined website and root on Android). Keep the GeoJSON files and <code>provenance.json</code> in the release. Clear/Dark basemaps use OpenFreeMap; Streets uses OpenStreetMap raster tiles. Preserve displayed attribution and validate real connectivity on the target hosting/device. Operators may set <code>VITE_BARANGAY_GEOJSON_URL</code>, <code>VITE_CITY_GEOJSON_URL</code> and <code>VITE_PROVINCE_GEOJSON_URL</code> to approved replacement FeatureCollections; use a <code>name</code> property for labels. Rebuild/synchronize Android after changing public configuration. The new camera migration replaces only the generic Manila center, retaining customized settings. See <a href="BASISTA_MAP_2026-11-09.md">the Basista map handover</a>.</p>
+</section>
+<section id="08-capstone-manuscript-guide"><h1>08 — Capstone manuscript preparation guide</h1>
+<p>This is an adaptable technical manuscript guide, not a fabricated completed study. Follow the institution's required chapter structure, citation style, approval process and formatting.</p>
+<h2>Suggested front matter</h2>
+<ul>
+<li>Title page: formal title, proponents, department/institution, adviser, municipality and academic year.</li>
+<li>Approval sheet and institutional declarations using approved templates.</li>
+<li>Acknowledgments, table of contents, list of figures, list of tables and abbreviations.</li>
+<li>Abstract containing the actual implemented scope and measured evaluation results only.</li>
+</ul>
+<h2>Abstract draft</h2>
+<p>The Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking is a mobile-friendly application intended to support citizen hazard reporting and municipal response monitoring. Citizens submit a category, description, compressed photographs and a confirmed location captured through GPS or a manually selected map pin. The system preserves device GPS, reported accuracy, citizen-selected coordinates and administrator-verified coordinates separately. Municipal administrators review reports through a map-centered dashboard, compare location evidence, assign departments and response teams, and record status updates. The implementation uses Vue 3, TypeScript and Capacitor for the client, Laravel and Sanctum for the API, MySQL for persistence, MapLibre for mapping, and configurable Cloudflare R2 and Firebase integrations. Automated verification covers reporting, authorization, photo limits, location validation, duplicate confirmation and status transitions. <strong>Insert actual evaluation method, participants, measured findings and supported conclusions after approved testing.</strong></p>
+<h2>Chapter 1 — Introduction</h2>
+<p>Develop the municipal context and supported problem statement. Present the general/specific objectives, stakeholders, significance, scope, limitations and definitions. Use <a href="#01-project-overview">Project overview</a> as the implementation-aligned requirements baseline. Establish the local problem using evidence gathered with authorization; do not claim interview or survey findings that were not collected.</p>
+<h2>Chapter 2 — Related literature and systems</h2>
+<p>Review peer-reviewed and primary sources about participatory reporting, geographic information quality, mobile usability and public-service response tracking. Distinguish scholarly literature from vendor documentation. Compare real existing systems using criteria such as reporting workflow, location evidence, verification, privacy, cost model and maintainability. Do not invent citations, deployment statistics or competitor features.</p>
+<p>Useful primary implementation references, consulted 2026-10-02, include:</p>
+<ul>
+<li><a href="https://laravel.com/docs/12.x/sanctum">Laravel Sanctum</a>: session and mobile authentication.</li>
+<li><a href="https://laravel.com/docs/12.x/queues">Laravel queues</a>: background processing.</li>
+<li><a href="https://maplibre.org/maplibre-gl-js/docs/API/">MapLibre API</a>: interactive mapping.</li>
+<li><a href="https://capacitorjs.com/docs/apis/geolocation">Capacitor Geolocation</a>: device location APIs and permissions.</li>
+<li><a href="https://capacitorjs.com/docs/apis/push-notifications">Capacitor Push Notifications</a>: native push integration.</li>
+<li><a href="https://developers.cloudflare.com/r2/examples/aws/aws-sdk-php/">Cloudflare R2 PHP example</a>: S3-compatible storage access.</li>
+<li><a href="https://firebase.google.com/docs/cloud-messaging/send/v1-api">Firebase HTTP v1 messaging</a>: server-to-device messaging.</li>
+</ul>
+<p>Check the applicable documentation version against the lockfiles and preserve access dates in the school's required reference style.</p>
+<h2>Chapter 3 — Methodology and design</h2>
+<p>Describe the development method actually followed, including requirements elicitation, phased implementation, review and validation. Include approved research design, participant selection, evaluation instruments, data handling and analysis procedures. No respondents have been surveyed by this development task.</p>
+<p>Use the architecture, report sequence/state diagrams, database ERD/data dictionary, requirements and API contracts from Attachments 01–04. Explain why original GPS and selected coordinates are distinct and why a location discrepancy triggers review rather than rejection. Describe student-maintenance constraints without assuming permanent cloud free tiers.</p>
+<h2>Chapter 4 — Implementation and results</h2>
+<p>Present screens and workflows tied to requirements. Identify the tested software version and runtime. Include actual automated results and defects corrected; report untested R2/FCM/device/deployment items separately. Add measured UAT, usability and performance results only after those activities occur. Synthetic demo screenshots demonstrate layout, not real incident response.</p>
+<p>Suggested result tables: requirement acceptance, automated case results, defect/retest log, device/browser compatibility, measured completion times, participant feedback, and unresolved limitations. Explain the sampling and analysis method before computing summary scores.</p>
+<h2>Chapter 5 — Conclusions and recommendations</h2>
+<p>Relate each conclusion to evidence for a stated objective. Separate implementation achievements from study outcomes. Document remaining requirements such as authoritative boundaries, cloud validation, real-device build testing, account recovery, municipal operating policy and field deployment. Recommend work according to recorded limitations rather than claiming all operational requirements are complete.</p>
+<h2>Suggested appendix package</h2>
+<ol>
+<li>Requirements and traceability matrix.</li>
+<li>Architecture diagram, sequence/state model, ERD and data dictionary.</li>
+<li>API reference and source-structure description.</li>
+<li>Citizen/admin user manual with sanitized screenshots.</li>
+<li>Test plan, automated results, defect log and signed UAT record.</li>
+<li>Deployment, environment, backup/restore and maintenance guide.</li>
+<li>Approved evaluation instruments and participant information/consent materials.</li>
+<li>Project phases, version history and release-gate evidence.</li>
+</ol>
+<p>Never attach secrets, passwords, service-account JSON, real reporter GPS/identity, unapproved hazard images, database dumps or private system logs to a capstone submission.</p>
+</section>
+<section id="09-security-and-privacy"><h1>09 — Security, privacy and operational decisions</h1>
+<p>This attachment describes implemented controls and open operational decisions. It does not assert legal compliance, certify the application, or establish a municipality's retention policy.</p>
+<p>For false reports, follow <a href="FRAUD_PREVENTION.md">the operational review guide</a>: account/rate-limit/duplicate controls support human verification, while GPS and photo contents remain untrusted evidence. Contact verification, account suspension and automatic fraud classification remain unimplemented. Public map/list entries may be awaiting verification; separate reviewed news and municipal response procedures remain necessary.</p>
+<h2>Access matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Information/action</th>
+<th>Guest</th>
+<th>Citizen</th>
+<th>Report owner</th>
+<th>Administrator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Approximate public list/map and reviewed summary</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Raw description, exact location and incident/resolution photos</td>
+<td>No</td>
+<td>No</td>
+<td>Own report</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Submit a report</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No (current citizen-only workflow)</td>
+</tr>
+<tr>
+<td>Confirm another active report</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes, except own report</td>
+<td>Yes, except own report</td>
+</tr>
+<tr>
+<td>Original GPS and accuracy</td>
+<td>No</td>
+<td>No</td>
+<td>Own report</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Reporter name/email and full history</td>
+<td>No</td>
+<td>No</td>
+<td>Own report</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Modify status/verified pin/assignment</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Private notification inbox</td>
+<td>No</td>
+<td>Own account</td>
+<td>Own account</td>
+<td>Own account</td>
+</tr>
+<tr>
+<td>Administrator provisioning</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Maintainer CLI process</td>
+</tr>
+</tbody>
+</table>
+<h2>Implemented controls</h2>
+<ul>
+<li>Sanctum cookie sessions and CSRF headers for web; hashed, expiring and revocable tokens for mobile.</li>
+<li>Registration validates allowed fields and cannot assign the admin role.</li>
+<li>API role/ownership checks apply independently of hidden/visible UI controls.</li>
+<li>Server-side field validation, coordinate ranges, location-source rules, file size/count/dimension checks and actual image decoding.</li>
+<li>Server WebP re-encoding strips original image metadata; images are stored under generated UUID keys.</li>
+<li>Three separate location records prevent administrators from overwriting original GPS evidence.</li>
+<li>Public JSON projection omits private device evidence and reporter identity for unauthorized users.</li>
+<li>Unique confirmations, foreign keys, transactional report/history/audit writes, and locked workflow updates.</li>
+<li>Authentication and report submission throttles; parameterized database queries.</li>
+<li>HTML templates escape report text; map markers use text content; CSV fields escape formula-leading characters.</li>
+<li>Secrets and private artifacts are ignored by Git; R2/Firebase secrets are backend-only. Firebase web application identifiers are public configuration, not service-account credentials.</li>
+<li>Dependency audits and tests are part of the required pre-push gate.</li>
+</ul>
+<h2>Important limitations</h2>
+<p>GPS is client-supplied evidence and can be inaccurate or spoofed; consistency flags are review aids, not proof. New reports select from the 13 user-approved Basista barangays and the API enforces the same allowlist. Coordinate bounds only prompt a reference-area warning; there is no legal polygon-based geofence. Raw evidence and descriptions are now private. A separately reviewed public summary or citizen comment can still disclose personal information if its author includes it; there is no automatic face detection or text anonymization.</p>
+<p>Uploaded images are resized/compressed before receipt, so the stored SHA-256 value is not a forensic hash of the original camera image. Original full-resolution files and their EXIF metadata are not retained. A closed report is an application workflow state, not an immutable records archive.</p>
+<p>Administrator MFA, account recovery, verified email enrollment, malware-scanning service integration and a formal record-retention/purge workflow are not implemented. Native mobile tokens are retained through Capacitor secure-storage 7.1.3 using Android Keystore-backed AES-GCM storage. Browser tokens/passwords are never placed in localStorage. Web sessions use HttpOnly session/remember cookies with CSRF protection. The default inactivity window is 90 days; logout and password changes still revoke access. Simulated bridge tests verify lifecycle, not physical Keystore security. Browser Google Fonts and map tile requests contact third-party providers; a municipality may self-host fonts or choose an approved map provider.</p>
+<h2>Decisions required before operational deployment</h2>
+<ol>
+<li>Approve who can administer reports and how access is reviewed, revoked and recovered.</li>
+<li>Approve the public fields/photos policy, user-facing notice, moderation process and process for correcting/removing sensitive uploads.</li>
+<li>Define retention and deletion periods for reports, photos, notifications, logs, devices and backups.</li>
+<li>Define backup encryption, access, off-site copies, restore testing and incident contacts.</li>
+<li>Configure HTTPS, secure session cookies, production error handling and least-privilege service credentials.</li>
+<li>Approve the emergency hotline and explain that reports do not replace emergency calls.</li>
+<li>Review cloud and map providers, account ownership and operating budgets without assuming permanent free tiers.</li>
+<li>Complete the institution's research approval, participant information and consent process before collecting evaluation data.</li>
+</ol>
+<h2>Incident response outline</h2>
+<p>Record the time, affected component and observed behavior without copying secrets into tickets. Restrict the affected credential/account, preserve relevant logs under authorized access, determine affected records, restore service, and verify the fix using a reproduction test. Follow the municipality's approved notification and escalation procedures. Review the event and update this document and the task tracker.</p>
+<h2>Community content and account changes</h2>
+<p>Confirmed-report news requires explicit publication of a separate admin-reviewed title/summary and always applies the public projection, including for a signed-in administrator. No original photo, raw title/description, exact address, precise GPS, injury observation or private workflow history is returned by that feed. Comments display the commenter's account name and body; authors and administrators may remove comments. Reaction uniqueness is enforced by a database constraint. Admin CMS and reward edits require an authenticated administrator; client navigation alone is not an authorization boundary.</p>
+<p>Report deletion is a soft delete available only to the owner before verification. It removes the report from application listings and news, and records an audit entry. Database records and uploaded evidence remain subject to a municipal retention and removal policy; this feature is not a personal-data erasure workflow. New uploads default to a private evidence disk. Existing local public evidence must be inspected and secured using <code>hazard:secure-evidence --apply</code>; the command verifies copied bytes before updating the storage pointer and removing the old public copy. R2 must use a private bucket with public/custom-domain access disabled; application authorization cannot protect an independently public bucket. Historical external copies/cache entries require separate operator remediation. Do not publish a real cash/gift promise until the municipality approves and funds it; the application records descriptions only.</p>
+<p>Profile password changes require the current password. Separate rate-limit prefixes prevent public browsing from exhausting authentication or mutation quotas.</p>
+<h2>Social identities and sign-in attempts</h2>
+<p>Google/Facebook identities are validated server-side through Socialite's session-bound state flow. New Google email must be provider-verified; Facebook email is recorded without a verified-email claim. Matching emails never merge accounts. Linking requires an authenticated password account and current password, then rechecks the user fingerprint/current credential at callback. Provider identities are unique, role remains citizen for new users, and provider access/refresh tokens are discarded. Social-only password authentication is disabled.</p>
+<p>Android uses an external browser, a fixed app callback and S256-bound opaque code exchange. The native verifier is stored separately in secure storage, the code expires in 90 seconds and can be consumed once, and five incorrect proofs exhaust it. No bearer tokens/profile data appear in deep links; web continues using HttpOnly cookies. Redirect origins are exact allowlisted origins; callbacks/exchange responses disable caching and referrer forwarding. Provider exception logs contain only provider/class, never remote error details/codes/tokens. OAuth attempts are pruned after expiration plus a day. Follow <a href="SOCIAL_AUTH_SETUP.md">setup and privacy requirements</a>, including the provider's publication/deletion process; no municipal acceptance is claimed.</p>
+</section>
+<section id="10-traceability-and-acceptance"><h1>10 — Requirements traceability and acceptance</h1>
+<h2>Traceability matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Implementation entry points</th>
+<th>Automated or manual evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-01 Separation</td>
+<td><code>hazard-client/</code>, <code>hazard-server/</code>, root workspace scripts</td>
+<td>Type check, production build, Laravel suite</td>
+</tr>
+<tr>
+<td>FR-02 Authentication</td>
+<td><code>Api/AuthController</code>, <code>services/api</code>, <code>config/api</code></td>
+<td>Registration/token/role and persistent-session tests; browser signup, remembered reopen, cross-device password revocation and logout</td>
+</tr>
+<tr>
+<td>FR-03 Photos</td>
+<td><code>ReportForm</code>, <code>mediaService</code>, <code>StoreReportRequest</code>, <code>PhotoStorage</code></td>
+<td>Photo count/size/content/dimension tests; browser compression/upload/retrieval</td>
+</tr>
+<tr>
+<td>FR-04 GPS</td>
+<td><code>mediaService</code>, <code>ReportForm</code>, report schema</td>
+<td>GPS completeness and adjusted-GPS feature tests; simulated browser GPS</td>
+</tr>
+<tr>
+<td>FR-05 Manual/adjusted pin</td>
+<td><code>HazardMap</code>, <code>ReportForm</code>, <code>StoreReportRequest</code></td>
+<td>Manual submission, invalid-source test, browser adjustment</td>
+</tr>
+<tr>
+<td>FR-06 Confirmation</td>
+<td><code>ReportForm</code>, <code>StoreReportRequest</code></td>
+<td>Unconfirmed location rejected; browser confirmation reset</td>
+</tr>
+<tr>
+<td>FR-07 Admin evidence</td>
+<td><code>HazardResource</code>, <code>ReportDetail</code>, <code>Location</code></td>
+<td>Original coordinates preserved and discrepancy flag test; field validation pending</td>
+</tr>
+<tr>
+<td>FR-08 Discovery</td>
+<td><code>useDashboard</code>, <code>DashboardView</code>, <code>ReportController</code></td>
+<td>Browser filters/export/mobile layout; live provider approval pending</td>
+</tr>
+<tr>
+<td>FR-09 Duplicates</td>
+<td><code>ReportController::nearby</code>, <code>Location</code></td>
+<td>Recent/category/radius test</td>
+</tr>
+<tr>
+<td>FR-10 Confirmations</td>
+<td><code>ReportController::confirm</code>, unique DB constraint</td>
+<td>Idempotency and inactive-report rejection tests</td>
+</tr>
+<tr>
+<td>FR-11 Workflow</td>
+<td><code>Workflow</code>, <code>ReportController::update</code>, <code>ReportDetail</code></td>
+<td>Full lifecycle and invalid-skip/permission tests</td>
+</tr>
+<tr>
+<td>FR-12 Audit/history</td>
+<td>History/audit tables and controller transactions</td>
+<td>Persistence and update counts in feature suite</td>
+</tr>
+<tr>
+<td>FR-13 Notifications</td>
+<td>Inbox routes, <code>SendReportPush</code>, <code>notificationService</code></td>
+<td>Inbox creation tested; actual FCM delivery pending credentials/device tests</td>
+</tr>
+<tr>
+<td>FR-14 Android</td>
+<td>Capacitor config/project/plugins/manifest</td>
+<td>Asset/plugin sync; actual signed build and device tests pending</td>
+</tr>
+<tr>
+<td>FR-15 Documentation/gate</td>
+<td><code>TASKS.md</code>, <code>MEMORY.md</code>, <code>AGENTS.md</code>, scripts, hook, CI</td>
+<td>Documentation checker and full <code>npm run verify</code></td>
+</tr>
+<tr>
+<td>FR-16 Private evidence/publication</td>
+<td><code>HazardResource</code>, <code>EvidenceController</code>, <code>SecureEvidence</code>, <code>ReportDetail</code>, <code>EvidencePhotos</code></td>
+<td><code>InterviewAlignmentTest</code>: public projection/search/news, cross-user and cross-report media access, no-store headers and legacy repair</td>
+</tr>
+<tr>
+<td>FR-17 Incident observations</td>
+<td>New migration, <code>StoreReportRequest</code>, <code>ReportForm</code>, <code>ReportDetail</code></td>
+<td><code>InterviewAlignmentTest</code>: incident timezone, input limits, public-field protection; Android browser guidance</td>
+</tr>
+<tr>
+<td>FR-18 Resolution evidence</td>
+<td><code>EvidenceController</code>, <code>ReportDetail</code>, typed photos</td>
+<td>Count/status/ownership/upload cleanup tests and complete municipal browser lifecycle</td>
+</tr>
+<tr>
+<td>FR-19 Period records</td>
+<td><code>AnalyticsController</code>, <code>IncidentAnalytics</code></td>
+<td>More-than-one-page totals, PHT boundaries, unknown-time fallback, weekly starts, rejected/deleted exclusion, phone CSV export</td>
+</tr>
+</tbody>
+</table>
+<h2>Municipal UAT scenarios</h2>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Role</th>
+<th>Procedure</th>
+<th>Expected acceptance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UAT-01</td>
+<td>Citizen</td>
+<td>Create account and sign in on a phone</td>
+<td>Can access reporting and own reports without admin privileges</td>
+</tr>
+<tr>
+<td>UAT-02</td>
+<td>Citizen</td>
+<td>Photograph a safe simulated hazard using GPS</td>
+<td>Photo is compressed; accuracy shown; confirmation required; reference returned</td>
+</tr>
+<tr>
+<td>UAT-03</td>
+<td>Citizen</td>
+<td>Deny GPS and place a manual pin</td>
+<td>Submission works after pin confirmation; source is manual; no invented GPS</td>
+</tr>
+<tr>
+<td>UAT-04</td>
+<td>Citizen</td>
+<td>Move a GPS-derived pin</td>
+<td>Original GPS persists; source changes; reconfirmation required</td>
+</tr>
+<tr>
+<td>UAT-05</td>
+<td>Citizen</td>
+<td>Submit near a same-category active report</td>
+<td>Duplicate suggestion appears; same-hazard confirmation is not duplicated</td>
+</tr>
+<tr>
+<td>UAT-06</td>
+<td>Admin</td>
+<td>Review large GPS-to-pin distance</td>
+<td>Difference and accuracy visible; original evidence retained; no automatic rejection</td>
+</tr>
+<tr>
+<td>UAT-07</td>
+<td>Admin</td>
+<td>Verify, assign, respond, resolve and close</td>
+<td>Only allowed transitions work; history and citizen inbox update</td>
+</tr>
+<tr>
+<td>UAT-08</td>
+<td>Citizen</td>
+<td>Open another user's private detail route</td>
+<td>Access denied; public overview remains available</td>
+</tr>
+<tr>
+<td>UAT-09</td>
+<td>Operator</td>
+<td>Disable network during submission</td>
+<td>Clear failure; no false success/ref number; controlled retry</td>
+</tr>
+<tr>
+<td>UAT-10</td>
+<td>Operator</td>
+<td>Validate real R2 and FCM</td>
+<td>Photo retrieval and foreground/background push documented with timestamps</td>
+</tr>
+<tr>
+<td>UAT-11</td>
+<td>Maintainer</td>
+<td>Restore an isolated backup</td>
+<td>Reports, photos, roles and configuration are consistent after recovery</td>
+</tr>
+<tr>
+<td>UAT-12</td>
+<td>Maintainer</td>
+<td>Run release verification before push</td>
+<td>Every required check passes; failures block the push</td>
+</tr>
+</tbody>
+</table>
+<p>Use safe, labeled simulated hazards for evaluation. Do not create a real hazard or delay emergency reporting to conduct a test.</p>
+<h2>Acceptance record — blank form</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value to be completed by evaluator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Project/version/commit</td>
+<td></td>
+</tr>
+<tr>
+<td>Municipality/institution</td>
+<td></td>
+</tr>
+<tr>
+<td>Evaluator and role</td>
+<td></td>
+</tr>
+<tr>
+<td>Test date and location</td>
+<td></td>
+</tr>
+<tr>
+<td>Device, OS and browser/app build</td>
+<td></td>
+</tr>
+<tr>
+<td>Network and deployment environment</td>
+<td></td>
+</tr>
+<tr>
+<td>UAT case / requirement IDs</td>
+<td></td>
+</tr>
+<tr>
+<td>Expected result</td>
+<td></td>
+</tr>
+<tr>
+<td>Actual observation</td>
+<td></td>
+</tr>
+<tr>
+<td>Pass / fail / not executed</td>
+<td></td>
+</tr>
+<tr>
+<td>Screenshot/log evidence reference</td>
+<td></td>
+</tr>
+<tr>
+<td>Defect and severity</td>
+<td></td>
+</tr>
+<tr>
+<td>Retest result/date</td>
+<td></td>
+</tr>
+<tr>
+<td>Reviewer approval and remarks</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>Study measurements — planning template</h2>
+<p>Before collecting results, define target users, authorized sample selection, approved consent/information procedures, tasks, measurement units, success criteria and analysis methods. Potential observations include task completion, input errors, time to a valid report, GPS-to-landmark consistency and clarity of status tracking. Choose an appropriate validated usability instrument with the adviser if required. Leave scores and respondent counts blank until collected; avoid retrofitting success thresholds after observing results.</p>
+<h2>Release acceptance conditions</h2>
+<ul>
+<li>The requested feature scope and known limitations are documented.</li>
+<li><code>npm run verify</code> passes on the exact revision; optional live-integration/release-specific checks are completed before claiming those capabilities validated.</li>
+<li>No secrets, real evidence or private user information are included in source control or capstone attachments.</li>
+<li>Documentation and environment examples match code and migrations.</li>
+<li>The administrator, service owners, backup operator and support contacts are approved.</li>
+<li>Production publication occurs only after explicit authorization and recorded operational acceptance.</li>
+</ul>
+<h2>FR-02 social sign-in extension</h2>
+<p>Implementation: <code>SocialAuthController</code>, <code>SocialAccounts</code>, social-auth migration, <code>socialAuth.ts</code>, <code>SocialLoginButtons</code>, AuthForm/ProfilePanel, Android App/Browser plugins and manifest callback. Evidence: isolated backend <code>SocialAuthenticationTest</code>, browser <code>social-auth.spec.ts</code> and full gate. Required external acceptance: real Google/Facebook new/repeat/cancel/link flows on HTTPS and physical Android including a killed-app callback. Provider console credentials/audience/review, publication privacy/deletion requirements and deployment remain pending. See <a href="SOCIAL_AUTH_SETUP.md">provider setup</a>.</p>
+<h2>Identity, guidance and promotion extension</h2>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Implementation</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-20</td>
+<td>Shared client identity, HTML title, modal/brand header, native display label, CSV filenames and capstone export builder; stable auth identifiers</td>
+<td>Brand/title assertions in <code>guide.spec.ts</code>, persistent-session cookie check, summary CSV check, typecheck/build and Android asset sync</td>
+</tr>
+<tr>
+<td>FR-21</td>
+<td><code>UserGuide</code>, <code>FeatureTour</code>, static manual data and <code>?view=guide</code> navigation</td>
+<td>Phone/desktop reflow, search/no-match recovery, citizen/admin instructions, complete tour/ESC, API-unavailable reading</td>
+</tr>
+<tr>
+<td>FR-22</td>
+<td>Independent <code>promo-video/</code> Remotion authoring project</td>
+<td>Studio preview, source checks, sampled frames, MP4 metadata/audio and recorded rendering result</td>
+</tr>
+<tr>
+<td>FR-23</td>
+<td><code>MapControls</code>, map preferences, boundary-layer service and persistent MapLibre instance</td>
+<td><code>maps.spec.ts</code>: actual rendered boundary change, fire/accident/empty filtering, synchronized expansion, retained markers/preferences, failed-style recovery and 320–1440px reflow</td>
+</tr>
+<tr>
+<td>FR-24</td>
+<td>Client/server municipality config, report allowlist, local GeoJSON/provenance and conditional camera migration</td>
+<td><code>BasistaScopeTest</code>, map-asset name/hash consistency, 13-feature browser check, count-preserving local migration and real-provider visual review</td>
+</tr>
+</tbody>
+</table>
+</section></main></body></html>

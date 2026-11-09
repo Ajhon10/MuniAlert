@@ -1,0 +1,46 @@
+name: Build Android debug APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_base_url:
+        description: Public HTTPS origin of the Laravel API, without a trailing slash
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v4
+      - run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - run: npm ci
+      - name: Validate API origin
+        env:
+          API_BASE_URL: ${{ inputs.api_base_url }}
+        run: node -e "const u = new URL(process.env.API_BASE_URL); if (u.protocol !== 'https:' || u.pathname !== '/' || u.search || u.hash) process.exit(1)"
+      - name: Copy web app into Android project
+        env:
+          VITE_API_BASE_URL: ${{ inputs.api_base_url }}
+        run: npm run android:sync
+      - run: chmod +x android/gradlew
+      - name: Assemble debug APK
+        working-directory: android
+        run: ./gradlew --no-daemon assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bantay-android-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

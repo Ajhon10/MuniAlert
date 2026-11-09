@@ -1,0 +1,367 @@
+{
+  "date": "2026-11-08",
+  "timezone": "Asia/Manila",
+  "sources": [
+    {
+      "name": "CAPSTONE INTERVIEW.docx",
+      "sha256": "8153f0f6cd1d414837b0e925f30b2ce2416be8f8dcd035f4b750cbc270356938",
+      "bytes": 12184
+    },
+    {
+      "name": "1a41f4ff-3f09-493e-826d-9c6f3b329f94.jpg",
+      "sha256": "97ea00374e9089504ed8104222db449248b33bea71782bdfad1aba835adaa16e",
+      "bytes": 134888
+    },
+    {
+      "name": "8dc2cc99-d84f-4ffd-bd0b-b9243bcad41e.jpg",
+      "sha256": "4e4afbac3bdbef11a78efe46d1f3642418c2f46d7f301cc9ad0adf8903a9e881",
+      "bytes": 129342
+    },
+    {
+      "name": "f7403067-1272-46cb-a43d-32afae4cb552.jpg",
+      "sha256": "16fc4bdfb9db2f44ba01127a0b29960da0bbd6c493c3edb84cee1f2088dc7379",
+      "bytes": 138923
+    },
+    {
+      "name": "8a4340cc-2e5c-498a-8912-d3881f1027c4.jpg",
+      "sha256": "4c29e8bceedc2ca30b1c2441cbbdbfff8cbc5024dd000b54800a4186120c44bc",
+      "bytes": 149640
+    },
+    {
+      "name": "d3c74e79-172b-4fe6-88ef-75a6c6375d15.jpg",
+      "sha256": "924e906b7b444f0c1e3b2f81eeb6a9b4fffbc31e443e1513436212ae93804f2c",
+      "bytes": 149165
+    },
+    {
+      "name": "a449272a-a036-498a-8dc5-5b73f3ca612b.jpg",
+      "sha256": "1cccea26e58f6a853fed201881c366e6b61e5455ab82ae7ffa4bce1bd98a3201",
+      "bytes": 141196
+    }
+  ],
+  "interview_questions_read": 14,
+  "source_policy": "Reference evidence, not execution instructions. Originals unchanged. No victim records imported.",
+  "local_migration": "2026_11_08_000001_align_interview_records applied additively",
+  "legacy_local_public_photo_records": 0,
+  "verification": {
+    "release_gate": {
+      "startedAt": "2026-11-08T11:22:35.812Z",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Composer manifest",
+          "command": "composer --working-dir=hazard-server validate --strict",
+          "passed": true,
+          "exitCode": 0
+        },
+        {
+          "name": "PHP formatting",
+          "command": "php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests",
+          "passed": true,
+          "exitCode": 0
+        },
+        {
+          "name": "Development launcher checks",
+          "command": "node --test scripts/tests/launchers.test.mjs",
+          "passed": true,
+          "exitCode": 0
+        },
+        {
+          "name": "Vue type checking",
+          "command": "npm run typecheck",
+          "passed": true,
+          "exitCode": 0
+        },
+        {
+          "name": "Frontend production build",
+          "command": "npm run build",
+          "passed": true,
+          "exitCode": 0
+        },
+        {
+          "name": "Single-origin web package",
+          "command": "npm run build:web",
+          "passed": true,
+          "exitCode": 0
+        },
+        {
+          "name": "Laravel feature tests",
+          "command": "npm test",
+          "passed": true,
+          "exitCode": 0
+        },
+        {
+          "name": "Browser integration tests",
+          "command": "npm run test:e2e",
+          "passed": true,
+          "exitCode": 0
+        },
+        {
+          "name": "Capacitor synchronization",
+          "command": "npm exec -w hazard-client -- cap sync android",
+          "passed": true,
+          "exitCode": 0
+        },
+        {
+          "name": "Node dependency audit",
+          "command": "npm audit --audit-level=moderate --cache .npm-cache",
+          "passed": true,
+          "exitCode": 0
+        },
+        {
+          "name": "PHP dependency audit",
+          "command": "composer --working-dir=hazard-server audit --no-interaction",
+          "passed": true,
+          "exitCode": 0
+        },
+        {
+          "name": "Documentation consistency",
+          "command": "node scripts/check-docs.mjs",
+          "passed": true,
+          "exitCode": 0
+        }
+      ],
+      "completedAt": "2026-11-08T11:24:42.757Z"
+    },
+    "backend": {
+      "tests": 60,
+      "assertions": 475,
+      "database": "isolated SQLite in memory"
+    },
+    "browser": {
+      "tests": 31,
+      "engine": "Chromium",
+      "android_emulation": "Pixel 7 with 320/360/412px checks; simulated 200 percent text enlargement"
+    },
+    "mysql_alignment": {
+      "tests": 8,
+      "assertions": 85,
+      "database": "isolated municipal_hazards_test",
+      "engine": "MySQL 8.0.44"
+    },
+    "launcher_tests": 5,
+    "platform": "Composer locked platform checks passed on PHP 8.5.1",
+    "npm_audit_findings": 0,
+    "composer_advisories": 0,
+    "normal_runtime_smoke": {
+      "normalRuntime": true,
+      "phonePreview": true,
+      "simulatedTextEnlargement": true
+    },
+    "database_isolation_refusal_probe": "passed before reset traits",
+    "diff_whitespace_checks": "passed in both repositories",
+    "ownership_repair": {
+      "processed": 53564,
+      "failed": 0,
+      "owner": "Lenovo; existing access permissions preserved"
+    }
+  },
+  "not_verified": [
+    "signed APK/AAB",
+    "physical Android",
+    "real OAuth/R2/FCM",
+    "Hostinger deployment",
+    "workload acceptance",
+    "municipal UAT"
+  ],
+  "dependency_repair": {
+    "initial_advisories": 8,
+    "packages": {
+      "symfony/filesystem": "7.4.23",
+      "symfony/http-foundation": "7.4.23",
+      "symfony/http-kernel": "7.4.23",
+      "symfony/routing": "7.4.23",
+      "symfony/yaml": "7.4.23"
+    },
+    "framework_migration": false,
+    "audit_exceptions": false
+  },
+  "contrast_samples": [
+    {
+      "name": "Body",
+      "foreground": "#263b45",
+      "background": "#f9fbfc",
+      "ratio": 11.28,
+      "meets_4_5": true
+    },
+    {
+      "name": "Help",
+      "foreground": "#4e5f59",
+      "background": "#f9fbfc",
+      "ratio": 6.52,
+      "meets_4_5": true
+    },
+    {
+      "name": "Form labels",
+      "foreground": "#355548",
+      "background": "#f9fbfc",
+      "ratio": 7.95,
+      "meets_4_5": true
+    },
+    {
+      "name": "Emergency notice",
+      "foreground": "#713c15",
+      "background": "#fff6eb",
+      "ratio": 8.32,
+      "meets_4_5": true
+    },
+    {
+      "name": "Category",
+      "foreground": "#3f5350",
+      "background": "#f9fbfc",
+      "ratio": 7.89,
+      "meets_4_5": true
+    },
+    {
+      "name": "Selected category",
+      "foreground": "#1d5e4a",
+      "background": "#e9f3ee",
+      "ratio": 6.73,
+      "meets_4_5": true
+    },
+    {
+      "name": "Error",
+      "foreground": "#9a352d",
+      "background": "#fff0eb",
+      "ratio": 6.48,
+      "meets_4_5": true
+    }
+  ],
+  "contrast_scope": "Seven selected form text/background pairs; not a full accessibility certification.",
+  "screenshots": [
+    "android-dashboard-360-2026-11-08.png",
+    "android-report-360-2026-11-08.png",
+    "android-report-200pct-320-2026-11-08.png",
+    "android-incident-summary-2026-11-08.png"
+  ],
+  "source_sha256": {
+    "hazard-client/src/App.vue": "c41e6b8aa2427c9bbec039b2125588c6a807921173cf110a786e66deb208ba3c",
+    "hazard-client/src/assets/android.css": "e7594098405e1b1f73fd5d2a969cb8077017e4acb0a0d8943618325c061349d6",
+    "hazard-client/src/assets/liquid-glass.css": "9f271d1bc6c9cb11fe1daaa4f6dff55fef83bd79e136b17e39ea7f3b90c956a7",
+    "hazard-client/src/assets/main.css": "0de73a345067c5647383eeb1e94a4b7edc32f3d52189ddb6eefc45fa90fb651a",
+    "hazard-client/src/assets/responsive.css": "a49947ef5fd43728bf4da869181ad0090c4898d846a1735b65ee309d4371ee5a",
+    "hazard-client/src/components/AdminCms.vue": "62db41c2b686d48ec5abe62996a7ffbaf413add25f6afd0b0d7a48ee53aaa248",
+    "hazard-client/src/components/AuthForm.vue": "263c48b1924448762679cc3b3220f87a29a55da762033f03c72669ec814e72f1",
+    "hazard-client/src/components/ConfirmDialog.vue": "2afcd0e7eb112aec925102162bec0c21a0088c87697b87fc6b9ac685bca1151f",
+    "hazard-client/src/components/EvidencePhotos.vue": "cb4abcd295c070a3e1203cf9bdc12be75b15121034ff9227ec253f3f501ef6ff",
+    "hazard-client/src/components/HazardIcon.vue": "a9a554bff18fca6a92f0022a072ee52ee8c35ddd159e556d1ebfb896640f7e14",
+    "hazard-client/src/components/HazardMap.vue": "ae377422c1aa1b725a710b65c1c897da5cadfe57c3bfa980f6d5753a198514db",
+    "hazard-client/src/components/IncidentAnalytics.vue": "02f8f7696f57f3e7a9804b95f9cf247c87b4e5b193391cc596c24d614fe27717",
+    "hazard-client/src/components/Modal.vue": "b3d5688b4a9d74e01fd74619e3ed1fd97e60cd62572723b22d6c414928ca38ec",
+    "hazard-client/src/components/NewsFeed.vue": "0ff6c0af9dd660a122b037660e1c92ad371afa1681db65dcbdf375845757e244",
+    "hazard-client/src/components/ProfilePanel.vue": "20a43b5837cf279584d319a5ed4b7680466a746584ec1021dc1fe783b7d2f399",
+    "hazard-client/src/components/ReportCards.vue": "36bad7b5568fbcea1435c454a6664027383d2c2bf712efcb9ef88cb220dddffc",
+    "hazard-client/src/components/ReportDetail.vue": "8dbdf5b369b0526deb4426dd3527d816e20739fc00abcd5186c86578a67d09fb",
+    "hazard-client/src/components/ReportForm.vue": "894ae9afc298207360ae97a4229b690c5b777ad64a91b9cee5307b4af14c4f89",
+    "hazard-client/src/components/SocialLoginButtons.vue": "07f0e511155a047a9c05a1fa70a28cc34ce1bc9de4f0e8dd226d567846baece9",
+    "hazard-client/src/composables/useDashboard.ts": "25aade2c095ffd55abb6d90253b27efee74faca1de3e00333a1faf9dd630c60a",
+    "hazard-client/src/config/api.ts": "21acadc09b010e0d1cbc1a6115499963905f7ac762f6ad047f36c4a21936dfe9",
+    "hazard-client/src/data/demo.ts": "7499f67c15ba194d7fb4e7a24864f6270db26453480a55528654f60d75b0b50b",
+    "hazard-client/src/directives/liquidGlass.ts": "f1862e73fd8c5b8748477f142ae3da76b5530cfb81cf0f1fb429ee51d507f90c",
+    "hazard-client/src/firebase-messaging-sw.ts": "f3dc4c3ede66e7a0acec567b182a5316750e03df46a039b9008280e1c5646692",
+    "hazard-client/src/main.ts": "40a65d68d531760bad1cc519344d2c69486734d4a0c300124ef1eba58abcb88e",
+    "hazard-client/src/services/api.ts": "2b30485a341be3f495f00a09c786d213e70683850736a0a8c37f8a4b2ede45a3",
+    "hazard-client/src/services/mediaService.ts": "9696a6cc2b36f098e0071fc345e70e4cbd927b179b10239ca531269ee27440c7",
+    "hazard-client/src/services/municipalSettings.ts": "6c200e82fa3a09fe24f853c28031f43fffc732a4d4895c9b2f7207e1189f1a91",
+    "hazard-client/src/services/notificationService.ts": "ea06f3935a054c503d7be223d5f0122681742fa1a1559068e127e4114d64317d",
+    "hazard-client/src/services/sessionStore.ts": "d05ad4b9ea5012555f27e965139d49199a533f7f7a63e2cde320afa0cebe9a7f",
+    "hazard-client/src/services/socialAuth.ts": "75fe91788a70bb1b8d184d272538ac8ed8fa473950dfd880c607aeb08c63c235",
+    "hazard-client/src/types/index.ts": "71189b9e35b08b1750f7fa66158acc71252235587f1918b41d8ec0f29102345f",
+    "hazard-client/src/views/DashboardView.vue": "070941ca0f7e6483309d20e6e7c1ad004df43d816d4c2a1114bdba8acbe08e86",
+    "hazard-server/app/Console/Commands/CreateAdmin.php": "5a098492fff3a050316fbb366a5ab90dffab02f3024d3de29fb5d649c60737db",
+    "hazard-server/app/Console/Commands/SecureEvidence.php": "e978ef4d567baf9b63f9b95b026d4ad1930aedd272321db052ef1d34bc12c100",
+    "hazard-server/app/Console/Commands/WorkPush.php": "1c542af27c99402dd528d673f1f23693f39a0a6b0b962b2ca62d8f4458356be5",
+    "hazard-server/app/Http/Controllers/Api/AnalyticsController.php": "f3bbefd88117d44b7a75dc3b413c51cbe62a4f3e158e741735050fee4c82760e",
+    "hazard-server/app/Http/Controllers/Api/AuthController.php": "b460016214599a498c18b05843a0e463f13f07f118d3e0ad054beede5346bdf0",
+    "hazard-server/app/Http/Controllers/Api/CommunityController.php": "0689be0dcc2202170d7281ec6cc15a17ebb05b0b14a920ababfcb769c7b7a6e7",
+    "hazard-server/app/Http/Controllers/Api/EvidenceController.php": "910faad236435098dc36fd341cb137060969ebc75c5e4b219922c1ba4a2ecd87",
+    "hazard-server/app/Http/Controllers/Api/NotificationController.php": "313890b638f29b2c7c28b08bb88d151ab4ef830d4db19ff738ef10d264b05f55",
+    "hazard-server/app/Http/Controllers/Api/ReportController.php": "52710328303b34d8434975513e83481d29393c2c519a066b7a1bd96c338c2937",
+    "hazard-server/app/Http/Controllers/Api/SocialAuthController.php": "2c03124fae7a1b26e3c1f35c30012cc5c55e5677ea8297c0e9619edd501cc68f",
+    "hazard-server/app/Http/Controllers/Controller.php": "25d1c1ef8e6cc8a376553faacfba2b07d9dfaee9bdbb84f14f77517580e9deb1",
+    "hazard-server/app/Http/Middleware/RefreshMobileSession.php": "8bac7609a6e525a4b6935ec58959bce69da7f62da4237dc937870d67ab409575",
+    "hazard-server/app/Http/Requests/StoreReportRequest.php": "78265803d712f48206e7412093860471bd7f048197741b4a8cbbe545d77365e9",
+    "hazard-server/app/Http/Resources/HazardResource.php": "28dec85cd29134f3428da2dc55d34ebf5e9fd075e3fe5d42e2af5fdf1c56e71f",
+    "hazard-server/app/Jobs/SendReportPush.php": "a87ada947f477c4644047da4add7f015e5250ce7f70bcfc893e31dcedc29cfec",
+    "hazard-server/app/Models/Category.php": "4b4633440a1e8658dc009303c490c344d7b859ddd6366ba5fec6ff22d256ec01",
+    "hazard-server/app/Models/Department.php": "6ef69e02d1a9f331dd5b1a81640fc9b6b577fb1f4e0a3c5456fe9aa3f480fd09",
+    "hazard-server/app/Models/HazardPhoto.php": "9adf0a25e5effc8d7b8b4f9af3cb99e54341bac72c6870339e50f1f5135e875b",
+    "hazard-server/app/Models/HazardReport.php": "394a908a6e407e4b04429ece3f1cce259ef15d2f103d036b7fff40a19c2bc409",
+    "hazard-server/app/Models/ReportConfirmation.php": "4de968ff16a9fa77818c639629f2188e480e7625a19599bbd51ce1ee7213083e",
+    "hazard-server/app/Models/StatusHistory.php": "55040b7ea74c07a7eef5541fb72983b42c4abbf857fec4af467cb0930f6f9105",
+    "hazard-server/app/Models/User.php": "be5a2d9c74131eb92a0b9e6b3a86cadd98469e144ac949e3f9a61dc98204aeea",
+    "hazard-server/app/Providers/AppServiceProvider.php": "caf306ef6a25a547bbb7edd5508a39b51c365083eb6dd58378cf2242018e94c7",
+    "hazard-server/app/Services/PhotoStorage.php": "27f576b8d72755080c67567c7aed5cd0fc086646d15ee93ded7796065f156253",
+    "hazard-server/app/Services/SocialAccounts.php": "e819c8db10cd882c219faecfcbd4e45153be3fbfcee84853035b7afab8db2c4b",
+    "hazard-server/app/Support/Location.php": "e61f23db7cb8acf1f1ef9a4474dae93652568caec2d5828db0516bb5173654ae",
+    "hazard-server/app/Support/SocialAuthFailure.php": "72292f3d0349870d391dc95619b1a78b78931560f5009e745af1cf085f7e4260",
+    "hazard-server/app/Support/Workflow.php": "5c0f03f1be8e69349474afec801b4d88f84ae598bede8d332557b0fcb5cf2e1e",
+    "hazard-server/config/app.php": "c8863128d674a2c067542d6d83b9f0a899a8ad1c5f84a60e5cc9ca5e37654935",
+    "hazard-server/config/auth.php": "09c46d5c0e950f0a35ae95c21ff998cc5e4157a78cb3d8ec7b9925322f00869f",
+    "hazard-server/config/cache.php": "dc3a64749bc19946ba6a054be0b67ae8c450c9401799cb176ac0a0b8d4756664",
+    "hazard-server/config/cors.php": "6674b12ba1838a4b9e1109e2313f3bdf01eedceea2af6ba0993cc56b2f7e20dc",
+    "hazard-server/config/database.php": "ccdd0f7c4d7a1ed046aebab390cf3c9079f467364f0966b6280a5351579db1cd",
+    "hazard-server/config/filesystems.php": "25ba040af558be235687023dea8d907253bd64147e8956e45d24ebb967ee6936",
+    "hazard-server/config/hazards.php": "bfe5c0e093f4f7cf54998fbb2d36cd5f97af2368f6ae9f19d15c76a0205c5d46",
+    "hazard-server/config/logging.php": "6e0885a09b96f9e3e9ccfae9e536da3c33dbd53a7710a518c05ac0f2b6808fb8",
+    "hazard-server/config/mail.php": "433acc0d5342a074b32e44b3d7ffba153c3eaf292a5a2fc94d7cb6ee0addb147",
+    "hazard-server/config/queue.php": "970cb97bd58fdb55a118e0ef137616d6436f4ad012d08b8ab37170e2d82391c6",
+    "hazard-server/config/services.php": "f0c76c3821b69453a8386a9b8ddf02c1e828f5e8b7a862c27b89b7bea622f985",
+    "hazard-server/config/session.php": "a6c25de0488574c7c54dfa13b43ee244126e96c345a3d42c5de4054d6c23fba8",
+    "hazard-server/database/migrations/0001_01_01_000000_create_users_table.php": "10d79883bc08ce46510f9ad8b1830b4d06d586dc56ae2c8bac3b3e491f69a90f",
+    "hazard-server/database/migrations/0001_01_01_000001_create_cache_table.php": "20f769d3c11748c1cc42c41cd3789b0b9b2cd0db44ee22d378addac3ff8aed4f",
+    "hazard-server/database/migrations/0001_01_01_000002_create_jobs_table.php": "7c9c712adf4091c87bf2612f4d0dccdfa1df4501553e4ac068b83d7bd5462fa5",
+    "hazard-server/database/migrations/2026_10_02_000001_create_hazard_tables.php": "3ae939f89b881848400752b23d042bb5ef34d7268b3dc41694ae444928d46a1d",
+    "hazard-server/database/migrations/2026_10_02_000002_add_community_features.php": "9fdd2bf829107f57773c9906b7b1aa8ca44766e8dd7e90a5fdbe4d8586438403",
+    "hazard-server/database/migrations/2026_11_04_000001_add_social_authentication.php": "8b9fa26c7ab9cb644f8b23d7537ef732d2f18cebabe695672eccf552d1d2ab4a",
+    "hazard-server/database/migrations/2026_11_08_000001_align_interview_records.php": "05097644f326c8b1f10424d532322aa9418a51761d25b08fab114c3bee0ad08e",
+    "hazard-server/routes/api.php": "d1dd3be101d8ffdfded285bc772fbb19094aa580d739150fa00311d7f0d0a413",
+    "hazard-server/routes/console.php": "4fd812094d21cc80883d74ac79db3df863865fd70122748cd79772a275b5bbe7",
+    "hazard-server/routes/web.php": "cbedc946ffe176a3a953e807f2e24b6113f66f761e821d1397d13956db8ad709",
+    "hazard-server/tests/Feature/AdminCommandTest.php": "5ba868c4d6c23d2f289686e88428e6113d8655d6ed65e2e1c183285dbc5f439b",
+    "hazard-server/tests/Feature/CommunityFeaturesTest.php": "f7c32e543748b5cf4865eb8f2451e2aba3900a8e659cf5495a229040bd74e17e",
+    "hazard-server/tests/Feature/DemoAccountSeederTest.php": "c1cdc320bfe701ded0c0898a4ccafeda8d099a461d2aa07242e2746fb1e7f01c",
+    "hazard-server/tests/Feature/ExampleTest.php": "aaa4a192fb4aa96d4e81eda06a29968da3d9a73b71026b87a67297e66dd985b8",
+    "hazard-server/tests/Feature/HazardWorkflowTest.php": "070c3b96b597ef1e8b20011730d26b128d9bbce62ec3a5a7984fa2ed02037293",
+    "hazard-server/tests/Feature/HealthTest.php": "8d89e2d2bfbe18fbb7b49740fcd385d05b4d41c2777ac2459e6f0ffe54a67a81",
+    "hazard-server/tests/Feature/InterviewAlignmentTest.php": "b787d292c0999ddc4cb7842353cee9dbb248a14bee70bb064f0588fa7dfbc818",
+    "hazard-server/tests/Feature/PersistentSessionTest.php": "6ef03678cfb023cb910917138a052eb3ad6bbc2e7d77bc56c524dd162dc9eb3f",
+    "hazard-server/tests/Feature/PushDeliveryTest.php": "9b096da7e395da868746dea0fb7495f72e907a84c7ab8e6d5a95c4045d4263f5",
+    "hazard-server/tests/Feature/ScheduledPushWorkerTest.php": "f5124848dbd7a67f8a066f55d09773e254bbf1caca11cb93aebaef113c7959d8",
+    "hazard-server/tests/Feature/SocialAuthenticationTest.php": "da5123e2cb9aa2664f7f3f90b9c4be62e8059e4811ebe3ae6bc4b65c8de43196",
+    "hazard-server/tests/Fixtures/RecordScheduledPush.php": "409b6c5bd6dd445a91255ec8a9baf222ae13a1af86dc3a8f04119a4655e16a46",
+    "hazard-server/tests/TestCase.php": "897924907725f5460b217474d48bce53c6583405f22bb6da1843f11c7bf62a92",
+    "hazard-server/tests/Unit/ExampleTest.php": "ffacae5c1a2a44c809420af5b3b404910da1b12167d58764dac6d10b8ba8cfaf",
+    "tests/android-interview.spec.ts": "fd40433139ea96a04d45a48051774d49cc9145a56a71090075951f2f03447b57",
+    "tests/dashboard-resilience.spec.ts": "765ecef4486fb80ac86abfc132941e64eeccd231497beff8f3d8335dbd773ba4",
+    "tests/fixtures.ts": "cb364e4e9dd05e05a8f630eac7282cea5ff80a6a6a950f61819d00383d75186a",
+    "tests/glass-navigation.spec.ts": "bd06a1b7b0944e86e1776a3ed75995d37cbc9dab2a23125c3e36c11ff3640b2a",
+    "tests/municipal-workflow.spec.ts": "d7c648b0607ff2cb39e451695f7adef3fa35d9086641b2a2a3f63edf9496382b",
+    "tests/native-session.spec.ts": "b565f1dd554562aede8217a9688f7bbcb202faacf19a8fc0b8c36d4df6336ab3",
+    "tests/reporting.spec.ts": "673a21bf328ce7a617ae7cb367b6fb179dbbdf45e51cfb5e15dac4a3f099f6d1",
+    "tests/responsive-layout.spec.ts": "97d7814e21d44ea3b354eba5ea26012096f364789e2617c9a470bd32e4fcf3bc",
+    "tests/sessions.spec.ts": "2d44d8c904236003026835fd36e50cd28f3d077b7506d5125723bc36a97a4ed7",
+    "tests/social-auth.spec.ts": "fd6efee7563dd30ddb730fb5f1178910fdeb7cbe38779291e71fb08057e60100",
+    "scripts/build-docs.mjs": "e50a7855447adae9c0020f747f1be9a83583b71765812f27984f5d5998422e39",
+    "scripts/check-docs.mjs": "a6fd4d7d54106a649573e818c1095f7a53cd3def4043895bf76497158d0b6302",
+    "scripts/dev.mjs": "0ca79551080e8990bf4874735ec5e6a302b6f6431820485f1c46904e2942c4a4",
+    "scripts/export-docs-pdf.mjs": "f5c4e54586f47b00530c6d7b861f2ccb9217cdad0acde16f825a585646851f01",
+    "scripts/export-interview-review.mjs": "26a8f607af3d6ea5284dd1d981c9085ebdf4d88fdda93bdd4bff88cd9ba91c38",
+    "scripts/package-web.mjs": "670acc8b1d607cb2da7c07fa17925e82ef2c1ba61a676accdc5d6dbcba6d7194",
+    "scripts/php-runtime.mjs": "52dd5ee8f648f040aa2ee3d7a8f4390857f7261678fe79551a08afa3d3718768",
+    "scripts/php.mjs": "87aea5cc67f42fcaec4c6d4a703bb51f4d835efd149cbddb8a49c3cce0c4ac23",
+    "scripts/run-e2e.mjs": "4bd07627b83f2091d0898cd831744bf27487be1d5ae0280ed873ca30e2a43f6b",
+    "scripts/tests/launchers.test.mjs": "110c9de8c68c444c8d1eb643634ab873feb392f71586b485a004a2149ad2432e",
+    "scripts/verify.mjs": "31b41f29dfaa4c9c858b4054fd912e59d138d4b693472bc27ebfb4a79b7dd921",
+    "hazard-server/composer.json": "2fc3200bd7f4e8fa94a595e2ce1073c2b78217f00e595be51ab8dc17b570b646",
+    "hazard-server/composer.lock": "65aed46fc0d621cbd5ae0bf270440aaf739eaf1a4b1aa10286d1d20f6b8f8a6d",
+    "hazard-client/package.json": "2a1a2e2d00b79d122f967020db769cce09f3c358aa158a586e238f699fd971bc",
+    "package.json": "57bd220cf98a0c868f80fe63875ab4766783f6112773b7a0809cdd2a217e3c19"
+  },
+  "release_state": {
+    "implemented": true,
+    "locally_verified": true,
+    "deployed": false,
+    "accepted_under_intended_workload": false,
+    "physical_android_verified": false
+  }
+}

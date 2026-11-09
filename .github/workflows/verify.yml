@@ -1,0 +1,36 @@
+name: Verify MuniAlert workspace
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            promo-video/package-lock.json
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, fileinfo, gd, pdo_mysql, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+      - run: npm ci
+      - run: npm ci --prefix promo-video
+      - run: composer --working-dir=hazard-server install --prefer-dist --no-interaction
+      - run: npx playwright install --with-deps chromium
+      - run: npm run verify
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification-and-browser-evidence
+          path: |
+            .cache/verification-last.json
+            test-results/
+          retention-days: 7

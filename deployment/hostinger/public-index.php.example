@@ -1,0 +1,19 @@
+<?php
+
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+// Upload this as public_html/index.php. The private application is a sibling:
+// domains/your-domain/bantay/hazard-server (never inside public_html).
+$basePath = dirname(__DIR__).'/bantay/hazard-server';
+
+if (file_exists($maintenance = $basePath.'/storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+require $basePath.'/vendor/autoload.php';
+$app = require_once $basePath.'/bootstrap/app.php';
+// Laravel must find the packaged HTML in the actual publicly served directory.
+$app->usePublicPath(__DIR__);
+$app->handleRequest(Request::capture());

@@ -1,0 +1,227 @@
+{
+  "date": "2026-11-03",
+  "scope": "Responsive layouts and persistent browser/native sign-in",
+  "php": "8.5.1",
+  "node": "v22.21.0",
+  "backend": {
+    "passed": 23,
+    "assertions": 150,
+    "database": "SQLite :memory:"
+  },
+  "browser": {
+    "passed": 16,
+    "durationSeconds": 39.2,
+    "database": ".cache/e2e.sqlite",
+    "viewports": [
+      [
+        320,
+        740
+      ],
+      [
+        375,
+        812
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        768,
+        1024
+      ],
+      [
+        844,
+        390
+      ],
+      [
+        1024,
+        768
+      ],
+      [
+        1366,
+        768
+      ],
+      [
+        1920,
+        1080
+      ]
+    ],
+    "nativeBridge": "simulated: restore, outage, revocation, logout, write failure and late startup 401; not an Android Keystore/device test"
+  },
+  "normalRuntime": {
+    "date": "2026-11-03",
+    "origin": "http://127.0.0.1:5173",
+    "checks": [
+      {
+        "name": "live overview",
+        "metrics": [
+          "00",
+          "00",
+          "00",
+          "00Community impact"
+        ],
+        "errorBanner": 0
+      },
+      {
+        "name": "Hazard map",
+        "heading": "Community hazard map"
+      },
+      {
+        "name": "Community reports",
+        "heading": "Hazard reports"
+      },
+      {
+        "name": "Verified news",
+        "heading": "Verified community news"
+      },
+      {
+        "name": "375px mobile",
+        "fits": true
+      }
+    ],
+    "errors": [],
+    "mobileElements": [
+      {
+        "tag": "main-shell",
+        "left": 0,
+        "right": 375,
+        "width": 375,
+        "scrollWidth": 375
+      },
+      {
+        "tag": "MAIN",
+        "left": 0,
+        "right": 375,
+        "width": 375,
+        "scrollWidth": 375
+      },
+      {
+        "tag": "page-heading",
+        "left": 16,
+        "right": 359,
+        "width": 343,
+        "scrollWidth": 343
+      },
+      {
+        "tag": "DIV",
+        "left": 16,
+        "right": 359,
+        "width": 343,
+        "scrollWidth": 343
+      },
+      {
+        "tag": "H1",
+        "left": 16,
+        "right": 359,
+        "width": 343,
+        "scrollWidth": 343
+      },
+      {
+        "tag": "news-list",
+        "left": 16,
+        "right": 359,
+        "width": 343,
+        "scrollWidth": 343
+      }
+    ],
+    "passed": true
+  },
+  "sessionConfiguration": {
+    "idleDays": 90,
+    "lifetimeMinutes": 129600,
+    "expireOnClose": false,
+    "httpOnly": true
+  },
+  "android": {
+    "assetSync": "passed; four native plugins",
+    "secureStorage": "@aparajita/capacitor-secure-storage@7.1.3",
+    "gradle": "8.11.1",
+    "androidGradlePlugin": "8.7.3",
+    "apkBuilt": false,
+    "physicalDeviceTested": false,
+    "reason": "No configured JDK/SDK or connected Android device"
+  },
+  "releaseGate": {
+    "startedAt": "2026-11-03T05:19:35.003Z",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Composer manifest",
+        "command": "composer --working-dir=hazard-server validate --strict",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP formatting",
+        "command": "php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Vue type checking",
+        "command": "npm run typecheck",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Frontend production build",
+        "command": "npm run build",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Laravel feature tests",
+        "command": "npm test",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Browser integration tests",
+        "command": "npm run test:e2e",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Capacitor synchronization",
+        "command": "npm exec -w hazard-client -- cap sync android",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Node dependency audit",
+        "command": "npm audit --audit-level=moderate --cache .npm-cache",
+        "passed": false,
+        "exitCode": 1
+      }
+    ]
+  },
+  "separateChecks": {
+    "composerPlatformRequirements": "passed on PHP 8.5.1",
+    "composerAudit": {
+      "passed": false,
+      "advisory": "PKSA-wtxr-p26d-nn42",
+      "package": "symfony/mime"
+    },
+    "documentation": "passed: links, 15 requirements, API route coverage, generated Markdown/HTML; PDF regenerated"
+  },
+  "sourceHashes": {
+    "hazard-client/src/assets/responsive.css": "a49947ef5fd43728bf4da869181ad0090c4898d846a1735b65ee309d4371ee5a",
+    "hazard-client/src/views/DashboardView.vue": "07151afd19baf1bed4c62f6ff058b9179d1b684e56a3a5163942c12fb03ec347",
+    "hazard-client/src/components/ReportCards.vue": "36bad7b5568fbcea1435c454a6664027383d2c2bf712efcb9ef88cb220dddffc",
+    "hazard-client/src/services/sessionStore.ts": "25fec62135f8f70b3241aea7ba151a0f7bf86c6464f5c7359dad0c22b0e5ad3e",
+    "hazard-client/src/services/api.ts": "dc51d4399c75dae285f63bfdfb26459c92f4665ba41055fa79bc79228aead438",
+    "hazard-client/package.json": "6f0583f35b4db054ea29f2a458415df1c727e56adcbff8ad73c28312a2a66376",
+    "hazard-client/package-lock.json": "df33147f235b8f2ff381c92cd75f3935ed5a940b72106f954b40a39791c9a36c",
+    "package-lock.json": "c10c34d2ed75c0c5ec8147f283e5a3de99acf31a8ff69752e0fb1d561076de26",
+    "hazard-client/android/build.gradle": "e1b17b1261159aa95ff781a43914da362b535621940a64d47f525267a9139a70",
+    "hazard-server/app/Http/Controllers/Api/AuthController.php": "9b4dc4e31c673b128a28569c9e3468bfc9db08de740e253d1610dc75d5cc721e",
+    "hazard-server/app/Http/Controllers/Api/CommunityController.php": "41efd95fa5634a8c1b6a2023e068fb975b3319b29443f120497089cbe1b4ad6a",
+    "hazard-server/app/Http/Middleware/RefreshMobileSession.php": "8bac7609a6e525a4b6935ec58959bce69da7f62da4237dc937870d67ab409575",
+    "hazard-server/config/hazards.php": "a8126e9da21c742935381832b644e477a0d7e4e31035f54bc2d6c198325576c0",
+    "hazard-server/config/session.php": "a6c25de0488574c7c54dfa13b43ee244126e96c345a3d42c5de4054d6c23fba8",
+    "hazard-server/tests/Feature/PersistentSessionTest.php": "6ef03678cfb023cb910917138a052eb3ad6bbc2e7d77bc56c524dd162dc9eb3f",
+    "tests/native-session.spec.ts": "e14e3118290ab2d194c77894744ccc99d629dd61d8b1489c07f38f7825355a95",
+    "tests/sessions.spec.ts": "e820fc51d9a4ed2477204c1292ea0b2ec2ade7eee884e07df277ba49d9b98f10",
+    "tests/responsive-layout.spec.ts": "232d53d9db70f3956557763b187f14340754f9e738f83e1cf849044473e79967"
+  }
+}

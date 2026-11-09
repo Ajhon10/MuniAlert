@@ -1,0 +1,56 @@
+{
+  "capturedAt": "2026-11-08T11:58:10.150Z",
+  "origin": "http://localhost:5173",
+  "provenance": "Actual Vue interface captured with synthetic API fixtures. No account credentials or production incident records. All API writes blocked.",
+  "files": [
+    {
+      "name": "guide.png",
+      "viewport": "390x720",
+      "scale": 2,
+      "sha256": "c2e7830f421c457f69ed733f778b05995a0466476b766d03fc5d98462d658702"
+    },
+    {
+      "name": "tour.png",
+      "viewport": "390x720",
+      "scale": 2,
+      "sha256": "495af62231ed53dbacb4d9286fa0d2ba9618fdf131dc4006c7e81bf1d8ba0d10"
+    },
+    {
+      "name": "privacy.png",
+      "viewport": "390x720",
+      "scale": 2,
+      "sha256": "9b3a94960e127759888bc2686314c46db6cc308b58e3ab0281653af56b815be1"
+    },
+    {
+      "name": "home.png",
+      "viewport": "390x720",
+      "scale": 2,
+      "sha256": "6597bce6ef241e5938fb4363c9cd4172606b9720530e6f6ddc5f460c15cc2fb0"
+    },
+    {
+      "name": "report.png",
+      "viewport": "390x720",
+      "scale": 2,
+      "sha256": "92eb480150ac0e1899b89b8f1b7e9cbc5c478dddb68995c4cedfadfb4f80fd14"
+    },
+    {
+      "name": "location.png",
+      "viewport": "390x720",
+      "scale": 2,
+      "sha256": "71d5b54a45a7ea9b89e47ff4cdde11b8b59875aa113679fb1f59962af2062364"
+    },
+    {
+      "name": "tracking.png",
+      "viewport": "390x720",
+      "scale": 2,
+      "sha256": "72378904aab7f8ced603f0e98791bdc5037513cd190bbb5b43b4b2de843e77d3"
+    },
+    {
+      "name": "records.png",
+      "viewport": "390x720",
+      "scale": 2,
+      "sha256": "3aeed1a2ae5d119a0f2c23dda4cddb428d8c1b69acfbcfc628b53d6dda440f81"
+    }
+  ],
+  "errors": []
+}

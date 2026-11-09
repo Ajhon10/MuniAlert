@@ -1,0 +1,435 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Asia/Manila",
+  "recordedAt": "2026-11-09T01:36:42.538Z",
+  "passed": true,
+  "authorization": "User requested map modes, barangay/city/province boundaries and hazard filtering; confirmed Basista Municipal Hall and the exact 13 covered barangays.",
+  "scope": {
+    "name": "Basista",
+    "office": "Basista Municipal Hall",
+    "province": "Pangasinan",
+    "psgc_code": "0105509000",
+    "map": {
+      "latitude": 15.865448,
+      "longitude": 120.400132,
+      "zoom": 12.5
+    },
+    "bounds": [
+      120.365047,
+      15.839049,
+      120.434852,
+      15.893453
+    ],
+    "barangays": [
+      "Anambongan",
+      "Bayoyong",
+      "Cabeldatan",
+      "Dumpay",
+      "Malimpec East",
+      "Mapolopolo",
+      "Nalneran",
+      "Navatat",
+      "Obong",
+      "Osmeña Sr.",
+      "Palma",
+      "Patacbo",
+      "Poblacion"
+    ]
+  },
+  "gate": {
+    "startedAt": "2026-11-09T01:30:22.908Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Composer manifest",
+        "command": "composer --working-dir=hazard-server validate --strict",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP formatting",
+        "command": "php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Development launcher checks",
+        "command": "node --test scripts/tests/launchers.test.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Vue type checking",
+        "command": "npm run typecheck",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Frontend production build",
+        "command": "npm run build",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Single-origin web package",
+        "command": "npm run build:web",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Laravel feature tests",
+        "command": "npm test",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Browser integration tests",
+        "command": "npm run test:e2e",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Capacitor synchronization",
+        "command": "npm exec -w hazard-client -- cap sync android",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Node dependency audit",
+        "command": "npm audit --audit-level=moderate --cache .npm-cache",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP dependency audit",
+        "command": "composer --working-dir=hazard-server audit --no-interaction",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Documentation consistency",
+        "command": "node scripts/check-docs.mjs",
+        "passed": true,
+        "exitCode": 0
+      }
+    ],
+    "completedAt": "2026-11-09T01:33:04.516Z"
+  },
+  "tests": {
+    "backend": 65,
+    "assertions": 502,
+    "browser": 40,
+    "launchers": 5
+  },
+  "sourcePolicy": "Public reference geographic data only. Source documents/metadata were not treated as execution instructions. No personal incident data was ingested.",
+  "geometry": {
+    "source": "https://github.com/bendlikeabamboo/barangay-boundaries-repository/releases/tag/v2026.4.13.0",
+    "archive_sha256": "cbf0a3f08c1284dd6d5ce385fd656e94e7e848c495bb5407a332d3da307a9415",
+    "geometry_snapshot": "NAMRIA 2023-11-06 / PSA PSGC 2023-10-24",
+    "attribution": "Philippine Statistics Authority (PSA), NAMRIA; detailed extracts via altcoder; province context via Manuel Balmeo",
+    "license_note": "Upstream MIT license applies to code; data attribution belongs to PSA/NAMRIA. Source redistributes data for research/interoperability.",
+    "changes": "Basista 13 barangays and intersecting nearby municipality context use detailed WGS84 geometry, rounded to six decimals only (about 0.1m coordinate precision, not positional accuracy). Province context retains the simplified release. Reduced properties; Osmeña Sr. follows the user. No invented borders. Distant municipalities are omitted to keep phone downloads small.",
+    "limitations": "Reference geometry from published source snapshots, not municipal survey or legal jurisdiction acceptance. No personal/incident data. Upstream simplification discarded after visual review.",
+    "outputs": [
+      {
+        "file": "pangasinan-province.geojson",
+        "features": 1,
+        "bytes": 27865,
+        "sha256": "b329f02dd7fa41b716b5f02b5296f5cd5434a35503b390737de87054449b70fe"
+      },
+      {
+        "file": "basista-barangays.geojson",
+        "features": 13,
+        "vertices": 370,
+        "bytes": 10912,
+        "sha256": "b2c4522d87d0d7dc69f6c3f8ecce63aa3a26189994504c9ec36d8a62ec87d560"
+      },
+      {
+        "file": "pangasinan-cities-municipalities.geojson",
+        "features": 6,
+        "vertices": 2724,
+        "bytes": 63182,
+        "sha256": "7cfec01aff2724873b8cd27020b740ae78723abcd13365c943670ec23ac37ef6"
+      }
+    ],
+    "detailed_sources": [
+      {
+        "level": "barangays",
+        "repository": "https://github.com/altcoder/philippines-psgc-shapefiles",
+        "archive_sha256": "904ff4ad2a8cfcfc06d23a6f4109bb1b142689d4cb4a8863d8bf650e99476186",
+        "archive_bytes": 382761836,
+        "coordinate_system": "Original WGS84 geographic layer",
+        "original_source": "PSA/NAMRIA 2023 via OCHA COD as documented by the upstream maintainer"
+      },
+      {
+        "level": "municipalities",
+        "repository": "https://github.com/altcoder/philippines-psgc-shapefiles",
+        "archive_sha256": "9bb847cfed70656b1ad67ac8648da7867a52df69e3150eff141cd8345b9027c2",
+        "archive_bytes": 317781224,
+        "coordinate_system": "Original WGS84 geographic layer",
+        "original_source": "PSA/NAMRIA 2023 via OCHA COD as documented by the upstream maintainer"
+      }
+    ]
+  },
+  "realProviderReview": {
+    "modes": [
+      "clear",
+      "dark",
+      "streets"
+    ],
+    "browserErrors": [],
+    "publicResponses": 29,
+    "nativeDevice": false
+  },
+  "localMigration": {
+    "migrated": true,
+    "counts_preserved": true,
+    "before": {
+      "users": 4,
+      "reports": 0
+    },
+    "after": {
+      "users": 4,
+      "reports": 0
+    },
+    "map_before": {
+      "zoom": 13,
+      "latitude": 14.5995,
+      "longitude": 120.9842
+    },
+    "map_after": {
+      "zoom": 12.5,
+      "latitude": 15.865448,
+      "longitude": 120.400132
+    },
+    "outside_scope_existing_reports": 0
+  },
+  "platforms": {
+    "cliPhp": "8.5.1",
+    "lockedComposerRequirements": "passed",
+    "gitWhitespaceClient": "passed",
+    "gitWhitespaceServer": "passed"
+  },
+  "resolvedFindings": [
+    "Rejected coarse street-level boundary geometry; replaced with detailed verified WGS84 extracts.",
+    "Normalized line endings in the three updated PHP test fixtures.",
+    "Corrected the new pin test selector to include the existing button helper text; focused retest passed."
+  ],
+  "ownership": {
+    "owner": "DESKTOP-K1K3K5F\\Lenovo",
+    "extractionCache": {
+      "owner": "DESKTOP-K1K3K5F\\Lenovo",
+      "accessPermissionsChanged": false,
+      "note": "The broad first attempt encountered the pip package ACL. It was already Lenovo-owned; repair was scoped to changed source/artifact paths instead, preserving its permissions."
+    },
+    "wildcardSafeDirectoryAdded": false,
+    "samples": [
+      {
+        "path": "hazard-client",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-client/.git",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-server",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-server/.git",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-client/src/components/MapControls.vue",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-client/src/assets/maps.css",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-client/public/boundaries/basista-barangays.geojson",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-server/config/municipality.php",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "documentation/BASISTA_MAP_2026-11-09.md",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      }
+    ],
+    "exitCode": 0,
+    "checkedAt": "2026-11-09T01:36:42.4277078Z",
+    "scopes": [
+      {
+        "summary": "Successfully processed 2573 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": "hazard-client"
+      },
+      {
+        "summary": "Successfully processed 19111 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": "hazard-server"
+      },
+      {
+        "summary": "Successfully processed 67 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": "documentation"
+      },
+      {
+        "summary": "Successfully processed 15 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": "scripts"
+      },
+      {
+        "summary": "Successfully processed 13 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": "tests"
+      },
+      {
+        "summary": "Successfully processed 1 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": "README.md"
+      },
+      {
+        "summary": "Successfully processed 1 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": "MEMORY.md"
+      },
+      {
+        "summary": "Successfully processed 1 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": "TASKS.md"
+      },
+      {
+        "summary": "Successfully processed 1 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": ".cache/finalize-basista-evidence.mjs"
+      },
+      {
+        "summary": "Successfully processed 1 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": ".cache/basista-live-review.mjs"
+      },
+      {
+        "summary": "Successfully processed 1 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": ".cache/HazardMap-next.vue"
+      },
+      {
+        "summary": "Successfully processed 1 files; Failed processing 0 files",
+        "exitCode": 0,
+        "target": ".cache/restore-basista-ownership.ps1"
+      }
+    ],
+    "target": "C:\\Users\\Lenovo\\Desktop\\PROJECTS\\PERSONAL\\BANTAY"
+  },
+  "fingerprints": [
+    {
+      "file": "hazard-client/src/components/HazardMap.vue",
+      "bytes": 8019,
+      "sha256": "d47979a9ac59ff41ed010c6e4ced1b4968c0f708391356bdd5c8cfed2a3b1eaf"
+    },
+    {
+      "file": "hazard-client/src/components/MapControls.vue",
+      "bytes": 3467,
+      "sha256": "c5fc56e9b6d454960f0b532ddd8fd4356c76868fa4f14a4e4799c99acb474967"
+    },
+    {
+      "file": "hazard-client/src/services/mapPreferences.ts",
+      "bytes": 1086,
+      "sha256": "4bc978aab7530b1de00dc9d42f00e0379262ca89a06d75e889a6ba19fb6061a1"
+    },
+    {
+      "file": "hazard-client/src/services/mapBoundaries.ts",
+      "bytes": 3173,
+      "sha256": "8e8743a69818770bea2fd67f5103063299e992d8af4356b9899c51a1543b7d54"
+    },
+    {
+      "file": "hazard-client/src/config/maps.ts",
+      "bytes": 2584,
+      "sha256": "abea52689f22f9aea29df11bba38e0427d2ec5d37fea57e4c266f5d4daf85d9f"
+    },
+    {
+      "file": "hazard-client/src/config/municipality.json",
+      "bytes": 432,
+      "sha256": "61618751ac624c9886214d714258776bd60f56b8908a963ba859b6e7c590b4dd"
+    },
+    {
+      "file": "hazard-client/src/assets/maps.css",
+      "bytes": 5816,
+      "sha256": "6a9a65d52c8f59fa1e1be0490c516161672072408e72ca078537a0db3201fbea"
+    },
+    {
+      "file": "hazard-client/src/components/ReportForm.vue",
+      "bytes": 14926,
+      "sha256": "d525f1bc25ede9143488a42e2476a0116e9c98fd5520f05477900eba8b0ff61c"
+    },
+    {
+      "file": "hazard-client/src/composables/useDashboard.ts",
+      "bytes": 15113,
+      "sha256": "da6df4af065ef1204ff72a823c5ff1d539b47b91feda6fa57c07de1e6dcac8ff"
+    },
+    {
+      "file": "hazard-server/config/municipality.php",
+      "bytes": 416,
+      "sha256": "3f12c4a915cf392c301323b1d677964c095588c7714d3b1d50861d65a7cc106b"
+    },
+    {
+      "file": "hazard-server/app/Http/Requests/StoreReportRequest.php",
+      "bytes": 3424,
+      "sha256": "f08e86f2c5ebcd1cb4ee5dd3d618d494cd2bcb9ac2a254c657fb1de8029d430e"
+    },
+    {
+      "file": "hazard-server/database/migrations/2026_11_09_000001_center_default_map_on_basista.php",
+      "bytes": 772,
+      "sha256": "e6e03eb3178157da3a8eb02309a5f6fc22dc8687621c1fe8ed070e6893fcb686"
+    },
+    {
+      "file": "tests/maps.spec.ts",
+      "bytes": 7321,
+      "sha256": "c6fe32f18d6e491140a442825dffc904bef1d4239d0261f195a466fd8e3f6b4a"
+    },
+    {
+      "file": "hazard-server/tests/Feature/BasistaScopeTest.php",
+      "bytes": 2912,
+      "sha256": "0d27a4e6ce35377b6c31a9ff8edb3a42f684ab92b8cae8e2f5e7bdd644a7777a"
+    },
+    {
+      "file": "documentation/MUNIALERT-CITIZEN-MANUAL.pdf",
+      "bytes": 223436,
+      "sha256": "c75bc4419976cef1ed9422bae8005d7b15dc82fba1d97368cae9955b9eab4a1d"
+    },
+    {
+      "file": "documentation/MUNIALERT-ADMIN-MANUAL.pdf",
+      "bytes": 149888,
+      "sha256": "48f70420e37331b4449efc7c35dcbd05b7f1627666499d5720cd42d9224a2eae"
+    },
+    {
+      "file": "documentation/CAPSTONE-TECHNICAL-DOCUMENTATION.pdf",
+      "bytes": 1359587,
+      "sha256": "79ad35ad8dbd81e8f95ef357d0ce37a64a9f41ed90c00792cd0dfd45a7c92321"
+    }
+  ],
+  "acceptance": {
+    "physicalAndroid": "pending",
+    "municipalBoundaryReview": "pending",
+    "liveCloudHosting": "pending",
+    "workloadAndUat": "pending",
+    "deployed": false,
+    "pushed": false,
+    "published": false
+  }
+}

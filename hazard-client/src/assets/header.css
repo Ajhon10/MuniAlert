@@ -1,0 +1,46 @@
+/* A compact, legible utility bar. Bottom More owns compact navigation. */
+:root { --header-surface: #f7fbf9; }
+.topbar {
+  width: max-content;
+  max-width: calc(100% - 2 * var(--workspace-gutter));
+  min-height: 56px;
+  height: auto;
+  margin: 12px var(--workspace-gutter) 0 auto;
+  padding: 6px 12px 6px 18px;
+  gap: 20px;
+  border-radius: 20px;
+  background: var(--header-surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.topbar .breadcrumb { min-width: 0; gap: 10px; line-height: 1.4; }
+.topbar .breadcrumb > span { flex-shrink: 0; }
+.topbar .breadcrumb > strong { overflow-wrap: anywhere; }
+.topbar .top-actions { min-width: 0; gap: 10px; }
+.topbar .ph-clock { white-space: nowrap; font-size: 12px; }
+.topbar .connection { font-size: 12px; }
+.topbar .icon-button, .topbar .top-avatar { width: 44px; height: 44px; min-width: 44px; }
+@media (max-width: 1023px) {
+  .topbar {
+    width: auto;
+    max-width: none;
+    margin: max(10px, env(safe-area-inset-top)) 12px 0;
+    padding: 6px 10px 6px 16px;
+    min-height: 60px;
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .topbar .breadcrumb { flex: 1; }
+  .topbar .breadcrumb > span { display: block; min-width: 0; flex-shrink: 1; overflow-wrap: anywhere; font-size: 17px; font-weight: 750; color: #244d3b; }
+  .topbar .breadcrumb > strong, .topbar .breadcrumb > svg, .topbar .ph-clock, .topbar .notification-button { display: none; }
+  .topbar .top-actions { gap: 8px; flex-shrink: 0; }
+  .topbar .icon-button, .topbar .top-avatar { width: 48px; height: 48px; min-width: 48px; }
+  .topbar .connection { width: 8px; font-size: 0; gap: 0; }
+  .topbar .connection i { width: 8px; height: 8px; }
+  .mobile-clock { display: block; margin-top: 8px; font-size: 12px; color: var(--text-muted); }
+}
+@media (max-width: 359px) {
+  .topbar { margin-inline: 10px; padding-inline: 10px; gap: 8px; }
+  .topbar .top-actions { gap: 6px; }
+}
+@media (prefers-contrast: more) { .topbar { border-color: #526e5c; } }

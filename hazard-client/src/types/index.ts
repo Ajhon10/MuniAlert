@@ -1,0 +1,31 @@
+export type Status = 'submitted' | 'under_verification' | 'verified' | 'assigned' | 'responding' | 'resolved' | 'closed' | 'rejected';
+export type Severity = 'low' | 'moderate' | 'high' | 'critical';
+export type Point = { latitude: number; longitude: number };
+export type GPS = Point & { accuracy: number };
+export type User = { id: number; name: string; email: string; role: 'citizen' | 'admin'; has_password?: boolean };
+export type Category = { id: string; name: string; department_id: string };
+export type Department = { id: string; name: string };
+export type Hazard = {
+  id: string; reference_number: string; title: string; description: string; address: string; barangay: string;
+  selected_latitude: number; selected_longitude: number; verified_latitude: number | null; verified_longitude: number | null;
+  gps_latitude?: number | null; gps_longitude?: number | null; gps_accuracy?: number | null;
+  location_source?: 'gps' | 'gps_adjusted' | 'manual'; location_difference_meters?: number | null; location_review_required?: boolean;
+  status: Status; severity: Severity; category: Category; department: Department;
+  photos: { id: string; url: string; photo_type?: 'incident' | 'resolution' }[]; created_at: string; updated_at: string;
+  occurred_at?: string | null; injuries?: 'unknown' | 'yes' | 'no'; people_affected?: number | null;
+  public_title?: string | null; public_summary?: string | null; approximate_location?: boolean;
+  assigned_responder?: string; reporter?: { name: string; email: string }; user_id?: number;
+  history?: { id: number; status: Status; note: string; created_at: string }[]; confirmations_count: number;
+};
+export type Stats = { total: number; active: number; pending: number; responding: number; resolved: number };
+export type Notice = { id: string; data: { report_id: string; reference_number: string; message: string }; read_at: string | null; created_at: string };
+export type Page = { data: Hazard[]; meta: { total: number; current_page: number; last_page: number } };
+export type Hotline = { name: string; number: string };
+export type MunicipalSettings = { map: Point & { zoom: number }; hotlines: Hotline[] };
+export type Badge = { id: number; threshold: number; name: string; color: 'bronze' | 'silver' | 'gold' | 'platinum'; description: string; reward_type: 'none' | 'cash' | 'gift'; cash_amount: string | null; reward_description: string | null; earned?: boolean };
+export type Profile = { user: User; verified_reports: number; badges: Badge[] };
+export type NewsItem = { report: Hazard; reactions: Record<string, number>; comments_count: number; my_reaction: string | null };
+export const labels: Record<Status, string> = { submitted: 'Submitted', under_verification: 'Under verification', verified: 'Verified', assigned: 'Assigned', responding: 'Responding', resolved: 'Resolved', closed: 'Closed', rejected: 'Rejected' };
+export const transitions: Record<Status, Status[]> = { submitted: ['under_verification', 'rejected'], under_verification: ['verified', 'rejected'], verified: ['assigned', 'rejected'], assigned: ['responding'], responding: ['resolved'], resolved: ['closed'], closed: [], rejected: [] };
+export const active = (status: Status) => !['resolved', 'closed', 'rejected'].includes(status);
+export function relativeTime(value: string) { const minutes = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 60000)); return minutes < 1 ? 'Just now' : minutes < 60 ? `${minutes} min ago` : minutes < 1440 ? `${Math.floor(minutes / 60)} hr ago` : new Date(value).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' }); }

@@ -1,0 +1,123 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Asia/Manila",
+  "recordedAt": "2026-11-09T02:21:39.496Z",
+  "scope": "Responsive header, Android development guide, fraud-prevention guidance and single private workspace preparation",
+  "verification": {
+    "startedAt": "2026-11-09T02:17:23.199Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Repository publication safety",
+        "command": "node scripts/check-publication.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Composer manifest",
+        "command": "composer --working-dir=hazard-server validate --strict",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP formatting",
+        "command": "php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Development launcher checks",
+        "command": "node --test scripts/tests/launchers.test.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Vue type checking",
+        "command": "npm run typecheck",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Frontend production build",
+        "command": "npm run build",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Single-origin web package",
+        "command": "npm run build:web",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Laravel feature tests",
+        "command": "npm test",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Browser integration tests",
+        "command": "npm run test:e2e",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Capacitor synchronization",
+        "command": "npm exec -w hazard-client -- cap sync android",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Node dependency audit",
+        "command": "npm audit --audit-level=moderate --cache .npm-cache",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP dependency audit",
+        "command": "composer --working-dir=hazard-server audit --no-interaction",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Documentation consistency",
+        "command": "node scripts/check-docs.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Promotional source and dependencies",
+        "command": "node scripts/verify-promo.mjs",
+        "passed": true,
+        "exitCode": 0
+      }
+    ],
+    "completedAt": "2026-11-09T02:20:24.489Z"
+  },
+  "tests": {
+    "backend": 65,
+    "assertions": 502,
+    "browser": 42,
+    "launcher": 5
+  },
+  "fraud": {
+    "existingControlsDocumented": true,
+    "contactVerificationImplemented": false,
+    "accountSuspensionImplemented": false,
+    "automatedFraudClassifierImplemented": false
+  },
+  "publication": {
+    "repository": "https://github.com/Ajhon10/MuniAlert",
+    "privateRepositoryCreated": true,
+    "sourcePushAtEvidenceCapture": false,
+    "oldGitMetadataPreservedLocally": true,
+    "collaboratorInvitationsSent": false,
+    "externalReceipt": ".cache/github-publication-result.json"
+  },
+  "acceptance": {
+    "physicalAndroid": false,
+    "nativeApkBuild": false,
+    "hostingDeployed": false,
+    "municipalAcceptance": false
+  }
+}

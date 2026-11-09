@@ -1,0 +1,7 @@
+# hPanel: create ONE Custom cron entry. Select every minute in its schedule UI.
+# Replace the PHP binary and private application path with verified account paths.
+# Do not paste the comments, cron schedule fields, or a www-data username into hPanel.
+/verified/path/to/php /home/u123456789/domains/example.org/bantay/hazard-server/artisan schedule:run
+
+# Enable HAZARD_SCHEDULED_PUSH=true in the private server .env and rebuild config.
+# Do not also install a persistent worker or a second work-push cron for this mode.

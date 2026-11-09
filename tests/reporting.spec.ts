@@ -1,0 +1,138 @@
+import { test, expect } from './fixtures';
+test('demo dashboard filters, details, export, and mobile layout', async ({ page }) => {
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/?demo=1');
+  await expect(page.getByRole('heading', { name: 'Community overview', exact: true })).toBeVisible();
+  await expect(page.locator('.metric-value').first()).toContainText('06');
+  await page.getByRole('combobox', { name: 'Filter by category' }).selectOption('tree');
+  await expect(page.locator('tbody tr')).toHaveCount(2);
+  const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export page' }).click(); expect((await download).suggestedFilename()).toContain('demo');
+  await page.locator('.table-report').first().click(); await expect(page.getByRole('dialog', { name: 'Hazard report', exact: true })).toBeVisible(); await page.getByRole('button', { name: 'Close dialog' }).click();
+  await page.getByRole('combobox', { name: 'Filter by category' }).selectOption('');
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: 'test-results/dashboard-desktop.png', fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole('button', { name: 'Report a hazard', exact: true })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole('button', { name: 'More navigation' }).click(); await expect(page.locator('.sidebar.open')).toBeVisible(); await page.getByRole('button', { name: 'Close navigation' }).click({ position: { x: 350, y: 300 } });
+  await expect.poll(() => page.locator('.sidebar').evaluate(element => element.getBoundingClientRect().right)).toBeLessThanOrEqual(0);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: 'test-results/dashboard-mobile.png', fullPage: true });
+  expect(errors).toEqual([]);
+});
+
+test('citizen registers, reports a compressed photo and confirmed manual location, then tracks it', async ({ page }) => {
+  await page.goto('/'); await page.getByRole('button', { name: 'Report a hazard', exact: true }).click();
+  await page.getByRole('button', { name: 'Create an account', exact: true }).click();
+  await page.getByLabel('Full name').fill('Browser Test Citizen');
+  await page.getByLabel('Email address').fill(`citizen-${Date.now()}@example.test`);
+  await page.getByLabel('Password', { exact: true }).fill('a-secure-browser-test-password');
+  await page.getByRole('button', { name: 'Create your account' }).click();
+  await expect(page.getByRole('dialog', { name: 'Report a hazard', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Fallen tree', exact: true }).click();
+  const image = await page.evaluate(async () => { const canvas = document.createElement('canvas'); canvas.width = 2500; canvas.height = 2000; const ctx = canvas.getContext('2d')!; ctx.fillStyle = '#4a7d5f'; ctx.fillRect(0, 0, 2500, 2000); return canvas.toDataURL('image/jpeg').split(',')[1]; });
+  await page.getByLabel('Add hazard photos').setInputFiles({ name: 'hazard.jpg', mimeType: 'image/jpeg', buffer: Buffer.from(image, 'base64') });
+  await expect(page.locator('.photo-preview')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Choose location on map' }).click();
+  await page.getByLabel('Selected latitude', { exact: true }).fill('14.5995'); await page.getByLabel('Selected longitude', { exact: true }).fill('120.9842');
+  await page.getByRole('button', { name: 'Confirm location', exact: true }).click(); await expect(page.getByRole('button', { name: 'Location confirmed', exact: true })).toBeVisible();
+  await page.getByLabel('Barangay', { exact: true }).selectOption('Anambongan'); await page.getByLabel('Street or landmark').fill('Riverside Road');
+  await page.getByLabel('Report title').fill('Fallen tree near the school gate'); await page.getByLabel('Description', { exact: true }).fill('A large fallen tree is blocking the road next to the school gate.');
+  const nearbyResponse = page.waitForResponse(response => response.url().includes('/api/reports/nearby?') && response.request().method() === 'GET');
+  await page.getByRole('button', { name: 'Submit hazard report' }).click();
+  const neighbors = await (await nearbyResponse).json();
+  expect(Array.isArray(neighbors)).toBe(true);
+  if (neighbors.length) {
+    await expect(page.getByRole('heading', { name: 'Similar hazards nearby' })).toBeVisible();
+    await page.getByRole('checkbox', { name: 'This is a different hazard; submit a new report.' }).check();
+    await page.getByRole('button', { name: 'Submit hazard report' }).click();
+  }
+  await expect(page.getByRole('dialog', { name: 'Submit this hazard report?' })).toBeVisible();
+  await page.getByRole('button', { name: 'Submit report', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Hazard report', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Report timeline' })).toBeVisible();
+  await expect(page.locator('.location-evidence')).toContainText('Not provided — manually pinned');
+  await expect.poll(() => page.locator('.detail-photos img').evaluate((img: HTMLImageElement) => img.naturalWidth > 0)).toBe(true);
+  await page.getByRole('button', { name: 'Close dialog' }).click();
+  await page.reload(); await expect(page.locator('.sidebar-user')).toContainText('Browser Test Citizen');
+  await page.getByRole('button', { name: 'My reports', exact: true }).click(); await expect(page.locator('tbody')).toContainText('Fallen tree near the school gate');
+  await page.getByRole('button', { name: 'My profile', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Achievements' })).toBeVisible();
+  await expect(page.locator('.achievement-row')).toHaveCount(4);
+  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Sign out?' })).toBeVisible();
+  await page.getByRole('button', { name: 'Sign out', exact: true }).last().click();
+  await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+});
+
+test('GPS location remains unconfirmed until the citizen accepts it and edits reset confirmation', async ({ page, context }) => {
+  await context.grantPermissions(['geolocation']); await context.setGeolocation({ latitude: 14.6, longitude: 120.98, accuracy: 9 });
+  await page.goto('/?demo=1'); await page.getByRole('button', { name: 'Report a hazard', exact: true }).click();
+  await page.getByRole('button', { name: 'Use current location' }).click();
+  await expect(page.getByRole('button', { name: 'Confirm location', exact: true })).toBeVisible();
+  await expect(page.locator('.source-tag')).toHaveText('gps'); await page.getByRole('button', { name: 'Confirm location', exact: true }).click();
+  await page.getByRole('button', { name: 'Adjust pin', exact: true }).click(); await page.getByLabel('Selected latitude', { exact: true }).fill('14.61');
+  await expect(page.locator('.source-tag')).toHaveText('gps adjusted'); await expect(page.getByRole('button', { name: 'Confirm location', exact: true })).toBeVisible();
+});
+
+test('administrator sees operations controls and publishes municipal CMS changes', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
+  await auth.getByLabel('Email address').fill('itsajhon@gmail.com');
+  await auth.getByLabel('Password').fill(process.env.E2E_ADMIN_PASSWORD!);
+  await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Municipal operations', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Content management' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Report a hazard' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Content management' }).click();
+  await expect(page.getByRole('heading', { name: 'Municipal map & emergency hotlines' })).toBeVisible();
+  await page.getByRole('button', { name: 'Add hotline' }).click();
+  await page.getByLabel('Service').fill('Test municipal rescue');
+  await page.getByLabel('Phone number').fill('+63 555 0100');
+  await page.getByRole('button', { name: 'Save map and hotlines' }).click();
+  await page.getByRole('dialog', { name: 'Publish CMS changes?' }).getByRole('button', { name: 'Publish changes' }).click();
+  await expect(page.getByText('Map and hotlines saved.')).toBeVisible();
+  await page.getByRole('button', { name: 'Operations', exact: true }).click();
+  await expect(page.getByRole('link', { name: 'Test municipal rescue' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'My profile' }).click();
+  await expect(page.getByRole('heading', { name: 'Achievements' })).toBeVisible();
+});
+
+test('verified news supports citizen reactions, comments and sharing', async ({ page, request }) => {
+  const origin = `http://127.0.0.1:${process.env.HAZARD_API_PORT || '18000'}`;
+  const email = `news-${Date.now()}@example.test`;
+  const password = 'a-long-isolated-news-password';
+  const registration = await request.post(`${origin}/api/auth/register`, { data: { name: 'News Test Citizen', email, password }, headers: { Accept: 'application/json' } });
+  expect(registration.ok()).toBe(true);
+  const citizenToken = (await registration.json()).token as string;
+  await page.goto('/');
+  const image = await page.evaluate(() => { const canvas = document.createElement('canvas'); canvas.width = 20; canvas.height = 20; const context = canvas.getContext('2d')!; context.fillStyle = '#318863'; context.fillRect(0, 0, 20, 20); return canvas.toDataURL('image/png').split(',')[1]; });
+  const reportResponse = await request.post(`${origin}/api/reports`, { headers: { Accept: 'application/json', Authorization: `Bearer ${citizenToken}` }, multipart: { category_id: 'tree', title: 'Verified news test hazard', description: 'An isolated confirmed report for browser testing.', address: 'Test Road', barangay: 'Anambongan', severity: 'high', selected_latitude: '14.5995', selected_longitude: '120.9842', location_source: 'manual', location_confirmed: '1', 'photos[0]': { name: 'news.png', mimeType: 'image/png', buffer: Buffer.from(image, 'base64') } } });
+  expect(reportResponse.status()).toBe(201);
+  const reportId = (await reportResponse.json()).data.id as string;
+  const adminLogin = await request.post(`${origin}/api/auth/login`, { data: { email: 'itsajhon@gmail.com', password: process.env.E2E_ADMIN_PASSWORD }, headers: { Accept: 'application/json' } });
+  expect(adminLogin.ok()).toBe(true);
+  const adminToken = (await adminLogin.json()).token as string;
+  for (const status of ['under_verification', 'verified']) {
+    const response = await request.patch(`${origin}/api/reports/${reportId}`, { headers: { Accept: 'application/json', Authorization: `Bearer ${adminToken}` }, data: { status, severity: 'high', department_id: 'engineering', note: 'Municipal review confirmed the reported hazard.', ...(status === 'verified' ? { public_title: 'Verified news test hazard', public_summary: 'The municipal team has confirmed a fallen tree. Please avoid the affected area.' } : {}), verified_latitude: 14.5995, verified_longitude: 120.9842 } });
+    expect(response.ok()).toBe(true);
+  }
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
+  await auth.getByLabel('Email address').fill(email);
+  await auth.getByLabel('Password').fill(password);
+  await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await page.getByRole('button', { name: 'Verified news', exact: true }).click();
+  const article = page.getByRole('article').filter({ has: page.getByRole('heading', { name: 'Verified news test hazard', exact: true }) });
+  await expect(article).toBeVisible();
+  await article.getByRole('button', { name: 'Helpful 0' }).click();
+  await expect(article.getByRole('button', { name: 'Helpful 1' })).toHaveAttribute('aria-pressed', 'true');
+  await article.getByRole('button', { name: 'Comments 0' }).click();
+  await article.getByLabel('Add a comment').fill('Thank you for confirming this hazard.');
+  await article.getByRole('button', { name: 'Post comment', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Post your comment?' }).getByRole('button', { name: 'Post comment' }).click();
+  await expect(article.locator('.comment')).toContainText('Thank you for confirming this hazard.');
+  await expect(article.getByRole('link', { name: 'Facebook' })).toHaveAttribute('href', /news%3D/);
+  await expect(article.getByRole('link', { name: 'X', exact: true })).toHaveAttribute('href', /news%3D/);
+});

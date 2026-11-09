@@ -1,0 +1,147 @@
+{
+  "date": "2026-11-04",
+  "gate": {
+    "startedAt": "2026-11-04T08:42:44.522Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Composer manifest",
+        "command": "composer --working-dir=hazard-server validate --strict",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP formatting",
+        "command": "php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Development launcher checks",
+        "command": "node --test scripts/tests/launchers.test.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Vue type checking",
+        "command": "npm run typecheck",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Frontend production build",
+        "command": "npm run build",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Single-origin web package",
+        "command": "npm run build:web",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Laravel feature tests",
+        "command": "npm test",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Browser integration tests",
+        "command": "npm run test:e2e",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Capacitor synchronization",
+        "command": "npm exec -w hazard-client -- cap sync android",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Node dependency audit",
+        "command": "npm audit --audit-level=moderate --cache .npm-cache",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP dependency audit",
+        "command": "composer --working-dir=hazard-server audit --no-interaction",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Documentation consistency",
+        "command": "node scripts/check-docs.mjs",
+        "passed": true,
+        "exitCode": 0
+      }
+    ],
+    "completedAt": "2026-11-04T08:46:16.679Z"
+  },
+  "backend": {
+    "passed": 52,
+    "assertions": 390,
+    "socialTests": 17,
+    "socialAssertions": 169
+  },
+  "browser": {
+    "passed": 28,
+    "socialCases": 8,
+    "nativeBridgeSimulated": true
+  },
+  "launcherTests": 5,
+  "lockedPlatform": "PHP 8.5.1: passed",
+  "localMigration": {
+    "applied": true,
+    "existingRecordCountsUnchanged": true,
+    "resetOrReseed": false
+  },
+  "providerCredentialsConfigured": {
+    "google": false,
+    "facebook": false
+  },
+  "npmAuditFindings": 0,
+  "standaloneClientAuditFindings": 0,
+  "composerAdvisories": 0,
+  "realProviderAccepted": false,
+  "physicalAndroidAccepted": false,
+  "hostingerDeployed": false,
+  "githubPushed": false,
+  "ownership": {
+    "checked": 61228,
+    "ownerRestored": 943,
+    "failures": 0,
+    "permissionsPreserved": true,
+    "reparsePointsSkipped": true
+  },
+  "applicationSourceSHA256": {
+    "hazard-server/app/Http/Controllers/Api/SocialAuthController.php": "2c03124fae7a1b26e3c1f35c30012cc5c55e5677ea8297c0e9619edd501cc68f",
+    "hazard-server/app/Services/SocialAccounts.php": "e819c8db10cd882c219faecfcbd4e45153be3fbfcee84853035b7afab8db2c4b",
+    "hazard-server/app/Support/SocialAuthFailure.php": "72292f3d0349870d391dc95619b1a78b78931560f5009e745af1cf085f7e4260",
+    "hazard-server/app/Models/User.php": "be5a2d9c74131eb92a0b9e6b3a86cadd98469e144ac949e3f9a61dc98204aeea",
+    "hazard-server/app/Http/Controllers/Api/AuthController.php": "b460016214599a498c18b05843a0e463f13f07f118d3e0ad054beede5346bdf0",
+    "hazard-server/app/Http/Controllers/Api/CommunityController.php": "0e5f6dbfcea5e768a887dbda54e0ba3cb9c220d0247b421a4fc5cd26e56ae32a",
+    "hazard-server/database/migrations/2026_11_04_000001_add_social_authentication.php": "8b9fa26c7ab9cb644f8b23d7537ef732d2f18cebabe695672eccf552d1d2ab4a",
+    "hazard-server/config/services.php": "f0c76c3821b69453a8386a9b8ddf02c1e828f5e8b7a862c27b89b7bea622f985",
+    "hazard-server/routes/api.php": "c1760642c0247cf07e65e93d985189e5e4449833939771b58ff4c1978605c861",
+    "hazard-server/routes/web.php": "cbedc946ffe176a3a953e807f2e24b6113f66f761e821d1397d13956db8ad709",
+    "hazard-server/routes/console.php": "4fd812094d21cc80883d74ac79db3df863865fd70122748cd79772a275b5bbe7",
+    "hazard-server/tests/Feature/SocialAuthenticationTest.php": "da5123e2cb9aa2664f7f3f90b9c4be62e8059e4811ebe3ae6bc4b65c8de43196",
+    "hazard-server/composer.lock": "58ff7fdf75088f5c78425213c08de120881cd31be34c22cc0bab694514df0872",
+    "hazard-client/src/components/AuthForm.vue": "263c48b1924448762679cc3b3220f87a29a55da762033f03c72669ec814e72f1",
+    "hazard-client/src/components/SocialLoginButtons.vue": "07f0e511155a047a9c05a1fa70a28cc34ce1bc9de4f0e8dd226d567846baece9",
+    "hazard-client/src/components/ProfilePanel.vue": "20a43b5837cf279584d319a5ed4b7680466a746584ec1021dc1fe783b7d2f399",
+    "hazard-client/src/services/socialAuth.ts": "75fe91788a70bb1b8d184d272538ac8ed8fa473950dfd880c607aeb08c63c235",
+    "hazard-client/src/services/sessionStore.ts": "d05ad4b9ea5012555f27e965139d49199a533f7f7a63e2cde320afa0cebe9a7f",
+    "hazard-client/src/services/api.ts": "0c955b976f29372114af5cccfed44bfca05d7df3931715686411c99b1e22f8be",
+    "hazard-client/src/composables/useDashboard.ts": "324cdf20ac5efa269d6da8c06bb842f6705b0d849b43f6334c7d9d7d6dd6cdb4",
+    "hazard-client/src/views/DashboardView.vue": "748bf2221d0441862000c5e4b59a1a456f2be90894d5314b447f03ae4a816e65",
+    "hazard-client/android/app/src/main/AndroidManifest.xml": "cbcd27312f770c0d8af901adfbce8eba88d0aadd129021ce8420c8623b5cce21",
+    "hazard-client/package-lock.json": "a2eaaa2c53ee375c46d367c7b0e0625c5a96e64fad513c9cff455eed90d1998b",
+    "package-lock.json": "89e308bec72797482e19ef22aa318d781d4d3cef86a60d81a80c120760181620",
+    "tests/social-auth.spec.ts": "fd6efee7563dd30ddb730fb5f1178910fdeb7cbe38779291e71fb08057e60100",
+    "tests/municipal-workflow.spec.ts": "787357f22a74b86279a4f07a9eddd4b3162dd34b55a3b9be41e1949246511813",
+    "tests/reporting.spec.ts": "dce98868fb6ec0cc66760eb2689a27fd5b656bdb483069e8cec3ed873aefe494"
+  }
+}

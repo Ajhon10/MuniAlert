@@ -1,0 +1,2 @@
+# Example for /etc/cron.d/bantay; includes the execution user.
+* * * * * www-data cd /var/www/bantay/hazard-server && /usr/bin/php artisan schedule:run >> /var/www/bantay/hazard-server/storage/logs/scheduler.log 2>&1

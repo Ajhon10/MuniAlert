@@ -1,0 +1,16 @@
+* text=auto eol=lf
+*.php text eol=lf
+*.sh text eol=lf
+*.mjs text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.vue text eol=lf
+*.css text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary
+*.wav binary
+*.mp4 binary
+*.jar binary

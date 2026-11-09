@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class HazardResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
+        // Public feeds never acquire private fields just because an admin is signed in.
+        $private = $request->routeIs('reports.mine', 'reports.admin', 'reports.show', 'reports.store', 'reports.update')
+            && $request->user() && ($request->user()->role === 'admin' || $request->user()->id === $this->user_id);
+
+        return [
+            'id' => $this->id, 'reference_number' => $this->reference_number,
+            'title' => $private ? $this->title : ($this->public_title ?: $this->category->name.' report'),
+            'description' => $private ? $this->description : ($this->public_summary ?: 'Municipal review pending. Incident details and evidence are private.'),
+            'address' => $private ? $this->address : 'Approximate area only', 'barangay' => $this->barangay, 'category' => $this->category, 'department' => $this->department,
+            'selected_latitude' => $private ? $this->selected_latitude : round($this->selected_latitude, 2),
+            'selected_longitude' => $private ? $this->selected_longitude : round($this->selected_longitude, 2),
+            'verified_latitude' => $this->verified_latitude === null ? null : ($private ? $this->verified_latitude : round($this->verified_latitude, 2)),
+            'verified_longitude' => $this->verified_longitude === null ? null : ($private ? $this->verified_longitude : round($this->verified_longitude, 2)),
+            'approximate_location' => ! $private,
+            'status' => $this->status, 'severity' => $this->severity, 'confirmations_count' => $this->confirmations_count ?? $this->confirmations()->count(),
+            'created_at' => $this->created_at, 'updated_at' => $this->updated_at, 'verified_at' => $this->verified_at, 'responded_at' => $this->responded_at, 'resolved_at' => $this->resolved_at,
+            'photos' => $private ? $this->photos->map(fn ($photo) => ['id' => $photo->id, 'url' => '/api/reports/'.$this->id.'/photos/'.$photo->id, 'photo_type' => $photo->photo_type]) : [],
+            $this->mergeWhen($private, fn () => [
+                'user_id' => $this->user_id, 'reporter' => ['name' => $this->reporter->name, 'email' => $this->reporter->email],
+                'occurred_at' => $this->occurred_at, 'injuries' => $this->injuries, 'people_affected' => $this->people_affected,
+                'public_title' => $this->public_title, 'public_summary' => $this->public_summary,
+                'gps_latitude' => $this->gps_latitude, 'gps_longitude' => $this->gps_longitude, 'gps_accuracy' => $this->gps_accuracy,
+                'location_source' => $this->location_source, 'location_difference_meters' => $this->location_difference_meters,
+                'location_review_required' => $this->location_difference_meters > config('hazards.location_review_meters') || ($this->gps_accuracy !== null && $this->gps_accuracy > 100),
+                'assigned_responder' => $this->assigned_responder,
+                'history' => $this->history->map(fn ($history) => ['id' => $history->id, 'status' => $history->status, 'note' => $history->note, 'created_at' => $history->created_at]),
+            ]),
+        ];
+    }
+}

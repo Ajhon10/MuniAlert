@@ -1,0 +1,169 @@
+{
+  "date": "2026-11-03",
+  "state": "implemented; locally verified functional flows; release gate failed; not deployed or workload accepted",
+  "php": "8.5.1",
+  "node": "v22.21.0",
+  "laravel": {
+    "passed": 19,
+    "assertions": 133,
+    "database": "SQLite :memory:"
+  },
+  "browser": {
+    "passed": 9,
+    "durationSeconds": 23.2,
+    "database": ".cache/e2e.sqlite",
+    "photos": "local public storage"
+  },
+  "runtimeSmoke": {
+    "date": "2026-11-03",
+    "origin": "http://127.0.0.1:5173",
+    "checks": [
+      {
+        "name": "live overview",
+        "metrics": [
+          "00",
+          "00",
+          "00",
+          "00Community impact"
+        ],
+        "errorBanner": 0
+      },
+      {
+        "name": "Hazard map",
+        "heading": "Community hazard map"
+      },
+      {
+        "name": "Community reports",
+        "heading": "Hazard reports"
+      },
+      {
+        "name": "Verified news",
+        "heading": "Verified community news"
+      },
+      {
+        "name": "375px mobile",
+        "fits": true
+      }
+    ],
+    "errors": [],
+    "mobileElements": [
+      {
+        "tag": "main-shell",
+        "left": 0,
+        "right": 375,
+        "width": 375,
+        "scrollWidth": 375
+      },
+      {
+        "tag": "MAIN",
+        "left": 0,
+        "right": 375,
+        "width": 375,
+        "scrollWidth": 375
+      },
+      {
+        "tag": "page-heading",
+        "left": 17,
+        "right": 358,
+        "width": 341,
+        "scrollWidth": 341
+      },
+      {
+        "tag": "DIV",
+        "left": 17,
+        "right": 328.484375,
+        "width": 311.484375,
+        "scrollWidth": 311
+      },
+      {
+        "tag": "H1",
+        "left": 17,
+        "right": 328.484375,
+        "width": 311.484375,
+        "scrollWidth": 311
+      },
+      {
+        "tag": "news-list",
+        "left": 17,
+        "right": 358,
+        "width": 341,
+        "scrollWidth": 341
+      }
+    ],
+    "passed": true
+  },
+  "releaseGate": {
+    "startedAt": "2026-11-03T02:16:22.880Z",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Composer manifest",
+        "command": "composer --working-dir=hazard-server validate --strict",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP formatting",
+        "command": "php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Vue type checking",
+        "command": "npm run typecheck",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Frontend production build",
+        "command": "npm run build",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Laravel feature tests",
+        "command": "npm test",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Browser integration tests",
+        "command": "npm run test:e2e",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Capacitor synchronization",
+        "command": "npm exec -w hazard-client -- cap sync android",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Node dependency audit",
+        "command": "npm audit --audit-level=moderate --cache .npm-cache",
+        "passed": false,
+        "exitCode": 1
+      }
+    ]
+  },
+  "separateChecks": {
+    "composerLockedPlatform": "passed",
+    "composerAudit": {
+      "passed": false,
+      "package": "symfony/mime",
+      "advisory": "PKSA-wtxr-p26d-nn42",
+      "cve": "CVE-2026-45070",
+      "severity": "medium"
+    },
+    "documentation": "passed"
+  },
+  "sourceHashes": {
+    "hazard-server/config/database.php": "ccdd0f7c4d7a1ed046aebab390cf3c9079f467364f0966b6280a5351579db1cd",
+    "hazard-client/src/services/api.ts": "64397968ac38c275c67806d6f0156858c67197ad92b94cea4a57dd2f85b0225e",
+    "hazard-client/src/composables/useDashboard.ts": "5286044eddb1711645ce9fdc34b58fb3d56e0dfdb854f88aa960011b25be9fc8",
+    "hazard-client/src/components/AdminCms.vue": "62db41c2b686d48ec5abe62996a7ffbaf413add25f6afd0b0d7a48ee53aaa248",
+    "tests/dashboard-resilience.spec.ts": "554ff7f68b00da6356b823da4098b56759fe6ca0559bb8c20f042115ebe327f5",
+    "tests/municipal-workflow.spec.ts": "c85613a10fcba1eaad2ac2bdb60d1a3f7cc794e75d4bd2c4c081217177e13be7",
+    "tests/reporting.spec.ts": "90150d31bce8dc675797a8c178449c58a99e3674e013fd9ed9a1173ff5087c9c"
+  }
+}

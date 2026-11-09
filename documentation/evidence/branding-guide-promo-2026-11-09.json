@@ -1,0 +1,445 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Asia/Manila",
+  "recordedAt": "2026-11-09T00:40:01.508Z",
+  "identity": {
+    "name": "MuniAlert",
+    "subtitle": "Emergency & Public Hazard Reporting",
+    "capstoneTitle": "Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking",
+    "description": "Report emergencies and public hazards with photos and confirmed locations. Follow municipal response updates."
+  },
+  "authorization": "User requested app rename, feature-highlighted guide, manual and Remotion promotion; explicitly confirmed MP4 plus editable preview.",
+  "appGate": {
+    "startedAt": "2026-11-09T00:36:31.405Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Composer manifest",
+        "command": "composer --working-dir=hazard-server validate --strict",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP formatting",
+        "command": "php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Development launcher checks",
+        "command": "node --test scripts/tests/launchers.test.mjs",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Vue type checking",
+        "command": "npm run typecheck",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Frontend production build",
+        "command": "npm run build",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Single-origin web package",
+        "command": "npm run build:web",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Laravel feature tests",
+        "command": "npm test",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Browser integration tests",
+        "command": "npm run test:e2e",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Capacitor synchronization",
+        "command": "npm exec -w hazard-client -- cap sync android",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Node dependency audit",
+        "command": "npm audit --audit-level=moderate --cache .npm-cache",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "PHP dependency audit",
+        "command": "composer --working-dir=hazard-server audit --no-interaction",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "Documentation consistency",
+        "command": "node scripts/check-docs.mjs",
+        "passed": true,
+        "exitCode": 0
+      }
+    ],
+    "completedAt": "2026-11-09T00:39:15.990Z"
+  },
+  "testResults": {
+    "backend": 61,
+    "backendAssertions": 487,
+    "browser": 36,
+    "launchers": 5
+  },
+  "normalRuntime": {
+    "normalRuntime": true,
+    "simulated200PercentTextAt320": true
+  },
+  "platform": {
+    "cliPhp": "8.5.1",
+    "lockedComposerPlatformRequirements": "passed",
+    "webServerAndRemoteHosts": "separate configuration and acceptance"
+  },
+  "video": {
+    "lintAndTypecheck": "passed",
+    "npmAuditFindings": 0,
+    "remotionVersion": "4.0.541",
+    "exports": {
+      "passed": true,
+      "checkedAt": "2026-11-09T00:32:12.469Z",
+      "outputs": [
+        {
+          "name": "MuniAlert-portrait.mp4",
+          "width": 1080,
+          "height": 1920,
+          "fps": "30/1",
+          "frames": "1800",
+          "seconds": 60.011,
+          "video_codec": "h264",
+          "pixel_format": "yuvj420p",
+          "audio_codec": "aac",
+          "audio_channels": 2,
+          "audio_peak_db": -2.68,
+          "audio_mean_db": -21.68,
+          "bytes": 22079811,
+          "sha256": "13dee0c4e82b58eef9c5235506d71e261aa624cb4049788ec6c613295b69185e"
+        },
+        {
+          "name": "MuniAlert-landscape.mp4",
+          "width": 1920,
+          "height": 1080,
+          "fps": "30/1",
+          "frames": "1800",
+          "seconds": 60.011,
+          "video_codec": "h264",
+          "pixel_format": "yuvj420p",
+          "audio_codec": "aac",
+          "audio_channels": 2,
+          "audio_peak_db": -2.68,
+          "audio_mean_db": -21.68,
+          "bytes": 16656841,
+          "sha256": "fc6043c97a31ee0eecd450b5c9b0fafc10b6340160ed31fbecc322ca60db8338"
+        }
+      ],
+      "narrationTiming": [
+        {
+          "file": "01-intro.wav",
+          "seconds": 5.513,
+          "scene_seconds": 7,
+          "starts_at_scene_second": 0.6
+        },
+        {
+          "file": "02-reporting.wav",
+          "seconds": 8.738,
+          "scene_seconds": 11,
+          "starts_at_scene_second": 0.6
+        },
+        {
+          "file": "03-privacy.wav",
+          "seconds": 7.078,
+          "scene_seconds": 8,
+          "starts_at_scene_second": 0.6
+        },
+        {
+          "file": "04-tracking.wav",
+          "seconds": 8.648,
+          "scene_seconds": 11,
+          "starts_at_scene_second": 0.6
+        },
+        {
+          "file": "05-records.wav",
+          "seconds": 7.428,
+          "scene_seconds": 9,
+          "starts_at_scene_second": 0.6
+        },
+        {
+          "file": "06-guide.wav",
+          "seconds": 8.803,
+          "scene_seconds": 10,
+          "starts_at_scene_second": 0.6
+        },
+        {
+          "file": "07-closing.wav",
+          "seconds": 5.249,
+          "scene_seconds": 7,
+          "starts_at_scene_second": 0.6
+        }
+      ],
+      "notes": [
+        "All seven scene samples reviewed in portrait and landscape.",
+        "Screens use synthetic fixtures and block API writes.",
+        "No signed Android, deployment or cloud-service acceptance implied."
+      ]
+    },
+    "preview": {
+      "checkedAt": "2026-11-09T00:29:18.790Z",
+      "results": [
+        {
+          "id": "MuniAlertPortrait",
+          "loaded": true,
+          "title": "MuniAlertPortrait / promo-video - Remotion Studio",
+          "errors": []
+        },
+        {
+          "id": "MuniAlertLandscape",
+          "loaded": true,
+          "title": "MuniAlertLandscape / promo-video - Remotion Studio",
+          "errors": []
+        },
+        {
+          "id": "Guide",
+          "loaded": true,
+          "title": "Guide / promo-video - Remotion Studio",
+          "errors": []
+        }
+      ]
+    },
+    "playback": {
+      "checkedAt": "2026-11-09T00:31:44.662Z",
+      "results": [
+        {
+          "name": "MuniAlert-portrait.mp4",
+          "width": 1080,
+          "height": 1920,
+          "duration": 60.011,
+          "playbackTime": 0.519764,
+          "error": null,
+          "seekToClosingScene": true
+        },
+        {
+          "name": "MuniAlert-landscape.mp4",
+          "width": 1920,
+          "height": 1080,
+          "duration": 60.011,
+          "playbackTime": 0.521567,
+          "error": null,
+          "seekToClosingScene": true
+        }
+      ]
+    },
+    "syntheticAssetManifest": "promo-video/public/screens/manifest.json"
+  },
+  "whitespace": {
+    "client": "git diff --check passed",
+    "server": "git diff --check passed"
+  },
+  "ownership": {
+    "exitCode": 0,
+    "wildcardSafeDirectoryAdded": false,
+    "owner": "DESKTOP-K1K3K5F\\Lenovo",
+    "samples": [
+      {
+        "path": ".",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-client",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-client/.git",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-server",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-server/.git",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-client/src/components/UserGuide.vue",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-client/src/components/FeatureTour.vue",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-client/src/config/identity.json",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "hazard-server/config/session.php",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "promo-video",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "promo-video/src/Root.tsx",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "promo-video/out/MuniAlert-portrait.mp4",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      },
+      {
+        "path": "documentation/MUNIALERT-CITIZEN-MANUAL.pdf",
+        "owner": "DESKTOP-K1K3K5F\\Lenovo",
+        "accessPermissionsPreserved": true
+      }
+    ],
+    "summary": "Successfully processed 76868 files; Failed processing 0 files",
+    "target": "C:\\Users\\Lenovo\\Desktop\\PROJECTS\\PERSONAL\\BANTAY",
+    "checkedAt": "2026-11-09T00:40:01.3677477Z"
+  },
+  "fingerprints": [
+    {
+      "file": "hazard-client/src/config/identity.json",
+      "bytes": 334,
+      "sha256": "1cf510e4cce907bcf57de06b1ebebe7184f807d16b63e6331c7d651f78726f23"
+    },
+    {
+      "file": "hazard-client/src/components/UserGuide.vue",
+      "bytes": 6388,
+      "sha256": "0f75aac37d407bad6926e3a5151a45577e558a23f79138fb91a2943231625940"
+    },
+    {
+      "file": "hazard-client/src/components/FeatureTour.vue",
+      "bytes": 5523,
+      "sha256": "e84e3d4c94ef7a2978d4bfb6095371eb79204e087b5db174f8c86c33d7187a9c"
+    },
+    {
+      "file": "hazard-client/src/data/help.ts",
+      "bytes": 13731,
+      "sha256": "c98cba562256871519aa3a26cacb0abd834fba070027573c0aeb9ef662f69354"
+    },
+    {
+      "file": "hazard-client/src/assets/guide.css",
+      "bytes": 8513,
+      "sha256": "f4493760374e408ffc76e43fbfa85cf799ac73967b5e4e04a1f1f84a20833c34"
+    },
+    {
+      "file": "hazard-client/src/views/DashboardView.vue",
+      "bytes": 20494,
+      "sha256": "bf3169b33dff4a899dcec17b7234f7a6d0497020b00c076100bc29f1c7e87dde"
+    },
+    {
+      "file": "hazard-client/src/composables/useDashboard.ts",
+      "bytes": 14914,
+      "sha256": "7a122734ff7e1a61711b7c2cce5c6047b545072edf95b212e431b528f55005f5"
+    },
+    {
+      "file": "hazard-client/src/components/IncidentAnalytics.vue",
+      "bytes": 4200,
+      "sha256": "d803ace3cde7f6cc786c6522dee5a7ef4cfb9ddb458397ee8d3be80b55dae1a3"
+    },
+    {
+      "file": "hazard-client/capacitor.config.ts",
+      "bytes": 304,
+      "sha256": "557e7b58332412912036ce700c843edc361d2543a3697cbc25d8f3268d2220a6"
+    },
+    {
+      "file": "hazard-client/android/app/src/main/res/values/strings.xml",
+      "bytes": 296,
+      "sha256": "7ab5d82b17625aaa7f8de4111d50c4b310ca3c800d2468a9f0673e363ddfd153"
+    },
+    {
+      "file": "hazard-server/config/session.php",
+      "bytes": 7853,
+      "sha256": "1e0a4fc0fe72843304a77d660a73f70bff2c5cfdc4b821df05d67b77a49140cd"
+    },
+    {
+      "file": "hazard-server/config/app.php",
+      "bytes": 4265,
+      "sha256": "c84a92b9469e0bb16aa7abd786832690f136d4d6acee0dba23385d0cddfecb4d"
+    },
+    {
+      "file": "hazard-server/app/Http/Controllers/Api/SocialAuthController.php",
+      "bytes": 12358,
+      "sha256": "e4a5997ef870522a507114904688795a2f37176c89e8ead0f17ad103e5ffddca"
+    },
+    {
+      "file": "tests/guide.spec.ts",
+      "bytes": 6655,
+      "sha256": "4b1078595fb26e736fc75ea6d2412ab0a80ef5a0d3d31ad2961fc4463c738ba2"
+    },
+    {
+      "file": "promo-video/package-lock.json",
+      "bytes": 192622,
+      "sha256": "c17b1516157c3ad26a3142f299da660f4e5b6ab7470089f1dcb415622a3c22a0"
+    },
+    {
+      "file": "promo-video/src/Root.tsx",
+      "bytes": 2828,
+      "sha256": "7ef31335ce00e2153a00745757697951e0f40f0305b6042ea39c1d43ba4a9976"
+    },
+    {
+      "file": "promo-video/src/Promo.tsx",
+      "bytes": 3569,
+      "sha256": "c222b9b306c2630d66f8868177bfe97cd759371fa479f463f8573072944c9535"
+    },
+    {
+      "file": "documentation/MUNIALERT-CITIZEN-MANUAL.pdf",
+      "bytes": 117861,
+      "sha256": "08898fe2714f200d25fb2b96416fd20ebf51005e59ae5e36e6713f9cc3322a57"
+    },
+    {
+      "file": "documentation/MUNIALERT-ADMIN-MANUAL.pdf",
+      "bytes": 223557,
+      "sha256": "60cc98b57d9e456a17710457faf8dddc27c3b24226447c97fc8241a576bf3a4b"
+    },
+    {
+      "file": "documentation/CAPSTONE-TECHNICAL-DOCUMENTATION.pdf",
+      "bytes": 1350510,
+      "sha256": "e70a6b20b5bf2081cb074a868ae560f7cd0c5c6c039e928a2fd36c7a71747c77"
+    },
+    {
+      "file": "documentation/evidence/munialert-guide-390-2026-11-09.png",
+      "bytes": 422456,
+      "sha256": "db7211b55dd8838ca4b7c9baae5d7a34317cdd8bfe676e929c0c88350401beb6"
+    },
+    {
+      "file": "documentation/evidence/munialert-guide-200pct-320-2026-11-09.png",
+      "bytes": 1004731,
+      "sha256": "5efb7ca4f91197e85520f6a806cf4100040edd50399181825864c6a675fe9268"
+    }
+  ],
+  "boundaries": {
+    "physicalAndroid": "not accepted",
+    "signedApk": "not built",
+    "liveCloudAndHostinger": "not accepted",
+    "municipalUat": "not conducted",
+    "deployed": false,
+    "pushed": false,
+    "videoPublished": false
+  }
+}
