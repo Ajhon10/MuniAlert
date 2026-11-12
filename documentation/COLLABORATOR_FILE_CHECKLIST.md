@@ -2,7 +2,7 @@
 
 Checked 9 November 2026 against the private repository and local configuration presence. No secret values were included in this audit.
 
-**For a fresh local website plus Android-Chrome test, send the private repository invitation/link and [quickstart](COLLABORATOR_QUICKSTART.md). No additional private owner file is required.** The teammate installs dependencies, creates configuration from examples, uses their own MySQL account/database, generates their own app key and creates their own test accounts.
+**For a fresh local website plus Android-Chrome test, send the public repository link (visibility confirmed on 12 November 2026) and [quickstart](COLLABORATOR_QUICKSTART.md). No additional private owner file is required.** The teammate installs dependencies, creates configuration from examples, uses their own MySQL account/database, generates their own app key and creates their own test accounts.
 
 ## Included versus intentionally excluded
 

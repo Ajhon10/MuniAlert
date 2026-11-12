@@ -6,7 +6,7 @@ Application name: **MuniAlert**. Baseline: 2026-10-02. Institution, proponents a
 
 This appendix documents the implementation and testing evidence. It does not invent field research, cloud deployment or evaluation findings.
 
-<!-- Source SHA256: 6ce5aae47cec6794d83dcc87bac4c085a3dff0718ec718a8336bb0c95907a860 -->
+<!-- Source SHA256: a53bb314f03c67c98ef93f38b7bd061845b394c676c0bfb6dbc8c1926328dcbf -->
 
 # 01 — Project overview and requirements
 
@@ -133,6 +133,8 @@ Photos remain on BANTAY; an optional loopback-only local classifier produces adv
 # 02 — System architecture and source structure
 
 ## Accepted technology baseline
+
+On 12 November 2026, the user confirmed that Ajhon10/MuniAlert should remain a **public source repository** and authorized pushing the current changes. This supersedes the earlier private-source preference described below. Public source access does not publish environment files, incident records, private evidence or credentials and does not deploy the application.
 
 The user selected one private `Ajhon10/MuniAlert` GitHub workspace repository on 9 November 2026 for team testing. The Vue client and Laravel server remain separate applications in `hazard-client/` and `hazard-server/`; shared tests, capstone documentation and deployment examples live at the root. Earlier local Git histories are preserved in ignored backups. This repository consolidation does not change the accepted stack or hosting architecture. Web releases package Vue inside Laravel’s public directory for one-origin Hostinger deployment. The confirmed deployment target is Hostinger Web/Cloud hosting, with Android plus responsive web as clients. See [the selected hosting guide](HOSTINGER_WEB_CLOUD.md), [stack review](STACK_AND_HOSTINGER.md) and [team setup](TEAM_TESTING.md).
 

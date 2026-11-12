@@ -69,7 +69,7 @@ The separate client/server commands in the table also reuse their existing match
 
 For development accounts, follow the [server's local demo seeder instructions](hazard-server/README.md#local-demo-accounts). For an installable Android app, follow the [client's Android setup](hazard-client/README.md#dedicated-android-app).
 
-The [capstone documentation](documentation/README.md), [task tracker](TASKS.md), [deployment examples](deployment/), and cross-application browser tests live at the workspace root. Local environment files, incident evidence, dependencies and generated builds are excluded from publication. The earlier app Git histories remain as local backups, while members use the single private workspace repository.
+The [capstone documentation](documentation/README.md), [task tracker](TASKS.md), [deployment examples](deployment/), and cross-application browser tests live at the workspace root. Local environment files, incident evidence, dependencies and generated builds are excluded from publication. The earlier app Git histories remain as local backups, while members use the single public workspace repository, as explicitly confirmed on 12 November 2026.
 
 ## Web and mobile stack / Hostinger
 

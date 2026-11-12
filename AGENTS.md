@@ -17,6 +17,8 @@ Read `MEMORY.md`, `TASKS.md`, and `documentation/02-system-architecture.md` befo
 
 The user selected one private `Ajhon10/MuniAlert` workspace repository on 9 November 2026. Keep `hazard-client/` and `hazard-server/` as separate applications inside it. The root `.githooks/pre-push` and root CI verify the full workspace, including isolated browser tests and promotional source. Legacy application Git histories are preserved locally in the ignored `.cache/git-history-backups/`. Do not reintroduce embedded repositories. The user has explicitly authorized this initial private publication; collaborator access remains for the owner to configure. Future pushes still require authorization and fresh passing checks.
 
+On 12 November 2026, the user explicitly confirmed **keep the repository public and push** after its live GitHub visibility was checked. This supersedes the earlier private-repository preference. Preserve public visibility unless the user requests a change. Environment files, keys, private records and runtime data remain excluded; all pushes still require the exact-state verification gate.
+
 ## Development conventions
 
 - API controllers: `hazard-server/app/Http/Controllers/Api`. Validation: `Http/Requests`; serialization/privacy: `Http/Resources`; integrations: `Services`; asynchronous FCM: `Jobs`; business rules: `Support`.

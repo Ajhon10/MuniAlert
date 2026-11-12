@@ -1,6 +1,6 @@
 # Private GitHub workspace and team testing
 
-The private repository is [Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert). The owner will configure collaborator access. One clone contains `hazard-client`, `hazard-server`, shared tests/documentation and the separate Remotion authoring project. No submodule permissions or additional repositories are needed.
+The public source repository is [Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert). Reading and cloning need no invitation; the owner configures collaborator write access separately. Public visibility was explicitly confirmed on 12 November 2026. One clone contains `hazard-client`, `hazard-server`, shared tests/documentation and the separate Remotion authoring project. No submodule permissions or additional repositories are needed.
 
 For a first download, use [the complete collaborator quickstart](COLLABORATOR_QUICKSTART.md). [The file checklist](COLLABORATOR_FILE_CHECKLIST.md) explains what is included, what gets generated locally and what the owner must provide for shared/native testing. A basic independent local test needs no private file from the owner. A ZIP can run the app after extraction, but developers should clone for Git updates/hooks/full verification.
 
@@ -49,7 +49,7 @@ Leave the client API origin blank for this website/USB route. Keep the PC servic
 
 Follow [the Android development guide](ANDROID_TESTING.md). The recommended first test is Chrome over USB port forwarding, using the phone's `http://localhost:5173`. It exercises the phone's browser and GPS permission flow without an APK. The installed Capacitor build is a separate test for native camera, secure storage and push.
 
-A private GitHub repository gives access to source code. It does **not** run Laravel/MySQL or make a PC's localhost reachable to remote members. Each member can run their own development copy; a shared remote phone test requires a separately configured HTTPS staging backend. No staging deployment has been performed by creating this repository.
+The public GitHub repository gives access to source code. It does **not** run Laravel/MySQL or make a PC's localhost reachable to remote members. Each member can run their own development copy; a shared remote phone test requires a separately configured HTTPS staging backend. No staging deployment has been performed by creating this repository.
 
 ## Work safely together
 

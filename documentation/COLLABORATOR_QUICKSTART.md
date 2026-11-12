@@ -15,7 +15,7 @@ Downloading a ZIP onto a phone does not run Node, Laravel or MySQL. GitHub store
 
 ## 1. Get access and the source
 
-The owner adds your GitHub account to [Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert). Accept the invitation and sign in. A private-repository 404 can mean you do not have access yet.
+The source repository [Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert) is public, as confirmed by the owner on 12 November 2026. Clone/download it without an invitation. The owner grants collaborator write access separately.
 
 Recommended for developers:
 

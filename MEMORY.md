@@ -1,5 +1,9 @@
 # Persistent project memory
 
+## Public source repository confirmed — 12 November 2026
+
+The user requested pushing the current BANTAY changes and explicitly selected keeping Ajhon10/MuniAlert public after live GitHub metadata showed public visibility. This replaces the earlier private-source preference; do not ask the same visibility question again unless the user changes it. Source publication does not deploy the app or configure external services. Keep environment files, credentials, incident records, database/runtime files and dependencies out of Git. The existing clean-state pre-push hook must verify the exact committed state before every push.
+
 ## Emergency-first workflow, actionable alerts and local image review — 11 November 2026
 
 The user removed notification sidebar/page navigation in favor of a bell/mobile Updates dialog whose items open authorized own/admin report details and mark only that item. Reporting now asks about immediate assistance before auth/form entry; Yes opens searchable approved agency contacts and optional coordinate-distance sorting, while online reporting remains possible without a call. Assistance is private and reporter-declared. New committed reports notify active admins transactionally; account-scoped per-category sounds require a gesture and active app, with initial-inbox baselines and bounded seen history. Responder contact/minimal brief tools remain available before image/factual review. The DEOS-style highlighted guide is a bottom-right floating launcher; manual/reading remain in Settings.
