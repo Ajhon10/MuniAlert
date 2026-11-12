@@ -1,5 +1,11 @@
 # 05 — Testing and validation
 
+## Cross-platform enlarged-text CI repair — 12 November 2026
+
+GitHub's Ubuntu workspace verification completed migrations and seeders, then failed two of 77 Chromium cases at 200% text size. Windows' default Segoe UI had concealed the fallback-font differences. Forcing Arial/sans-serif locally reproduced a 379-pixel document in a 375-pixel viewport (the manual heading) and a 71-pixel Updates label inside a 67-pixel dock button. The guide now wraps long words, and dock buttons distribute space according to their labels with a 44-pixel minimum and wrapping on narrower screens.
+
+The existing manual/form and floating-guide tests now exercise both platform and Arial/sans-serif fonts at 320/375-pixel widths. They preserve the document-overflow and label-fit assertions, enlarged landscape-form usability, guide clearance and keyboard-focus restoration. Supplemental rendered checks cover 320/375/768-pixel widths with bold text and extra reading spacing. No overflow clipping, test skips, relaxed tolerances, schema changes or workflow bypasses are used. The mandatory exact-state nineteen-check pre-push gate and GitHub's subsequent Linux run provide release verification; this workflow does not deploy to Hostinger.
+
 ## Single validation toasts and password visibility — 11 November 2026
 
 The client refinement checks one visible/persistent sign-in error, retry/dismissal behavior, native validation cancellation, first-field focus, accessible field links/cleanup, all eight password fields, value/autocomplete preservation, no submission from visibility buttons, registration-mode reset and 200% phone reflow. Existing MFA, location-denial and session checks retain their assertions while looking for the sole toast. Database inspection uses read-only metadata/count queries on localhost and reports no cleanup action. Final results and inventory are in [the refinement](TOAST_PASSWORD_SCHEMAS_2026-11-11.md) and its evidence. Earlier dated results below are historical.

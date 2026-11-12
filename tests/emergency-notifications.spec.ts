@@ -108,8 +108,18 @@ test('floating guide stays above the phone dock and returns keyboard focus after
   const help = page.getByRole('button', { name: 'Start guided tour', exact: true });
   await expect(help).toBeVisible(); const box = (await help.boundingBox())!; const dock = (await page.locator('.mobile-dock').boundingBox())!;
   expect(box.height).toBeGreaterThanOrEqual(48); expect(box.width).toBeGreaterThanOrEqual(48); expect(box.y + box.height).toBeLessThanOrEqual(dock.y - 8);
-  for (const button of await page.locator('.mobile-dock > button').all()) {
-    expect(await button.evaluate(element => { const label = element.querySelector('span:last-child'); if (!label) return true; const range = document.createRange(); range.selectNodeContents(label); return range.getBoundingClientRect().width <= element.getBoundingClientRect().width + .5; })).toBe(true);
+  for (const font of ['platform', 'Arial, sans-serif']) {
+    const override = font === 'platform' ? null : await page.addStyleTag({ content: `:root { --font-system: ${font}; }` });
+    await test.step(`Phone navigation labels fit with ${font} fonts at 200%`, async () => {
+      for (const width of [320, 375]) {
+        await page.setViewportSize({ width, height: 900 });
+        for (const button of await page.locator('.mobile-dock > button').all()) {
+          expect((await button.boundingBox())!.width).toBeGreaterThanOrEqual(44);
+          expect(await button.evaluate(element => { const label = element.querySelector('span:last-child'); if (!label) return true; const range = document.createRange(); range.selectNodeContents(label); return range.getBoundingClientRect().width <= element.getBoundingClientRect().width + .5; })).toBe(true);
+        }
+      }
+    });
+    await override?.evaluate(element => element.remove());
   }
   await page.screenshot({ path: 'test-results/floating-guide-phone-200.png', animations: 'disabled' });
   await help.click(); const tour = page.getByRole('dialog', { name: 'Feature tour', exact: true }); await expect(tour).toBeVisible();

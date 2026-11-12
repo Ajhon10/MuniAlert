@@ -1,5 +1,13 @@
 # Phased task tracker
 
+## GitHub enlarged-text layout repair — 12 November 2026
+
+- [x] Reproduce both Ubuntu CI failures locally with the Arial/sans-serif fallback: the guide heading causes horizontal overflow and the Updates label exceeds its equal-width dock button at 200% text size.
+- [x] Wrap guide content and size dock buttons by their labels, retaining at least 44-pixel touch targets and the existing floating-guide clearance.
+- [x] Extend both existing regressions to platform/fallback fonts and 320/375-pixel widths, preserving overflow, label-fit, landscape-form and tour-focus assertions.
+
+The exact-state nineteen-check gate and subsequent GitHub run remain the publication evidence; see [testing notes](documentation/05-testing-and-validation.md). The failing workflow verifies the workspace and does not deploy the application.
+
 ## Emergency-first reports, actionable notifications and image review — 11 November 2026
 
 - [x] Replace notification sidebar/page with a bell/mobile dialog, owned single read and authorized destination/report opening.

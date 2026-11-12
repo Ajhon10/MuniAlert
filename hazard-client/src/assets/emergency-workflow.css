@@ -9,6 +9,7 @@ body > .toast-stack { bottom: calc(94px + env(safe-area-inset-bottom)); }
 @media print { .floating-tour-button { display: none; } }
 @media (max-width: 1023px) {
   #main-content { padding-bottom: calc(204px + env(safe-area-inset-bottom)); }
-  .mobile-dock > button { min-width: 0; }
-  .mobile-dock > button > span:last-child { font-size: min(.75rem, 18px); line-height: 1.25; }
+  .mobile-dock { display: flex; }
+  .mobile-dock > button { flex: 1 1 auto; min-width: 44px; padding-inline: 0; }
+  .mobile-dock > button > span:last-child { max-width: 100%; overflow-wrap: anywhere; text-align: center; font-size: min(.75rem, 18px); line-height: 1.25; }
 }

@@ -6,7 +6,7 @@ Application name: **MuniAlert**. Baseline: 2026-10-02. Institution, proponents a
 
 This appendix documents the implementation and testing evidence. It does not invent field research, cloud deployment or evaluation findings.
 
-<!-- Source SHA256: a53bb314f03c67c98ef93f38b7bd061845b394c676c0bfb6dbc8c1926328dcbf -->
+<!-- Source SHA256: 08999c9d0e553163a56f40d7a016ca9d9a1c75ac445ad4e23dc33371ab0907d9 -->
 
 # 01 — Project overview and requirements
 
@@ -802,6 +802,12 @@ Hotline settings additionally accept optional service police/fire/medical/rescue
 ---
 
 # 05 — Testing and validation
+
+## Cross-platform enlarged-text CI repair — 12 November 2026
+
+GitHub's Ubuntu workspace verification completed migrations and seeders, then failed two of 77 Chromium cases at 200% text size. Windows' default Segoe UI had concealed the fallback-font differences. Forcing Arial/sans-serif locally reproduced a 379-pixel document in a 375-pixel viewport (the manual heading) and a 71-pixel Updates label inside a 67-pixel dock button. The guide now wraps long words, and dock buttons distribute space according to their labels with a 44-pixel minimum and wrapping on narrower screens.
+
+The existing manual/form and floating-guide tests now exercise both platform and Arial/sans-serif fonts at 320/375-pixel widths. They preserve the document-overflow and label-fit assertions, enlarged landscape-form usability, guide clearance and keyboard-focus restoration. Supplemental rendered checks cover 320/375/768-pixel widths with bold text and extra reading spacing. No overflow clipping, test skips, relaxed tolerances, schema changes or workflow bypasses are used. The mandatory exact-state nineteen-check pre-push gate and GitHub's subsequent Linux run provide release verification; this workflow does not deploy to Hostinger.
 
 ## Single validation toasts and password visibility — 11 November 2026
 

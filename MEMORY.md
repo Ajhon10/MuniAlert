@@ -1,5 +1,9 @@
 # Persistent project memory
 
+## Cross-platform enlarged-text layout — 12 November 2026
+
+The first public-source Ubuntu verification failed two of 77 browser tests although Windows passed. Explicit Arial/sans-serif reproduced both: at 200%, the manual heading extended the 375-pixel document to 379 pixels and Updates measured 71 pixels inside a 67-pixel dock button. Guide content now wraps long words; dock buttons share space according to label width with a 44-pixel minimum and wrapping when necessary. Both existing tests now cover platform/fallback fonts at 320/375 pixels without relaxing their assertions. Preserve this font coverage when changing mobile navigation or manual typography. Workflow verification is separate from Hostinger deployment.
+
 ## Public source repository confirmed — 12 November 2026
 
 Windows pushes run the full gate through Git Bash. The pinned secret scanner explicitly selects Windows' System32/tar.exe for ZIP listing/extraction; Git Bash's GNU tar misreads drive-letter paths as remote archives. Temporary scanner/negative-fixture cleanup uses bounded retries for transient Windows file locks, without suppressing a persistent failure or exempting real secrets.

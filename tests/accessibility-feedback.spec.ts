@@ -208,7 +208,17 @@ test('large-text manual, navigation and landscape forms keep controls reachable'
   await page.addInitScript(() => localStorage.setItem('munialert-reading-v1', JSON.stringify({ textSize: 200, reduceMotion: true })));
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/?demo=1&view=guide');
-  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect(page.locator('.guide-hero')).toBeVisible();
+  for (const font of ['platform', 'Arial, sans-serif']) {
+    const override = font === 'platform' ? null : await page.addStyleTag({ content: `:root { --font-system: ${font}; }` });
+    await test.step(`Guide reflows with ${font} fonts at 200%`, async () => {
+      for (const width of [320, 375]) {
+        await page.setViewportSize({ width, height: 812 });
+        await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      }
+    });
+    await override?.evaluate(element => element.remove());
+  }
   await openReading(page);
   const panel = page.getByRole('dialog', { name: 'Reading & accessibility', exact: true });
   await expect(panel).toBeVisible();

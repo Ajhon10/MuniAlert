@@ -1,7 +1,7 @@
 .brand > div:last-child { min-width: 0; }
 .brand strong { font-size: 1.75rem; letter-spacing: -1.2px; }
 .brand small { max-width: 170px; font-size: 0.625rem; line-height: 1.5; letter-spacing: .2px; white-space: normal; }
-.user-guide { max-width: 1120px; margin-inline: auto; }
+.user-guide { max-width: 1120px; margin-inline: auto; overflow-wrap: anywhere; }
 .guide-hero { padding: clamp(24px, 4vw, 48px); border: 1px solid #bdd4c8; border-radius: 24px; background: linear-gradient(135deg, #e6f4eb, #f5faf8 65%, #edf3fb); }
 .guide-kicker { display: flex; align-items: center; gap: 10px; font-size: 0.9375rem; font-weight: 650; color: #23614d; }
 .guide-hero h2 { margin-block: 20px 16px; font-size: clamp(1.875rem, 3.5vw, 2.875rem); line-height: 1.2; letter-spacing: -1.2px; color: #213b35; }
