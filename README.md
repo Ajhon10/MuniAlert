@@ -1,5 +1,9 @@
 # MuniAlert — Municipal Hazard Reporting
 
+[Emergency-first reports, actionable notifications, hazard sounds and private image review](documentation/EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md) records the current workflow; real contacts and a local classifier need configuration.
+
+[Settings, saved reading preferences, authenticator 2FA and Gmail readiness](documentation/SETTINGS_2FA_EMAIL_2026-11-11.md) records the current refinement; real delivery needs BANTAY's separate app password.
+
 Private team repository: **[Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert)**. One clone contains both apps, shared tests, documentation and Remotion source.
 
 **New collaborator? Start with [the complete download/setup guide](documentation/COLLABORATOR_QUICKSTART.md).** For a new local website and Android-Chrome test, you do not need the owner's private `.env`, app key, database dump or installed dependency folders. Use the included examples and create your own development database/accounts. [Included/missing-file checklist and what the owner should send](documentation/COLLABORATOR_FILE_CHECKLIST.md).
@@ -51,6 +55,8 @@ node scripts/php.mjs hazard-server/artisan hazard:admin admin@example.test
 
 Choose the administrator name/password when prompted. Create a separate citizen account through the app. Fresh installations have no owner accounts or incident records. Do not regenerate an existing app key or reset an existing database when updating.
 
+For optional local **administrator + citizen test accounts**, follow [Test accounts and the explicit seeder](documentation/TEST_ACCOUNTS.md). Choose three private passwords in your own server `.env`, then run `npm.cmd run db:seed:accounts`. Normal seeding never creates shared logins. See [the phased security work](documentation/SECURITY_IMPLEMENTATION_PLAN.md) for implemented protections and remaining release requirements.
+
 From the repository root, start both services and keep the terminal running:
 
 ```sh
@@ -84,3 +90,15 @@ The managing office is **Basista Municipal Hall, Pangasinan**, covering the 13 b
 
 
 For false or abusive reports, follow [the municipal review guide](documentation/FRAUD_PREVENTION.md). Current controls support human verification; verified contact enrollment and automated fraud detection are not implemented.
+
+## Continued security phases
+
+Administrator MFA and fresh verification, versioned/revoked credentials, verified-local-email recovery, production CSP, optional fail-closed scanning and private security events are implemented. See [the activation guide](documentation/SECURITY_OPERATIONS_2026-11-10.md) before migrating an operational system: existing password-only administrator sessions are rejected and enrollment needs operator approval. Email/scanning remain unconfigured until approved services are supplied. The expanded exact-state gate includes PHP static analysis, TypeScript and pinned/redacted source secret scanning. No push/deployment is implied.
+
+## Community review and achievements
+
+Members see accepted hazards and explicitly published community news; own submissions stay in My reports. Administrators record factual review before acceptance and publish a separate reviewed post. Profiles include ten category tracks at 1/5/15 accepted own reports. See [the implementation and local evidence](documentation/COMMUNITY_REVIEW_ACHIEVEMENTS_2026-11-10.md).
+
+## Latest community navigation refinement
+
+Verified hazards is removed from the community menu; use Hazard map for accepted incidents, Verified news for shareable reviewed updates and My reports for every own undeleted submission/status. News includes reviewed incident details and optional submitter display-name credit. See [implementation and local evidence](documentation/COMMUNITY_NAVIGATION_NEWS_DETAILS_2026-11-10.md).

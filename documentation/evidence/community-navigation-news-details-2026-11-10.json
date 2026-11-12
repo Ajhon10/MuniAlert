@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-10",
+  "state": "local uncommitted refinement",
+  "implemented": ["distinct community navigation", "all-status private own submissions", "reviewed news detail and optional display-name snapshots", "legacy community report links open map", "shared preview/feed incident detail"],
+  "focusedBackend": { "passed": true, "tests": 7, "assertions": 169 },
+  "focusedMySql": { "passed": true, "tests": 33, "assertions": 411, "isolatedSchema": "municipal_hazards_test" },
+  "focusedBrowser": { "passed": true, "tests": 4 },
+  "screenshot": "verified-news-details-2026-11-10.png",
+  "localActivation": { "additiveMigrationApplied": true, "countsPreserved": true, "users": 4, "reports": 0, "legacyNamesAutomaticallyPublished": false },
+  "finalGate": { "passed": true, "checks": 19, "backendTests": 110, "backendAssertions": 994, "browserTests": 69, "phpStanErrors": 0, "nodeDependencyFindings": 0, "phpDependencyAdvisories": 0, "report": "community-navigation-news-gate-final-2026-11-10.json" },
+  "manualExportsUpdated": true,
+  "androidAssetSync": { "passed": true, "physicalPhoneVerified": false },
+  "ownership": { "restoredToLenovo": true, "scopes": 49, "accessControlSamplesPreserved": 19, "wildcardSafeDirectoryAdded": false },
+  "deployed": false,
+  "realIncidentOrIdentityPublished": false,
+  "externalSocialMessageSent": false,
+  "physicalAndroidAccepted": false
+}

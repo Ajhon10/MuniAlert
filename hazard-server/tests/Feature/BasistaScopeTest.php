@@ -20,7 +20,7 @@ class BasistaScopeTest extends TestCase
     public function test_new_reports_accept_basista_names_and_reject_another_municipality_barangay(): void
     {
         $this->seed();
-        $this->actingAs(User::factory()->create());
+        $this->authenticateUser(User::factory()->create());
         $this->postJson('/api/reports', $this->payload('Anambongan'))->assertCreated()->assertJsonPath('data.barangay', 'Anambongan');
         $this->postJson('/api/reports', $this->payload('San Antonio'))->assertUnprocessable()->assertJsonValidationErrors('barangay');
         $this->assertDatabaseCount('hazard_reports', 1);
@@ -29,7 +29,7 @@ class BasistaScopeTest extends TestCase
     public function test_ascii_and_case_variants_are_normalized_to_the_user_approved_name(): void
     {
         $this->seed();
-        $this->actingAs(User::factory()->create());
+        $this->authenticateUser(User::factory()->create());
         $this->postJson('/api/reports', $this->payload(' osmena sr. '))->assertCreated()->assertJsonPath('data.barangay', 'Osmeña Sr.');
     }
 

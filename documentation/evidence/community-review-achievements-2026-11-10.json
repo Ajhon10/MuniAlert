@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-10",
+  "state": "local uncommitted implementation",
+  "implemented": ["verified-only community discovery", "private own submissions", "explicit administrator fact-check", "separate reviewed news publication", "public share pages", "per-category achievements", "private-cache clearing on authority changes"],
+  "focusedBackend": { "passed": true, "tests": 5, "assertions": 103 },
+  "focusedBrowser": { "passed": true, "tests": 9, "includes": ["admin/member publication flow", "category progress and 200 percent reflow", "cached private data cleared before public read", "native and browser session regressions"] },
+  "focusedMySql": { "passed": true, "tests": 31, "assertions": 345, "isolatedSchema": "municipal_hazards_test" },
+  "finalGate": {
+    "passed": true,
+    "checks": 19,
+    "backendTests": 108,
+    "backendAssertions": 928,
+    "browserTests": 68,
+    "phpStanErrors": 0,
+    "nodeDependencyFindings": 0,
+    "phpDependencyAdvisories": 0,
+    "report": "community-review-gate-final-2026-11-10.json"
+  },
+  "localActivation": { "additiveMigrationApplied": true, "countsPreserved": true, "users": 4, "reports": 0, "automaticallyFactCheckedOrPublished": 0 },
+  "manualExportsUpdated": true,
+  "androidAssetSync": { "passed": true, "physicalPhoneVerified": false },
+  "screenshot": "hazard-achievements-2026-11-10.png",
+  "ownership": { "restoredToLenovo": true, "scopes": 62, "accessControlSamplesPreserved": 16, "wildcardSafeDirectoryAdded": false },
+  "deployed": false,
+  "realIncidentFactCheckedOrPublished": false,
+  "externalSocialMessageSent": false,
+  "physicalAndroidAccepted": false
+}

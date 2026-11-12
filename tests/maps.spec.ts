@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect, continueReport } from './fixtures';
 
 // Deterministic background styles; actual bundled Basista/Pangasinan geometry
 // still passes through the real MapLibre worker and WebGL renderer.
@@ -92,7 +92,7 @@ test('map controls reflow on small phones and handle an unavailable style with a
 test('changing the location map style preserves the selected and confirmed incident pin', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/?demo=1');
-  await page.getByRole('button', { name: 'Create hazard report', exact: true }).click();
+  await page.getByRole('button', { name: 'Create hazard report', exact: true }).click(); await continueReport(page);
   const form = page.getByRole('dialog', { name: 'Report a hazard', exact: true });
   await form.getByRole('button', { name: 'Choose location on map' }).click();
   await form.getByLabel('Selected latitude', { exact: true }).fill('15.86');

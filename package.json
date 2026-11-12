@@ -12,6 +12,7 @@
     "test": "node scripts/php.mjs --cwd=hazard-server artisan test --no-ansi",
     "db:migrate": "node scripts/php.mjs hazard-server/artisan migrate",
     "db:seed": "node scripts/php.mjs hazard-server/artisan db:seed",
+    "db:seed:accounts": "node scripts/php.mjs hazard-server/artisan db:seed --class=DemoAccountSeeder",
     "test:e2e": "node scripts/run-e2e.mjs",
     "verify": "node scripts/verify.mjs",
     "docs:build": "node scripts/build-docs.mjs",

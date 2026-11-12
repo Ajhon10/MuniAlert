@@ -1,0 +1,25 @@
+.sidebar-utilities { margin-bottom: 16px; }
+.sidebar-utilities .help-link { display: grid; grid-template-columns: 24px minmax(0, 1fr) 16px; gap: 12px; padding: 12px 14px; text-align: left; border: 1px solid #dce8e1; border-radius: 12px; background: #f3f8f5; line-height: 1.5; }
+.sidebar-utilities .help-link > svg:first-child { margin-left: 0; }
+.sidebar-utilities .help-link > span { min-width: 0; overflow-wrap: anywhere; }
+.sidebar-bottom { padding-top: 20px; }
+.sidebar-user { margin-top: 18px; }
+main.has-dashboard-background { position: relative; isolation: isolate; }
+.dashboard-backdrop { position: absolute; inset: 0; z-index: -1; background-size: cover; background-position: center top; opacity: .32; pointer-events: none; border-radius: 20px; }
+main.has-dashboard-background .page-heading { background: #f7faf5e8; border-radius: 16px; padding: 18px; }
+main.has-dashboard-background :is(.metric-card, .map-panel, .attention-panel, .reports-panel, .hotlines-card) { background-color: #fffffff5; }
+.dashboard-appearance { grid-column: 1 / -1; }
+.dashboard-appearance h2 { display: flex; align-items: center; gap: 10px; }
+.background-preview { position: relative; margin-block: 20px; border: 1px solid #dbe8df; border-radius: 16px; overflow: hidden; background: #eaf2ec; max-width: 640px; min-height: 210px; isolation: isolate; }
+.background-preview > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: .5; }
+.background-preview-content { padding: 24px; display: grid; gap: 10px; color: #173f36; }
+.background-preview-content > strong { font-size: 1.25rem; background: #ffffffdf; border-radius: 8px; padding: 8px; width: fit-content; }
+.background-preview-content > div { background: #fffffff2; border: 1px solid #d8e5dc; padding: 12px 16px; border-radius: 12px; width: fit-content; display: grid; gap: 4px; }
+.background-preview-content b { font-size: 1.75rem; }
+.background-picker { display: grid; gap: 10px; font-weight: 600; }
+.background-picker input { max-width: 100%; padding: 12px; border: 1px solid #cbdcd0; border-radius: 10px; background: white; }
+.background-actions { flex-wrap: wrap; margin-top: 16px; }
+.background-actions .text-button { display: inline-flex; align-items: center; gap: 8px; }
+.highContrast .dashboard-backdrop { display: none; }
+.highContrast .background-preview-content > :is(strong, div) { background: white; color: #102b20; }
+@media (max-width: 480px) { .background-actions > button { width: 100%; justify-content: center; } }

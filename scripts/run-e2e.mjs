@@ -15,16 +15,21 @@ try {
   const webPort = process.env.HAZARD_WEB_PORT || '15173';
   const apiUrl = `http://127.0.0.1:${apiPort}`;
   const webUrl = `http://127.0.0.1:${webPort}`;
-  for (const url of [`${apiUrl}/api/health`, webUrl]) if (await responds(url)) throw Error(`Stop the server at ${url} before running isolated browser tests.`);
+  const peerUrl = process.env.HAZARD_E2E_MYSQL === '1' ? `http://127.0.0.1:${Number(apiPort) + 1}` : null;
+  for (const url of [`${apiUrl}/api/health`, webUrl, ...(peerUrl ? [`${peerUrl}/api/health`] : [])]) if (await responds(url)) throw Error(`Stop the server at ${url} before running isolated browser tests.`);
   mkdirSync(resolve(root, '.cache'), { recursive: true });
   const sqlite = resolve(root, '.cache/e2e.sqlite');
   const mysql = process.env.HAZARD_E2E_MYSQL === '1';
   if (!mysql) writeFileSync(sqlite, '');
-  const env = { ...phpEnv(), HAZARD_API_PORT: apiPort, HAZARD_WEB_PORT: webPort, APP_ENV: 'testing', APP_DEBUG: 'false', BCRYPT_ROUNDS: '4', APP_URL: apiUrl, FRONTEND_URLS: `${webUrl},http://localhost:${webPort}`, APP_KEY: 'base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', DB_CONNECTION: mysql ? 'mysql' : 'sqlite', DB_DATABASE: mysql ? 'municipal_hazards_e2e' : sqlite, SESSION_DRIVER: 'file', CACHE_STORE: 'database', QUEUE_CONNECTION: 'sync', GOOGLE_CLIENT_ID: '', GOOGLE_CLIENT_SECRET: '', GOOGLE_REDIRECT_URI: '', FACEBOOK_CLIENT_ID: '', FACEBOOK_CLIENT_SECRET: '', FACEBOOK_REDIRECT_URI: '', FCM_PROJECT_ID: '', GOOGLE_APPLICATION_CREDENTIALS: '', HAZARD_EVIDENCE_DISK: 'evidence', SANCTUM_STATEFUL_DOMAINS: `127.0.0.1:${webPort},localhost:${webPort}`, HAZARD_DEMO_ADMIN_PASSWORD: randomBytes(24).toString('base64url'), HAZARD_DEMO_CITIZEN_ONE_PASSWORD: randomBytes(24).toString('base64url'), HAZARD_DEMO_CITIZEN_TWO_PASSWORD: randomBytes(24).toString('base64url') };
+  const env = { ...phpEnv(), HAZARD_API_PORT: apiPort, HAZARD_WEB_PORT: webPort, APP_ENV: 'testing', APP_DEBUG: 'false', BCRYPT_ROUNDS: '4', APP_URL: apiUrl, FRONTEND_URLS: `${webUrl},http://localhost:${webPort}`, APP_KEY: 'base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', DB_CONNECTION: mysql ? 'mysql' : 'sqlite', DB_DATABASE: mysql ? 'municipal_hazards_e2e' : sqlite, SESSION_DRIVER: 'file', CACHE_STORE: 'database', QUEUE_CONNECTION: 'sync', GOOGLE_CLIENT_ID: '', GOOGLE_CLIENT_SECRET: '', GOOGLE_REDIRECT_URI: '', FACEBOOK_CLIENT_ID: '', FACEBOOK_CLIENT_SECRET: '', FACEBOOK_REDIRECT_URI: '', IMAGE_DETECTOR_ENABLED: 'false', IMAGE_DETECTOR_TOKEN: '', FCM_PROJECT_ID: '', GOOGLE_APPLICATION_CREDENTIALS: '', HAZARD_EVIDENCE_DISK: 'evidence', SANCTUM_STATEFUL_DOMAINS: `127.0.0.1:${webPort},localhost:${webPort}`, HAZARD_DEMO_ADMIN_PASSWORD: randomBytes(24).toString('base64url'), HAZARD_DEMO_CITIZEN_ONE_PASSWORD: randomBytes(24).toString('base64url'), HAZARD_DEMO_CITIZEN_TWO_PASSWORD: randomBytes(24).toString('base64url') };
   // Exercise both the Vite proxy and the packaged same-origin web deployment.
   env.SANCTUM_STATEFUL_DOMAINS += `,127.0.0.1:${apiPort},localhost:${apiPort}`;
   env.FRONTEND_URLS += `,${apiUrl}`;
+  env.E2E_ADMIN_MFA_SECRET = Array.from(randomBytes(32), byte => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'[byte & 31]).join('');
+  if (peerUrl) env.HAZARD_E2E_PEER_URL = peerUrl;
+  env.E2E_ADMIN_RECOVERY_CODE = randomBytes(5).toString('hex') + '-' + randomBytes(5).toString('hex');
   env.E2E_ADMIN_PASSWORD = env.HAZARD_DEMO_ADMIN_PASSWORD;
+  env.HAZARD_DEMO_ADMIN_EMAIL = 'admin@example.test';
   env.E2E_CITIZEN_PASSWORD = env.HAZARD_DEMO_CITIZEN_ONE_PASSWORD;
   if (!env.PLAYWRIGHT_BROWSERS_PATH && existsSync(resolve(root, '.cache/playwright'))) env.PLAYWRIGHT_BROWSERS_PATH = resolve(root, '.cache/playwright');
   const migration = spawnSync(php, ['artisan', 'migrate:fresh', '--seed', '--force', '--no-ansi'], { cwd: resolve(root, 'hazard-server'), env, stdio: 'inherit' });
@@ -35,8 +40,9 @@ try {
   for (const [name, executable, args, cwd] of [
     ['api', php, ['-S', `127.0.0.1:${apiPort}`, resolve(root, 'hazard-server/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')], resolve(root, 'hazard-server/public')],
     ['web', process.execPath, [resolve(root, 'node_modules/vite/bin/vite.js'), '--host', '127.0.0.1', '--port', webPort], resolve(root, 'hazard-client')],
+    ...(peerUrl ? [['api-peer', php, ['-S', `127.0.0.1:${Number(apiPort) + 1}`, resolve(root, 'hazard-server/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')], resolve(root, 'hazard-server/public')]] : []),
   ]) { const log = openSync(resolve(root, `.cache/e2e-${name}.log`), 'w'); logs.push(log); services.push(spawn(executable, args, { cwd, env, windowsHide: true, stdio: ['ignore', log, log] })); }
-  for (const url of [`${apiUrl}/api/health`, webUrl]) {
+  for (const url of [`${apiUrl}/api/health`, webUrl, ...(peerUrl ? [`${peerUrl}/api/health`] : [])]) {
     const deadline = Date.now() + 30000;
     while (!await responds(url)) { if (Date.now() > deadline) throw Error(`Test server failed to start: ${url}. See .cache/e2e-*.log.`); await delay(200); }
   }

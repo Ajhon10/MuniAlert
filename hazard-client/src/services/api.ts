@@ -1,4 +1,5 @@
 import { Capacitor } from '@capacitor/core';
+import { requestStepUp, type MfaChallenge } from './accountSecurity';
 import type { User } from '../types';
 import { API_SERVER_URL as base } from '../config/api';
 import { readSessionToken, saveSessionToken, clearSessionToken } from './sessionStore';
@@ -26,12 +27,16 @@ export async function apiBlob(path: string): Promise<Blob> {
   if (!response.headers.get('Content-Type')?.startsWith('image/')) throw new Error('The evidence server returned an invalid image.');
   return response.blob();
 }
-export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function api<T>(path: string, options: RequestInit = {}, steppedUp = false): Promise<T> {
   const response = await request(path, options);
   if (response.status === 204 && response.ok) return undefined as T;
   let data;
   try { data = await response.json(); }
   catch { throw new Error('The municipal server returned an invalid response. Please retry or contact the administrator.'); }
+  if (response.status === 428 && data?.reauthentication_required && !steppedUp) {
+    await requestStepUp(data);
+    return api<T>(path, options, true);
+  }
   if (!response.ok) {
     const details = data?.errors ? Object.values(data.errors).flat().join(' ') : data?.message;
     throw new Error(response.status === 419 ? 'Your session expired. Reload the page and sign in again.' : details || `Request failed (${response.status}).`);
@@ -40,7 +45,8 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
 }
 export async function authenticate(register: boolean, values: { email: string; password: string; name?: string }) {
   await csrf();
-  const result = await api<{ user: User; token?: string }>(`${native ? '/api' : ''}/auth/${register ? 'register' : 'login'}`, { method: 'POST', body: JSON.stringify(values) });
+  const result = await api<({ user: User; token?: string }) | MfaChallenge>(`${native ? '/api' : ''}/auth/${register ? 'register' : 'login'}`, { method: 'POST', body: JSON.stringify(values) });
+  if ('mfa_required' in result) return result;
   return acceptSession(result);
 }
 export async function acceptSession(result: { user: User; token?: string }) {

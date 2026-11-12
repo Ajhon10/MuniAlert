@@ -1,5 +1,129 @@
 # Phased task tracker
 
+## Emergency-first reports, actionable notifications and image review — 11 November 2026
+
+- [x] Replace notification sidebar/page with a bell/mobile dialog, owned single read and authorized destination/report opening.
+- [x] Ask about immediate assistance first; searchable approved hotlines, optional closest sorting and no-call online submission; preserve private assistance flag.
+- [x] Insert safe active-admin alerts atomically; add per-hazard sound patterns/volume/test/mute, initial-inbox baseline and bounded account-scoped state.
+- [x] Add manual responder contact/minimal copy brief and a bottom-right highlighted guide above the dock with focus restoration.
+- [x] Keep photos on BANTAY; add bounded numeric-loopback detector adapter/jobs and explicit private admin image-review gating, with stale-result protection.
+- [x] Apply only additive local migrations preserving four accounts/zero reports; intermediate SQLite/MySQL checks pass.
+- [x] Complete the nineteen-check gate, refreshed manual/technical exports, final review and redacted evidence.
+- [x] Restore Lenovo ownership across 75 scopes, preserve all 42 sampled access permissions and complete post-record documentation/secret checks.
+- [ ] Publish approved agency contacts/coordinates, configure/evaluate a maintained local classifier on supported hosting, and validate real devices/audio/municipal/workload operation.
+
+See [implementation/readiness](documentation/EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
+
+## Settings, per-account reading and PDEA-style 2FA/email — 11 November 2026
+
+- [x] Move reading and user guide into Settings; remove their header/sidebar shortcuts and the community callout.
+- [x] Persist allowlisted reading customizations per account, with separate guest/cache scopes, autosave/retry and stale-account request guards.
+- [x] Change demo admin defaults to a sample .test address and sample display name; preserve existing personal accounts.
+- [x] Add accessible six-digit authenticator entry with paste, keyboard navigation and separate recovery mode; retain security controls.
+- [x] Prepare separate Gmail SMTP configuration, HTML/plaintext verification/recovery and opt-in verified own-report status mail through bounded transactional queues.
+- [x] Apply only the additive preference migration on localhost, preserving four accounts/zero reports; copy no PDEA credentials and send no real mail.
+- [x] Complete all nineteen local checks, refreshed manual/technical exports and redacted evidence.
+- [x] Restore Lenovo ownership across 64 scopes with all 32 sampled access permissions preserved; complete post-record documentation/secret checks.
+- [ ] Add a separate Gmail app password directly to BANTAY's ignored server environment and validate authorized real delivery/public HTTPS links; deployment/device/municipal acceptance remain open.
+
+See [implementation/readiness](documentation/SETTINGS_2FA_EMAIL_2026-11-11.md).
+
+## Single validation toasts, password visibility and schema audit — 11 November 2026
+
+- [x] Remove duplicate inline validation, suppress native bubbles, retain validation rules and persistent accessible toast/field focus.
+- [x] Add eight independent show/hide password controls, masked defaults, preserved values/autocomplete and no submit/visibility persistence.
+- [x] Inspect configured/reached MySQL schema and identify separate tests/archived collaborator copy using read-only counts/metadata.
+- [x] Focused UI checks pass after correcting the capture-event timing probe; keep MFA/location/session assertions against the new single-toast presentation.
+- [x] Record the 19-check gate (110 backend tests / 994 assertions; 72 browser tests), then 11 passing focused checks and refreshed builds/sync after final large-text spacing correction. Regenerate manuals/evidence and restore Lenovo ownership across 52 scopes with all 23 sampled access-control lists preserved.
+
+See [the refinement](documentation/TOAST_PASSWORD_SCHEMAS_2026-11-11.md). No database deletion or deployment is included.
+
+## Community navigation and reviewed news detail — 10 November 2026
+
+- [x] Remove redundant community Verified hazards navigation, redirect legacy links to the map and preserve administrator report review.
+- [x] Verify all eight own submission statuses and rejection history; clarify My reports and reset incoming filters.
+- [x] Add reviewed feed/share incident details and actual display-name/time snapshots, with anonymous publication option and protected contacts/evidence.
+- [x] Apply additive snapshot migration locally without backfilling old posts or changing account/report counts.
+- [x] Focused SQLite/MySQL and browser checks pass, including all statuses, snapshot/escaping/privacy, old links and 200% phone reflow.
+- [x] Record all 19 release checks: 110 backend tests / 994 assertions, 69 browser tests and zero dependency findings. Refresh manuals/evidence and restore Lenovo ownership across 49 scoped paths, preserving all 19 sampled access-control lists.
+
+See [the refinement](documentation/COMMUNITY_NAVIGATION_NEWS_DETAILS_2026-11-10.md). Municipal attribution policy, real hosting/social-platform/device/workload acceptance and deployment remain separate.
+
+## Community privacy, factual review, news and hazard achievements — 10 November 2026
+
+- [x] Restrict public list/map/stat/search/nearby/confirmation to fact-checked accepted records; keep own submissions and full admin queue private.
+- [x] Record explicit administrator factual attestation, method, private notes, actor/time and verified location with transactional audit/inbox updates.
+- [x] Separate reviewed news publication/edit/unpublish from response updates; add protected public share pages and Facebook/X/WhatsApp/native/copy sharing controls.
+- [x] Add ten private category tracks with creative 1/5/15 milestones, accessible progress and current accepted-own-report counts without duplicate status/publication credit.
+- [x] Clear cached report/stat/selection data on sign-out, expiry and identity changes before public replacement reads.
+- [x] Apply the additive localhost migration with unchanged application account/report counts and no automatic legacy acceptance/publication.
+- [x] Focused backend/MySQL and real admin/member/browser flows pass, including private notes, publication gating, sharing, category progress, 200% phone reflow and delayed-read cache privacy.
+- [x] Record all 19 gate checks: 108 backend tests / 928 assertions, 68 browser tests and zero dependency findings. Regenerate manuals/evidence and restore Lenovo ownership across 62 scoped paths, preserving all 16 sampled access-control lists.
+- [ ] Obtain real municipal factual/reward-policy, public-host/social-platform, physical-device and workload acceptance. No push/deployment is included.
+
+See [the continuation](documentation/COMMUNITY_REVIEW_ACHIEVEMENTS_2026-11-10.md).
+
+## Text-size slider and rolling dashboard digits — 10 November 2026
+
+- [x] Replace text-size presets with a native 100–200% slider, percentage readout, 5% minus/plus steps, keyboard access and stable preview/release behavior.
+- [x] Preserve saved legacy sizes and support intermediate 5% sizes, including responsive large-text layouts from 150% upward.
+- [x] Add lottery-style dashboard digit reels with staggered settling, grouped/zero-padded exact values, immediate screen-reader values and system/app reduced-motion cancellation.
+- [x] Focused browser checks passed, including range interaction/persistence, phone reflow, rolling grouped counts and reduced motion; type checking and web production build passed.
+- [x] Browser regression passed 65 tests; final percentage-badge polish passed all eight focused checks. Production/native/web builds, type checking, Android asset sync and updated manuals passed. Affected project ownership is restored to Lenovo with permissions preserved.
+
+See [the follow-up](documentation/SLIDER_ROLLING_NUMBERS_2026-11-10.md). This UI continuation does not establish a fresh full backend/security gate or external-service/device acceptance.
+
+## Phase 3, saved login and dashboard follow-up — 10 November 2026
+
+- [x] Preserve login after browser/Android closure using revocable device credentials; retain administrator MFA and recent-action checks, per-device logout and security-change revocation.
+- [x] Apply the three additive localhost migrations; keep account/report counts, roles and passwords intact and never revive expired credentials.
+- [x] Align the reading shortcut above the community card and replace its icon with a consistent text-size icon in sidebar/header.
+- [x] Rename overview navigation to Dashboard and implement approved admin background preview/publish/discard/remove with sanitized bounded uploads and readable/high-contrast presentation.
+- [x] Animate initial/navigation entry while preserving the map and respecting system/app Reduce motion.
+- [x] Add aggregate operational monitoring/cron heartbeat and guarded encrypted synthetic MySQL dump/restore rehearsal; test tamper/schema safeguards.
+- [x] Focused MySQL checks: 22 tests / 171 assertions; initial browser checks: six passed. Synthetic encrypted restore/hash/tamper checks passed without application data.
+- [x] Final 19-check gate passed: 103 backend tests / 825 assertions, 63 browser tests, five launcher tests, static/secret checks and zero dependency findings. Separate MySQL browser suite: 14 tests including two-process MFA race. Manuals/technical PDF refreshed; affected files restored to Lenovo ownership with permissions preserved.
+- [ ] Complete external GitHub/staging/hosting/mail/scanner/alert/production restore/device/municipal acceptance; no push/deployment is included.
+
+See [the continuation](documentation/SECURITY_PHASE_3_DASHBOARD_2026-11-10.md).
+
+## Continued security phases — 10 November 2026
+
+- [x] Phase 2 source: operator-approved MFA enrollment, shared password/social/native verification boundary, one-use codes, attempt/expiry/version guards and current-account checks.
+- [x] Phase 2 source: device/session recent verification, operator suspension/role/recovery controls and last-active-admin protection.
+- [x] Phase 2 source: distinct verified-local-email recovery, generic single-use reset, ID-only transactional mail queue and bounded scheduled worker.
+- [x] Phase 2 source: production CSP/meta/static headers, fail-closed scanner adapter, private bounded quarantine and redacted security events/cleanup.
+- [x] Phase 3 source: maintained PHP static analysis, strict TypeScript, checksum-pinned redacted Gitleaks with negative fixtures, and full Action revision pins.
+- [x] Focused local checks: MySQL feature security suite and dual-PHP-process MFA consumption; complete browser regression passed during implementation.
+- [x] Final expanded gate: all 18 checks passed, including 98 backend tests / 786 assertions, 58 browser tests, five launcher tests, static/secret analysis and zero dependency findings. Focused isolated MySQL: 37 feature tests / 339 assertions and seven browser security checks with a dual-process MFA race.
+- [x] Apply the additive security migration to localhost MySQL without changing account/report counts; restore Lenovo ownership of affected paths while preserving permissions.
+- [ ] Obtain real enrollment/recovery approval; configure/validate mail, scanner, hosting/CI branch rules, staging scan, backup restore, alerts, physical Android and municipal/workload acceptance.
+
+See [implementation](documentation/SECURITY_PHASE_2_2026-11-10.md) and [activation/remaining operations](documentation/SECURITY_OPERATIONS_2026-11-10.md). Source checkmarks do not mean real services are enabled or that deployment is accepted.
+
+## Reading, action feedback and motion — 10 November 2026
+
+- [x] Add shared success/error/information toast feedback across user actions, retaining inline errors and safe modal placement.
+- [x] Animate dashboard/period-summary counts with accurate assistive-technology values and device/app reduced-motion support.
+- [x] Add saved text sizes up to 200%, bold text, high contrast, reading spacing, reduced motion and persistent-message controls.
+- [x] Use relative typography and improve phone/dialog reflow, keyboard focus, touch targets and the enlarged-text skip link.
+- [x] Document the controls in the in-app and capstone manuals; add focused accessibility and feedback browser checks.
+- [x] Record final local checks: 51 browser tests, Vue type checking/production build, same-origin web package, Android asset sync and documentation consistency passed. See [the dated review](documentation/ACCESSIBILITY_FEEDBACK_2026-11-10.md).
+- [ ] Validate physical Android/TalkBack and actual older-user/low-vision usability; local browser checks do not establish field acceptance.
+
+## Security guidance and test accounts — 9 November 2026
+
+See [the full three-phase plan](documentation/SECURITY_IMPLEMENTATION_PLAN.md), [Phase 1 review](documentation/SECURITY_PHASE_1_2026-11-09.md) and [test accounts](documentation/TEST_ACCOUNTS.md).
+
+- [x] Phase 1: audit existing account roles without exposing credentials; make explicit local/test seeding configurable, transactional and safe for existing accounts.
+- [x] Phase 1: enforce shared bcrypt byte limits, reject malformed email fields, add response/cache headers and production debug/Secure/HttpOnly guards.
+- [x] Phase 1: add negative auth/role/CSRF/CORS/throttle/credential tests and a read-only production configuration checker.
+- [x] Phase 1 verification: all 14 checks passed, including 79 backend tests / 626 assertions, 45 browser tests and five launcher tests; zero dependency audit findings. Record is local/uncommitted; no push or deployment.
+- [x] Phase 2 source is implemented in the 10 November continuation above; real service/policy/hosting acceptance remains pending.
+- [ ] Phase 3: static/expanded secret analysis, protected releases, authorized staging scan, real hosting/network checks, isolated backup restore, alerts and municipal/device/workload acceptance.
+
+No complete ASVS assessment, production acceptance or deployment is claimed. Later operational work needs the real test/hosting services and approved recovery/retention/access policies.
+
 ## Startup and repository ownership repair - 4 November 2026
 
 - [x] Restore the user's ownership of affected project/repository directories without disabling Git ownership checks.

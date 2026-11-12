@@ -27,7 +27,7 @@ class AnalyticsController extends Controller
         $day = DB::getDriverName() === 'sqlite'
             ? "strftime('%Y-%m-%d', COALESCE(occurred_at, created_at), '+8 hours')"
             : 'DATE(DATE_ADD(COALESCE(occurred_at, created_at), INTERVAL 8 HOUR))';
-        $daily = (clone $base)->selectRaw($day." AS day, COUNT(*) AS total, COUNT(occurred_at) AS known_time, SUM(CASE WHEN category_id = 'accident' THEN 1 ELSE 0 END) AS accidents")->groupByRaw($day)->orderBy('day')->get();
+        $daily = (clone $base)->selectRaw($day." AS day, COUNT(*) AS total, COUNT(occurred_at) AS known_time, SUM(CASE WHEN category_id = 'accident' THEN 1 ELSE 0 END) AS accidents")->groupByRaw($day)->orderBy('day')->toBase()->get();
         $periods = [];
         for ($date = $from; $date->lte($to); $date = $date->addDay()) {
             $key = ($data['group'] === 'week' ? $date->startOfWeek() : $date->startOfMonth())->toDateString();

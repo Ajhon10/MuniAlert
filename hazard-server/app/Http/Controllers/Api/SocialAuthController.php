@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\AccountMfa;
+use App\Services\SecuritySessions;
 use App\Services\SocialAccounts;
+use App\Support\PasswordInput;
 use App\Support\SocialAuthFailure;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -17,6 +20,8 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Laravel\Sanctum\PersonalAccessToken;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\AbstractProvider;
+use Laravel\Socialite\Two\FacebookProvider;
 use Laravel\Socialite\Two\InvalidStateException;
 use Throwable;
 
@@ -51,9 +56,9 @@ class SocialAuthController extends Controller
             'platform' => ['required', Rule::in(['web', 'android'])],
             'mode' => ['required', Rule::in(['login', 'link'])],
             'return_origin' => 'nullable|required_if:platform,web|url:http,https|max:255',
-            'intent' => ['nullable', Rule::in(['overview', 'report', 'profile', 'mine', 'activity', 'news', 'reports', 'map', 'guide'])],
+            'intent' => ['nullable', Rule::in(['overview', 'report', 'profile', 'mine', 'activity', 'news', 'reports', 'map', 'guide', 'settings'])],
             'code_challenge' => ['nullable', 'required_if:platform,android', 'regex:/^[A-Za-z0-9_-]{43}$/'],
-            'current_password' => 'nullable|string|max:128',
+            'current_password' => ['nullable', ...PasswordInput::rules()],
         ]);
         $origin = null;
         if ($data['platform'] === 'web') {
@@ -67,7 +72,12 @@ class SocialAuthController extends Controller
         $token = null;
         if ($data['mode'] === 'link') {
             $actor = Auth::guard('sanctum')->user();
-            abort_unless($actor, 401);
+            abort_unless($actor instanceof User, 401);
+            $request->setUserResolver(fn () => $actor);
+            abort_unless(app(SecuritySessions::class)->valid($request, $actor), 401);
+            if ($actor->role === 'admin') {
+                app(SecuritySessions::class)->requireRecent($request);
+            }
             abort_unless($actor->has_password && Hash::check($data['current_password'] ?? '', $actor->password), 422, 'Confirm your MuniAlert password to connect this account.');
             $token = $actor->currentAccessToken();
         }
@@ -136,18 +146,26 @@ class SocialAuthController extends Controller
                     }
                 }
                 $user = $accounts->resolve($provider, $identity, $link);
+                if (! $user->is_active) {
+                    throw new SocialAuthFailure('unavailable');
+                }
                 DB::table('social_auth_attempts')->where('id', $attempt->id)->update([
                     'user_id' => $user->id, 'completed_at' => now(), 'updated_at' => now(),
                     'consumed_at' => $attempt->platform === 'web' ? now() : null,
                     'exchange_code_hash' => $attempt->platform === 'android' ? hash('sha256', $code) : null,
+                    'auth_fingerprint' => $this->fingerprint($user),
                     'expires_at' => now()->addSeconds(90),
                 ]);
 
                 return $user;
             });
             if ($attempt->platform === 'web' && $attempt->mode === 'login') {
-                Auth::guard('web')->setRememberDuration(config('hazards.session_days') * 1440)->login($user, true);
-                $request->session()->regenerate();
+                $result = app(AccountMfa::class)->login($request, $user, false);
+                if (isset($result['mfa_required'])) {
+                    $request->session()->put('security_pending', $result);
+
+                    return $this->finish($attempt, ['social_auth' => 'mfa']);
+                }
             }
 
             return $this->finish($attempt, ['social_auth' => $attempt->mode === 'link' ? 'linked' : 'success', ...($attempt->platform === 'android' ? ['code' => $code] : [])]);
@@ -170,7 +188,7 @@ class SocialAuthController extends Controller
     public function exchange(Request $request)
     {
         $data = $request->validate(['attempt' => 'required|uuid', 'code' => 'required|string|size:64', 'code_verifier' => ['required', 'string', 'regex:/^[A-Za-z0-9._~-]{43,128}$/']]);
-        $result = DB::transaction(function () use ($data) {
+        $result = DB::transaction(function () use ($data, $request) {
             $attempt = DB::table('social_auth_attempts')->where('id', $data['attempt'])->where('platform', 'android')->lockForUpdate()->first();
             if (! $attempt || $attempt->consumed_at || ! $attempt->completed_at || Carbon::parse($attempt->expires_at)->isPast()) {
                 return null;
@@ -183,12 +201,13 @@ class SocialAuthController extends Controller
                 return null;
             }
             $user = User::whereKey($attempt->user_id)->lockForUpdate()->first();
-            if (! $user) {
+            if (! $user || ! $user->is_active || ! hash_equals($attempt->auth_fingerprint ?? '', $this->fingerprint($user))) {
                 return null;
             }
             DB::table('social_auth_attempts')->where('id', $attempt->id)->update(['consumed_at' => now(), 'exchange_code_hash' => null, 'updated_at' => now()]);
 
-            return ['user' => $user, 'intent' => $attempt->intent, 'linked' => $attempt->mode === 'link', ...($attempt->mode === 'login' ? ['token' => $user->createToken('mobile', ['*'], now()->addDays(config('hazards.session_days')))->plainTextToken] : [])];
+            return ['intent' => $attempt->intent, 'linked' => $attempt->mode === 'link',
+                ...($attempt->mode === 'login' ? app(AccountMfa::class)->login($request, $user, true) : ['user' => $user])];
         });
         abort_unless($result, 422, 'This sign-in request expired or could not be verified. Start again.');
 
@@ -197,14 +216,25 @@ class SocialAuthController extends Controller
 
     private function fingerprint(User $user): string
     {
-        return hash('sha256', $user->password.'|'.$user->remember_token);
+        return hash('sha256', $user->password.'|'.$user->remember_token.'|'.$user->role.'|'.$user->security_version);
     }
 
     private function driver(string $provider)
     {
-        $driver = Socialite::driver($provider)->setHttpClient(new Client(['connect_timeout' => 5, 'timeout' => 15]));
+        $driver = Socialite::driver($provider);
+        if (! $driver instanceof AbstractProvider) {
+            throw new \RuntimeException('Unsupported sign-in driver.');
+        }
+        $driver->setHttpClient(new Client(['connect_timeout' => 5, 'timeout' => 15]));
 
-        return $provider === 'google' ? $driver->enablePKCE() : $driver->fields(['id', 'name', 'email']);
+        if ($provider === 'google') {
+            return $driver->enablePKCE();
+        }
+        if (! $driver instanceof FacebookProvider) {
+            throw new \RuntimeException('Unsupported sign-in driver.');
+        }
+
+        return $driver->fields(['id', 'name', 'email']);
     }
 
     private function finish(object $attempt, array $parameters)

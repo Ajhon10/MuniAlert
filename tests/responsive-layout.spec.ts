@@ -40,7 +40,7 @@ test('compact navigation supports keyboard opening and escape; long headings wra
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/?demo=1');
   await page.getByRole('button', { name: 'More navigation' }).click();
-  await expect(page.getByRole('button', { name: 'Overview', exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Dashboard', exact: true })).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('button', { name: 'More navigation' })).toBeFocused();
   await page.getByRole('button', { name: 'More navigation' }).click();

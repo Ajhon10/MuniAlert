@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReportRequest;
 use App\Http\Resources\HazardResource;
-use App\Jobs\SendReportPush;
+use App\Jobs\ScreenReportImage;
 use App\Models\Category;
 use App\Models\Department;
 use App\Models\HazardReport;
-use App\Models\User;
+use App\Services\AdminReportAlerts;
 use App\Services\PhotoStorage;
+use App\Services\ReportUpdates;
+use App\Services\SecurityEvents;
 use App\Support\Location;
 use App\Support\Workflow;
 use Carbon\CarbonImmutable;
@@ -38,7 +40,7 @@ class ReportController extends Controller
         } elseif ($request->routeIs('reports.admin')) {
             abort_unless($request->user()->role === 'admin', 403);
         } else {
-            $query->whereNotIn('status', ['rejected']);
+            $query->communityVisible();
         }
         if (! empty($data['status'])) {
             $query->where('status', $data['status']);
@@ -48,8 +50,15 @@ class ReportController extends Controller
         }
         if (! empty($data['search'])) {
             $query->where(function ($q) use ($data, $private) {
-                foreach ($private ? ['title', 'reference_number', 'barangay', 'address'] : ['public_title', 'reference_number', 'barangay'] as $field) {
-                    $q->orWhere($field, 'like', '%'.str_replace(['%', '_'], ['\\%', '\\_'], $data['search']).'%');
+                $pattern = '%'.str_replace(['%', '_'], ['\\%', '\\_'], $data['search']).'%';
+                if ($private) {
+                    foreach (['title', 'reference_number', 'barangay', 'address'] as $field) {
+                        $q->orWhere($field, 'like', $pattern);
+                    }
+                } else {
+                    $q->where('reference_number', 'like', $pattern)->orWhere('barangay', 'like', $pattern)
+                        ->orWhereHas('category', fn ($category) => $category->where('name', 'like', $pattern))
+                        ->orWhere(fn ($published) => $published->published()->where('public_title', 'like', $pattern));
                 }
             });
         }
@@ -57,9 +66,15 @@ class ReportController extends Controller
         return HazardResource::collection($query->latest()->paginate(100));
     }
 
-    public function stats()
+    public function stats(Request $request)
     {
-        $counts = HazardReport::selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status');
+        $query = HazardReport::query();
+        if ($request->routeIs('reports.admin.stats')) {
+            abort_unless($request->user()->role === 'admin', 403);
+        } else {
+            $query->communityVisible();
+        }
+        $counts = $query->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status');
 
         return ['total' => $counts->sum() - ($counts['rejected'] ?? 0), 'active' => collect(['submitted', 'under_verification', 'verified', 'assigned', 'responding'])->sum(fn ($s) => $counts[$s] ?? 0), 'pending' => ($counts['submitted'] ?? 0) + ($counts['under_verification'] ?? 0), 'responding' => $counts['responding'] ?? 0, 'resolved' => ($counts['resolved'] ?? 0) + ($counts['closed'] ?? 0)];
     }
@@ -69,11 +84,11 @@ class ReportController extends Controller
         $d = $request->validate(['category' => 'required|exists:categories,id', 'latitude' => 'required|numeric|between:-90,90', 'longitude' => 'required|numeric|between:-180,180']);
         $matches = [];
         // The indexed category/time filter and latitude band keep candidate sets small on MySQL.
-        $candidates = HazardReport::where('category_id', $d['category'])->whereNotIn('status', ['resolved', 'closed', 'rejected'])->where('created_at', '>=', now()->subHours(6))->whereRaw('COALESCE(verified_latitude, selected_latitude) BETWEEN (? + 0.0) AND (? + 0.0)', [$d['latitude'] - 0.001, $d['latitude'] + 0.001])->cursor();
+        $candidates = HazardReport::communityVisible()->where('category_id', $d['category'])->whereNotIn('status', ['resolved', 'closed', 'rejected'])->where('created_at', '>=', now()->subHours(6))->whereRaw('COALESCE(verified_latitude, selected_latitude) BETWEEN (? + 0.0) AND (? + 0.0)', [$d['latitude'] - 0.001, $d['latitude'] + 0.001])->cursor();
         foreach ($candidates as $r) {
             $distance = Location::distance($d['latitude'], $d['longitude'], $r->verified_latitude ?? $r->selected_latitude, $r->verified_longitude ?? $r->selected_longitude);
             if ($distance <= 100) {
-                $matches[] = ['id' => $r->id, 'reference_number' => $r->reference_number, 'title' => $r->public_title ?: $r->category->name.' report', 'distance' => round($distance / 50) * 50, 'created_at' => $r->created_at];
+                $matches[] = ['id' => $r->id, 'reference_number' => $r->reference_number, 'title' => $r->isPublished() ? $r->public_title : $r->category->name.' report', 'distance' => round($distance / 50) * 50, 'created_at' => $r->created_at];
             }
         }
         usort($matches, fn ($a, $b) => $a['distance'] <=> $b['distance']);
@@ -99,9 +114,15 @@ class ReportController extends Controller
                 $data['reference_number'] = 'HZ-'.now()->year.'-'.strtoupper(Str::random(8));
                 $data['location_difference_meters'] = isset($data['gps_latitude']) ? Location::distance($data['gps_latitude'], $data['gps_longitude'], $data['selected_latitude'], $data['selected_longitude']) : null;
                 $report = HazardReport::create($data);
-                $report->photos()->createMany($photos);
+                $images = $report->photos()->createMany($photos);
+                foreach ($images as $image) {
+                    if ($image->ai_status === 'queued') {
+                        ScreenReportImage::dispatch($image->id)->onConnection('image-screening')->onQueue('image-screening')->beforeCommit();
+                    }
+                }
                 $report->history()->create(['actor_id' => $request->user()->id, 'status' => 'submitted', 'note' => 'Report submitted for municipal verification.']);
                 $this->audit($report, $request, 'created', ['category_id' => $report->category_id]);
+                app(AdminReportAlerts::class)->submitted($report);
 
                 return $report;
             });
@@ -128,17 +149,20 @@ class ReportController extends Controller
     {
         abort_unless($request->user()->role === 'admin', 403);
         $data = $request->validate(['status' => ['required', Rule::in(array_keys(Workflow::NEXT))], 'severity' => ['required', Rule::in(['low', 'moderate', 'high', 'critical'])], 'department_id' => 'required|exists:departments,id', 'assigned_responder' => 'nullable|string|min:2|max:100', 'note' => 'required|string|min:5|max:1000', 'verified_latitude' => 'nullable|required_with:verified_longitude|required_if:status,verified|numeric|between:-90,90', 'verified_longitude' => 'nullable|required_with:verified_latitude|required_if:status,verified|numeric|between:-180,180']);
-        $publication = $request->validate(['public_title' => 'nullable|required_with:public_summary|string|min:5|max:120', 'public_summary' => 'nullable|required_with:public_title|string|min:15|max:1000']);
-        $data = [...$data, ...$publication];
+        $request->validate(['public_title' => 'prohibited', 'public_summary' => 'prohibited', 'public_reporter_name' => 'prohibited', 'public_occurred_at' => 'prohibited']);
         $report = DB::transaction(function () use ($request, $report, $data) {
             $report = HazardReport::whereKey($report->id)->lockForUpdate()->firstOrFail();
             Workflow::check($report->status, $data['status']);
-            if (! empty($data['public_summary']) && ! in_array($data['status'], ['verified', 'assigned', 'responding', 'resolved', 'closed'], true)) {
-                throw ValidationException::withMessages(['public_summary' => 'Verify the report before publishing a public summary.']);
+            if (in_array($data['status'], HazardReport::ACCEPTED_STATUSES, true) && ! $report->fact_checked_at) {
+                throw ValidationException::withMessages(['status' => 'Use Fact-check incident to verify and accept this report first.']);
             }
             if ($data['status'] === 'rejected') {
                 $data['public_title'] = null;
                 $data['public_summary'] = null;
+                $data['published_at'] = null;
+                $data['published_by'] = null;
+                $data['public_reporter_name'] = null;
+                $data['public_occurred_at'] = null;
             }
             if ($data['status'] === 'assigned' && empty($data['assigned_responder']) && ! $report->assigned_responder) {
                 throw ValidationException::withMessages(['assigned_responder' => 'Assign a responder or response team.']);
@@ -154,16 +178,8 @@ class ReportController extends Controller
             $report->update($data);
             $report->history()->create(['actor_id' => $request->user()->id, 'status' => $report->status, 'note' => $note]);
             $this->audit($report, $request, 'updated', ['from' => $from, ...$data, 'note' => $note]);
-            $notificationId = (string) Str::uuid();
-            DB::table('notifications')->insert(['id' => $notificationId, 'type' => 'report_updated', 'notifiable_type' => User::class, 'notifiable_id' => $report->user_id, 'data' => json_encode(['report_id' => $report->id, 'reference_number' => $report->reference_number, 'message' => ucfirst(str_replace('_', ' ', $report->status)).': '.$note]), 'created_at' => now(), 'updated_at' => now()]);
-            if (config('hazards.fcm_project_id') && config('hazards.fcm_credentials')) {
-                foreach (DB::table('device_tokens')->where('user_id', $report->user_id)->select('id')->cursor() as $device) {
-                    // Insert before commit on the SAME database: failure rolls back
-                    // the report/inbox too, and a crash cannot leave an enqueue gap.
-                    SendReportPush::dispatch($report->user_id, $report->id, $report->reference_number, ucfirst(str_replace('_', ' ', $report->status)), $device->id, $notificationId)
-                        ->onConnection('report-push')->beforeCommit();
-                }
-            }
+            app(SecurityEvents::class)->record('municipal_response_changed', $request->user(), $request);
+            app(ReportUpdates::class)->notify($report, ucfirst(str_replace('_', ' ', $report->status)).': '.$note);
 
             return $report;
         });
@@ -175,6 +191,7 @@ class ReportController extends Controller
     {
         return DB::transaction(function () use ($request, $report) {
             $report = HazardReport::whereKey($report->id)->lockForUpdate()->firstOrFail();
+            abort_unless($report->isCommunityVisible(), 404);
             abort_if(in_array($report->status, ['resolved', 'closed', 'rejected']), 422, 'This report is no longer active.');
             abort_if($request->user()->id === $report->user_id, 422, 'You already reported this hazard.');
             $report->confirmations()->firstOrCreate(['user_id' => $request->user()->id]);

@@ -1,5 +1,13 @@
 # Capstone technical documentation
 
+[Emergency-first reports, actionable notifications, hazard sounds and private image review](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md) records the current workflow; real contacts and a local classifier need configuration.
+
+[Settings, saved reading preferences, authenticator 2FA and Gmail readiness](SETTINGS_2FA_EMAIL_2026-11-11.md) records the current refinement; real delivery needs BANTAY's separate app password.
+
+[Single validation toasts, password visibility and schema inventory](TOAST_PASSWORD_SCHEMAS_2026-11-11.md) explains the latest UI changes and which local databases serve the app versus tests/archived setup.
+
+[Community navigation and reviewed news details](COMMUNITY_NAVIGATION_NEWS_DETAILS_2026-11-10.md) records the latest page simplification, all-status My reports and reviewed public submitter credit.
+
 **Project:** Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking\
 **Application name:** MuniAlert\
 **Baseline date:** 2 October 2026\
@@ -53,3 +61,15 @@ For members: [private workspace setup](TEAM_TESTING.md), [Android USB/native tes
 [KIKOS narrator and flush mobile header](NARRATOR_MOBILE_2026-11-09.md) records the latest narrator, top-spacing correction and MP4 hashes. Its export record supersedes the preceding video versions.
 
 For a new teammate: [first-download quickstart](COLLABORATOR_QUICKSTART.md), [files and owner handoff](COLLABORATOR_FILE_CHECKLIST.md), and [fresh-source setup verification](COLLABORATOR_SETUP_2026-11-09.md).
+
+[Administrator/citizen test accounts](TEST_ACCOUNTS.md), [the three-phase security plan](SECURITY_IMPLEMENTATION_PLAN.md), and [Phase 1 implementation/evidence](SECURITY_PHASE_1_2026-11-09.md) cover the latest account and security follow-up. Pending controls remain explicit.
+
+[Continued security phases](SECURITY_PHASE_2_2026-11-10.md) and [activation/remaining operations](SECURITY_OPERATIONS_2026-11-10.md) describe administrator MFA, recovery, CSP/scanning adapters and source automation, with explicit service/hosting acceptance limits.
+
+[Durable login, dashboard appearance and Phase 3 local operations](SECURITY_PHASE_3_DASHBOARD_2026-11-10.md) records the latest session/background/sidebar/motion follow-up, aggregate monitoring and synthetic encrypted MySQL restore rehearsal, with separate production acceptance limits.
+
+[Text-size slider and rolling dashboard counters](SLIDER_ROLLING_NUMBERS_2026-11-10.md) records the native range control, saved intermediate sizes, digit-reel motion and reduced-motion behavior.
+
+## Verified community publication and hazard collections
+
+See [private submissions, factual review, separate news and category achievements](COMMUNITY_REVIEW_ACHIEVEMENTS_2026-11-10.md) for current visibility, admin actions, sharing and milestone rules.

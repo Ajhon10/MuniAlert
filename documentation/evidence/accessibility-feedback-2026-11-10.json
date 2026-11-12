@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-10",
+  "timezone": "Asia/Manila",
+  "state": "local uncommitted workspace",
+  "checks": [
+    {
+      "command": "npm.cmd run test:e2e",
+      "passed": true,
+      "tests": 51,
+      "newAccessibilityFeedbackTests": 6,
+      "database": "isolated .cache/e2e.sqlite"
+    },
+    {
+      "command": "npm.cmd run typecheck",
+      "passed": true
+    },
+    {
+      "command": "npm.cmd run build",
+      "passed": true
+    },
+    {
+      "command": "npm.cmd run build:web",
+      "passed": true
+    },
+    {
+      "command": "npm.cmd exec -w hazard-client -- cap sync android",
+      "passed": true,
+      "scope": "asset/plugin sync, not APK build"
+    },
+    {
+      "command": "npm.cmd run docs:build / docs:check; node scripts/export-docs-pdf.mjs",
+      "passed": true
+    },
+    {
+      "command": "git diff --check; git diff --cached --check",
+      "passed": true
+    }
+  ],
+  "earlierFindings": [
+    "Focused browser runs exposed duplicate toast/field labels and dialog geometry movement; corrected.",
+    "Large text exposed skip-link pointer overlap and oversized modal chrome; corrected.",
+    "Sign-in failure now focuses the email input for correction; final suite passed."
+  ],
+  "screenshots": [
+    {
+      "path": "reading-settings-phone-2026-11-10.png",
+      "sha256": "3973d37c6fb0b446f364e72586a179338f0cbfbdf6dcb866978ac5cd79f99b81",
+      "data": "fictional demo reports / synthetic test inputs"
+    },
+    {
+      "path": "reading-settings-200-phone-2026-11-10.png",
+      "sha256": "34bb6ac65e4d7954b60be0c44e95d318580c73367c3b8cbfadcd27c453d11c18",
+      "data": "fictional demo reports / synthetic test inputs"
+    },
+    {
+      "path": "report-large-text-phone-2026-11-10.png",
+      "sha256": "92eaad15236612bc99c3803a7f12a10a597dfffe8d8018b94e8b5a1abfdc19e1",
+      "data": "fictional demo reports / synthetic test inputs"
+    },
+    {
+      "path": "dashboard-mobile-2026-11-10.png",
+      "sha256": "2a42ed7bc094f8cb94f28f55a67084432c08f9b8e1b24b9519542224b3230279",
+      "data": "fictional demo reports / synthetic test inputs"
+    },
+    {
+      "path": "dashboard-desktop-2026-11-10.png",
+      "sha256": "89b81b86f9ae4b863b04f767f8007d2be17179955e19715bf3bae03f99e8ae2f",
+      "data": "fictional demo reports / synthetic test inputs"
+    }
+  ],
+  "deployed": false,
+  "githubPushPerformed": false,
+  "fullReleaseGateRun": false,
+  "pending": [
+    "Physical Android build/device/TalkBack and actual system font scaling",
+    "Older-user and low-vision usability sessions",
+    "Cloud, deployment, workload and municipal acceptance"
+  ]
+}

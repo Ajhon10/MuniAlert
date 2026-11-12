@@ -1,0 +1,63 @@
+.review-step { padding: 20px; border: 1px solid #cbded2; border-radius: 16px; margin-top: 24px; background: #f6faf7; }
+.review-step > h3, .achievement-collection-heading h2 { display: flex; align-items: center; gap: 10px; }
+.review-step > .field-help { margin-block: 10px; }
+.review-step .form-body { padding: 0; gap: 16px; margin-top: 16px; }
+.review-step .checkbox-label { display: flex; flex-direction: row; align-items: flex-start; gap: 12px; line-height: 1.6; }
+.review-step .checkbox-label input { margin-top: 5px; flex: 0 0 24px; }
+.review-step .button-row { flex-wrap: wrap; }
+.private-verification-note, .post-preview p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.fact-check-panel details { padding-top: 12px; }
+.fact-check-panel summary { cursor: pointer; font-weight: 600; padding-block: 8px; }
+.post-preview { padding: 20px; border: 1px solid #c4dacc; border-radius: 16px; background: #fff; }
+.post-preview-label { display: flex; align-items: center; gap: 8px; color: #245d43; font-size: .875rem; }
+.post-preview h4 { margin-block: 12px 8px; font-size: 1.25rem; overflow-wrap: anywhere; }
+.post-preview small { display: block; margin-top: 16px; color: #4c6257; }
+.community-visibility-note { margin-bottom: 20px; padding: 12px 16px; background: #edf6ef; border: 1px solid #c9ddcf; border-radius: 12px; font-size: .9375rem; }
+.news-incident-details { margin-block: 20px; padding: 18px; border: 1px solid #cfddd3; border-radius: 14px; background: #f5f9f6; min-width: 0; }
+.news-incident-details h3 { font-size: 1rem; margin: 0 0 12px; }
+.news-reporter { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 16px; overflow-wrap: anywhere; }
+.news-reporter svg { flex: 0 0 auto; margin-top: 3px; }
+.news-reporter span { min-width: 0; }
+.news-reporter strong { font-weight: 700; }
+.news-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 16px 24px; margin: 0; }
+.news-facts div { min-width: 0; }
+.news-facts dt { font-size: .8125rem; color: #4b6256; margin-bottom: 4px; }
+.news-facts dd { margin: 0; font-size: .9375rem; overflow-wrap: anywhere; }
+.news-priority { text-transform: capitalize; }
+.highContrast .news-incident-details { background: white; border-color: #204a34; }
+.highContrast .news-facts dt { color: #102b20; }
+.hazard-achievements { margin-top: 24px; }
+.achievement-collection-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.collection-count { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 24px; background: #e4f1e8; color: #23543c; font-weight: 700; }
+.hazard-achievement-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 20px; margin-top: 24px; }
+.hazard-achievement-track { --achievement-ink: #285746; --achievement-tint: #e6f1e8; border: 1px solid #d1dfd5; border-radius: 20px; padding: 20px; background: linear-gradient(145deg, var(--achievement-tint), #fff 44%); min-width: 0; }
+.hazard-achievement-track:is(.fire, .electrical) { --achievement-ink: #8a451e; --achievement-tint: #fff0dd; }
+.hazard-achievement-track:is(.flood, .streetlight) { --achievement-ink: #245b7d; --achievement-tint: #e4f2fc; }
+.hazard-achievement-track:is(.accident, .road) { --achievement-ink: #754e86; --achievement-tint: #f1e8f7; }
+.hazard-achievement-track > header { display: flex; align-items: center; gap: 12px; }
+.hazard-achievement-track > header > div, .achievement-collection-heading h2 span, .hazard-levels li > div { min-width: 0; overflow-wrap: anywhere; }
+.hazard-achievement-track h3 { font-size: 1.0625rem; margin: 0; overflow-wrap: anywhere; }
+.hazard-achievement-track summary { cursor: pointer; min-height: 48px; padding-block: 12px; font-weight: 600; font-size: .875rem; }
+.next-achievement { font-size: .875rem; color: var(--achievement-ink); overflow-wrap: anywhere; }
+.hazard-achievement-track header p { font-size: .875rem; margin-top: 4px; color: #4b6256; }
+.hazard-medallion { width: 58px; height: 64px; display: grid; place-items: center; flex: 0 0 58px; color: var(--achievement-ink); background: #fff; border: 2px solid var(--achievement-ink); border-radius: 18px 18px 26px 26px; box-shadow: 0 4px 0 var(--achievement-tint); }
+.achievement-progress { display: grid; gap: 8px; margin-block: 20px; font-size: .875rem; font-weight: 600; }
+.achievement-progress progress { width: 100%; height: 10px; accent-color: var(--achievement-ink); border: 0; border-radius: 8px; overflow: hidden; }
+.achievement-progress progress::-webkit-progress-bar { background: #dae5dd; border-radius: 8px; }
+.achievement-progress progress::-webkit-progress-value { background: var(--achievement-ink); border-radius: 8px; }
+.achievement-progress progress::-moz-progress-bar { background: var(--achievement-ink); border-radius: 8px; }
+.hazard-levels { display: grid; gap: 14px; padding: 0; margin: 0; list-style: none; }
+.hazard-levels li { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid #d9e4dc; }
+.level-medallion { position: relative; display: grid; place-items: center; width: 48px; height: 52px; flex: 0 0 48px; border: 1px solid #9cafa1; border-radius: 14px 14px 20px 20px; background: #f0f3f1; color: #52665a; }
+.level-medallion > span { position: absolute; right: -4px; bottom: -3px; display: grid; place-items: center; width: 22px; height: 22px; border: 2px solid white; border-radius: 50%; background: #e4ebe6; color: #344d3e; font-size: .75rem; font-weight: 800; }
+.earned .level-medallion { background: #e7f3dc; border: 2px solid var(--achievement-ink); color: var(--achievement-ink); }
+.earned .tier-2 { background: #e1edf7; }
+.earned .tier-3 { background: #fff0c6; box-shadow: 0 0 0 3px #e9b94d30; }
+.hazard-levels strong, .hazard-levels small { display: block; overflow-wrap: anywhere; }
+.hazard-levels strong { font-size: .9375rem; }
+.hazard-levels small, .level-state { color: #4f6357; font-size: .8125rem; }
+.level-state { display: flex; align-items: center; gap: 5px; margin-top: 4px; }
+.earned .level-state { color: #205c37; font-weight: 700; }
+.highContrast :is(.review-step, .post-preview, .hazard-achievement-track) { background: white; border-color: #204a34; }
+.highContrast .hazard-levels :is(strong, small, .level-state) { color: #102b20; }
+@media (max-width: 480px) { .review-step, .hazard-achievement-track { padding: 16px; } .review-step .button-row > button { width: 100%; justify-content: center; } }

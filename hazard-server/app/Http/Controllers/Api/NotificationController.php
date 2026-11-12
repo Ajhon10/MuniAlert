@@ -10,14 +10,29 @@ class NotificationController extends Controller
 {
     public function index(Request $r)
     {
-        return $r->user()->notifications()->latest()->limit(50)->get();
+        return $r->user()->notifications()->where('type', $this->type($r))->latest()->limit(50)->get();
     }
 
     public function read(Request $r)
     {
-        $r->user()->unreadNotifications()->update(['read_at' => now()]);
+        $r->user()->unreadNotifications()->where('type', $this->type($r))->update(['read_at' => now()]);
 
         return ['ok' => true];
+    }
+
+    public function readOne(Request $r, string $notification)
+    {
+        $notice = $r->user()->notifications()->where('type', $this->type($r))->findOrFail($notification);
+        if (! $notice->read_at) {
+            $notice->forceFill(['read_at' => now()])->save();
+        }
+
+        return ['ok' => true];
+    }
+
+    private function type(Request $r): string
+    {
+        return $r->user()->role === 'admin' ? 'report_submitted' : 'report_updated';
     }
 
     public function device(Request $r)

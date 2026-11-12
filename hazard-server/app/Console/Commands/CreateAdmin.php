@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Support\PasswordInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,7 +28,7 @@ class CreateAdmin extends Command
         }
         $name = $this->ask('Administrator name', 'Municipal Administrator');
         $password = $this->secret('Password (at least 12 characters)');
-        $validator = Validator::make(compact('name', 'email', 'password'), ['name' => 'required|string|min:2|max:80', 'email' => 'required|email', 'password' => 'required|string|min:12|max:128']);
+        $validator = Validator::make(compact('name', 'email', 'password'), ['name' => 'required|string|min:2|max:80', 'email' => 'required|email', 'password' => ['required', ...PasswordInput::rules(true)]]);
         if ($validator->fails()) {
             foreach ($validator->errors()->all() as $error) {
                 $this->error($error);
@@ -37,8 +38,9 @@ class CreateAdmin extends Command
         }
         $user = new User(compact('name', 'email', 'password'));
         $user->role = 'admin';
+        $user->mfa_enrollment_until = now()->addMinutes(15);
         $user->save();
-        $this->info('Administrator created.');
+        $this->info('Administrator created. Complete authenticator enrollment within 15 minutes.');
 
         return self::SUCCESS;
     }

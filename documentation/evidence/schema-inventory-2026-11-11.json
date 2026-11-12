@@ -1,0 +1,62 @@
+{
+    "readOnly": true,
+    "connection": "mysql",
+    "configuredDatabase": "municipal_hazards",
+    "databaseReached": "municipal_hazards",
+    "schemas": [
+        {
+            "schema": "municipal_hazards",
+            "configuredApplication": true,
+            "tables": 28,
+            "counts": {
+                "users": 4,
+                "hazard_reports": 0,
+                "hazard_photos": 0,
+                "migrations": 14
+            },
+            "connectionsAtInspection": [
+                {
+                    "COMMAND": "Execute",
+                    "total": 1
+                }
+            ]
+        },
+        {
+            "schema": "municipal_hazards_test",
+            "configuredApplication": false,
+            "tables": 28,
+            "counts": {
+                "users": 0,
+                "hazard_reports": 0,
+                "hazard_photos": 0,
+                "migrations": 14
+            },
+            "connectionsAtInspection": []
+        },
+        {
+            "schema": "munialert_collab_20261109_070339",
+            "configuredApplication": false,
+            "tables": 25,
+            "counts": {
+                "users": 6,
+                "hazard_reports": 3,
+                "hazard_photos": 3,
+                "migrations": 8
+            },
+            "connectionsAtInspection": []
+        },
+        {
+            "schema": "municipal_hazards_e2e",
+            "configuredApplication": false,
+            "tables": 28,
+            "counts": {
+                "users": 3,
+                "hazard_reports": 0,
+                "hazard_photos": 0,
+                "migrations": 12
+            },
+            "connectionsAtInspection": []
+        }
+    ],
+    "databaseDeleted": false
+}

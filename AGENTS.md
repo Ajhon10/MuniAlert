@@ -25,6 +25,6 @@ The user selected one private `Ajhon10/MuniAlert` workspace repository on 9 Nove
 - Original GPS, selected hazard coordinates, and administrator-verified coordinates are separate evidence. Never overwrite original GPS during verification.
 - Require explicit location confirmation. Retain `gps`, `gps_adjusted`, or `manual` as the source. Flag discrepancies for review; do not automatically reject them.
 - Keep the three-photo, 1920-pixel, 1-MB-per-final-photo limits enforced on the server as well as the client.
-- Do not expose private GPS, reporter identity, credentials, or evidence metadata through public responses.
+- Do not expose private GPS, live reporter identity/contact fields, credentials, or evidence metadata through public responses. The user's 10 November news-detail request permits an explicitly admin-reviewed submitter display-name snapshot on a published post; preserve the option to withhold it. See `documentation/COMMUNITY_NAVIGATION_NEWS_DETAILS_2026-11-10.md`.
 - Keep demo records clearly labeled. Do not claim tests, cloud delivery, device builds, deployment, field trials, respondent counts, or capstone findings that have not actually been verified.
 - Never commit `.env`, Firebase service-account keys, signing keys, database exports, uploaded evidence, or dependency folders.

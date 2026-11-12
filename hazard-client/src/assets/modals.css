@@ -10,17 +10,17 @@
 .modal-footer { display: flex; flex-direction: column; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--border); background: #f7fbf9; }
 .modal-footer > .button:only-child { align-self: flex-end; }
 .modal-footer .button { min-height: 48px; white-space: normal; }
-.modal-footer .button.full { font-size: 16px; }
-.modal-footer .form-foot { font-size: 14px; line-height: 1.5; color: var(--text-muted); }
+.modal-footer .button.full { font-size: 1rem; }
+.modal-footer .form-foot { font-size: 0.875rem; line-height: 1.5; color: var(--text-muted); }
 .modal-footer .form-foot .text-button { min-height: 32px; font-size: inherit; }
-.modal-footer .field-help { font-size: 12px; line-height: 1.5; }
+.modal-footer .field-help { font-size: 0.75rem; line-height: 1.5; }
 .modal-footer .form-error { max-height: 96px; overflow-y: auto; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
 .modal-actions > .button { flex: 1 1 auto; }
 .tour-sheet { display: flex; flex-direction: column; overflow: hidden; padding: 0; max-height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
 .tour-header { flex: 0 0 auto; padding: 20px 24px 16px; border-bottom: 1px solid var(--border); }
 .tour-body { min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; padding: 18px 24px; }
-.tour-body p { font-size: 16px; line-height: 1.65; color: #3b5647; }
+.tour-body p { font-size: 1rem; line-height: 1.65; color: #3b5647; }
 .tour-footer { flex: 0 0 auto; padding: 12px 24px 16px; border-top: 1px solid var(--border); background: #f7fbf9; }
 .tour-footer .tour-progress { margin-top: 0; }
 @media (max-width: 639px) {

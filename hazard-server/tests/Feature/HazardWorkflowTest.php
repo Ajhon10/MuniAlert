@@ -9,7 +9,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class HazardWorkflowTest extends TestCase
@@ -51,7 +50,7 @@ class HazardWorkflowTest extends TestCase
     public function test_manual_report_requires_confirmed_location_and_compresses_photos(): void
     {
         $user = $this->citizen();
-        Sanctum::actingAs($user);
+        $this->authenticateUser($user);
         $this->postJson('/api/reports', $this->payload(['location_confirmed' => 0]))->assertUnprocessable()->assertJsonValidationErrors('location_confirmed');
         $response = $this->postJson('/api/reports', $this->payload())->assertCreated()->assertJsonPath('data.location_source', 'manual')->assertJsonPath('data.gps_latitude', null);
         $report = HazardReport::findOrFail($response->json('data.id'));
@@ -65,13 +64,13 @@ class HazardWorkflowTest extends TestCase
 
     public function test_gps_adjustment_is_saved_and_flagged_without_rejection(): void
     {
-        Sanctum::actingAs($this->citizen());
+        $this->authenticateUser($this->citizen());
         $this->postJson('/api/reports', $this->payload(['location_source' => 'gps_adjusted', 'gps_latitude' => 14.7, 'gps_longitude' => 121.0, 'gps_accuracy' => 9.2]))->assertCreated()->assertJsonPath('data.status', 'submitted')->assertJsonPath('data.gps_accuracy', 9.2)->assertJsonPath('data.location_review_required', true);
     }
 
     public function test_gps_source_cannot_hide_a_changed_pin_and_coordinates_are_required(): void
     {
-        Sanctum::actingAs($this->citizen());
+        $this->authenticateUser($this->citizen());
         $this->postJson('/api/reports', $this->payload(['location_source' => 'gps', 'gps_latitude' => 14.7, 'gps_longitude' => 121.0, 'gps_accuracy' => 12]))->assertUnprocessable()->assertJsonValidationErrors('location_source');
         $this->postJson('/api/reports', $this->payload(['selected_latitude' => null]))->assertUnprocessable()->assertJsonValidationErrors('selected_latitude');
         $this->postJson('/api/reports', $this->payload(['selected_longitude' => 190]))->assertUnprocessable()->assertJsonValidationErrors('selected_longitude');
@@ -79,7 +78,7 @@ class HazardWorkflowTest extends TestCase
 
     public function test_photo_count_size_and_decoded_type_are_checked(): void
     {
-        Sanctum::actingAs($this->citizen());
+        $this->authenticateUser($this->citizen());
         $this->postJson('/api/reports', $this->payload(['photos' => array_fill(0, 4, UploadedFile::fake()->image('photo.jpg'))]))->assertUnprocessable();
         $this->postJson('/api/reports', $this->payload(['photos' => [UploadedFile::fake()->image('large.jpg')->size(1025)]]))->assertUnprocessable();
         $this->postJson('/api/reports', $this->payload(['photos' => [UploadedFile::fake()->create('not-an-image.jpg', 1, 'text/plain')]]))->assertUnprocessable();
@@ -90,7 +89,7 @@ class HazardWorkflowTest extends TestCase
     {
         $report = $this->report($this->citizen(), ['gps_latitude' => 14.59, 'gps_longitude' => 120.98, 'gps_accuracy' => 8, 'location_source' => 'gps_adjusted']);
         $this->getJson('/api/reports')->assertOk()->assertJsonMissingPath('data.0.gps_latitude')->assertJsonMissingPath('data.0.reporter');
-        Sanctum::actingAs($this->citizen());
+        $this->authenticateUser($this->citizen());
         $this->getJson('/api/reports/'.$report->id)->assertForbidden();
         $this->patchJson('/api/reports/'.$report->id, ['status' => 'verified'])->assertForbidden();
         $this->getJson('/api/admin/reports')->assertForbidden();
@@ -100,11 +99,15 @@ class HazardWorkflowTest extends TestCase
     {
         $citizen = $this->citizen();
         $report = $this->report($citizen, ['gps_latitude' => 14.599, 'gps_longitude' => 120.984, 'gps_accuracy' => 9, 'location_source' => 'gps_adjusted']);
-        Sanctum::actingAs($this->admin());
+        $this->authenticateUser($this->admin());
         $update = ['severity' => 'high', 'department_id' => 'engineering', 'note' => 'Municipal team reviewed this report.', 'verified_latitude' => 14.6001, 'verified_longitude' => 120.9843];
         $this->patchJson('/api/reports/'.$report->id, [...$update, 'status' => 'resolved'])->assertUnprocessable();
         foreach (['under_verification', 'verified', 'assigned', 'responding', 'resolved', 'closed'] as $status) {
-            $this->patchJson('/api/reports/'.$report->id, [...$update, 'status' => $status, 'assigned_responder' => 'Engineering team 1'])->assertOk()->assertJsonPath('data.status', $status);
+            if ($status === 'verified') {
+                $this->postJson('/api/admin/reports/'.$report->id.'/verify', ['confirmed_happened' => true, 'method' => 'responder_confirmation', 'verification_note' => 'Municipal response team independently confirmed this incident.', 'verified_latitude' => 14.6001, 'verified_longitude' => 120.9843])->assertOk()->assertJsonPath('data.status', $status);
+            } else {
+                $this->patchJson('/api/reports/'.$report->id, [...$update, 'status' => $status, 'assigned_responder' => 'Engineering team 1'])->assertOk()->assertJsonPath('data.status', $status);
+            }
         }
         $report->refresh();
         $this->assertSame(14.599, $report->gps_latitude);
@@ -119,12 +122,12 @@ class HazardWorkflowTest extends TestCase
     public function test_nearby_detection_and_confirmations_are_scoped_and_idempotent(): void
     {
         $owner = $this->citizen();
-        $near = $this->report($owner);
-        $this->report($owner, ['selected_latitude' => 15.0]);
-        $this->report($owner, ['category_id' => 'flood']);
-        $this->report($owner, ['status' => 'resolved']);
+        $near = $this->report($owner, ['status' => 'verified', 'fact_checked_at' => now()]);
+        $this->report($owner, ['status' => 'verified', 'fact_checked_at' => now(), 'selected_latitude' => 15.0]);
+        $this->report($owner, ['status' => 'verified', 'fact_checked_at' => now(), 'category_id' => 'flood']);
+        $this->report($owner, ['status' => 'resolved', 'fact_checked_at' => now()]);
         $this->getJson('/api/reports/nearby?category=tree&latitude=14.5995&longitude=120.9842')->assertOk()->assertJsonCount(1)->assertJsonPath('0.id', $near->id);
-        Sanctum::actingAs($this->citizen());
+        $this->authenticateUser($this->citizen());
         $this->postJson('/api/reports/'.$near->id.'/confirm')->assertOk();
         $this->postJson('/api/reports/'.$near->id.'/confirm')->assertOk();
         $this->assertDatabaseCount('report_confirmations', 1);

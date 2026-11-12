@@ -99,6 +99,8 @@ export const vLiquidGlass: ObjectDirective<HTMLElement> = {
     let disposed = false;
 
     const effectsAllowed = () =>
+      !document.documentElement.classList.contains('reduceMotion') &&
+      !document.documentElement.classList.contains('highContrast') &&
       !reducedMotion.matches &&
       !reducedTransparency.matches &&
       !moreContrast.matches &&
@@ -235,6 +237,7 @@ export const vLiquidGlass: ObjectDirective<HTMLElement> = {
     element.addEventListener("pointerleave", resetPointer, { passive: true });
     for (const preference of preferences)
       preference.addEventListener("change", preferenceChanged);
+    window.addEventListener('reading-preferences-changed', preferenceChanged);
     scheduleLens();
     cleanups.set(element, () => {
       disposed = true;
@@ -246,6 +249,7 @@ export const vLiquidGlass: ObjectDirective<HTMLElement> = {
       element.removeEventListener("pointerleave", resetPointer);
       for (const preference of preferences)
         preference.removeEventListener("change", preferenceChanged);
+      window.removeEventListener('reading-preferences-changed', preferenceChanged);
       element.removeAttribute("data-liquid-glass");
     });
   },

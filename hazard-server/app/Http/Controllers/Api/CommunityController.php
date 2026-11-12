@@ -6,14 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\HazardResource;
 use App\Models\HazardReport;
 use App\Models\User;
+use App\Services\HazardAchievements;
+use App\Services\SecurityEvents;
+use App\Services\SecuritySessions;
+use App\Support\PasswordInput;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class CommunityController extends Controller
 {
@@ -26,7 +28,11 @@ class CommunityController extends Controller
 
     public function settings()
     {
-        return DB::table('municipal_settings')->pluck('value', 'key')->map(fn ($value) => json_decode($value, true));
+        return DB::table('municipal_settings')->pluck('value', 'key')->map(function ($value, $key) {
+            $decoded = json_decode($value, true);
+
+            return $key === 'dashboard_background' ? ($decoded ? '/api/dashboard-background/'.$decoded['id'] : null) : $decoded;
+        });
     }
 
     public function saveSettings(Request $request)
@@ -35,10 +41,18 @@ class CommunityController extends Controller
         $data = $request->validate([
             'map.latitude' => 'required|numeric|between:-90,90', 'map.longitude' => 'required|numeric|between:-180,180', 'map.zoom' => 'required|numeric|between:3,19',
             'hotlines' => 'present|array|max:20', 'hotlines.*.name' => 'required|string|min:2|max:80', 'hotlines.*.number' => ['required', 'string', 'max:30', 'regex:/^[+0-9() -]+$/'],
+            'hotlines.*' => 'array:name,number,service,area,address,latitude,longitude',
+            'hotlines.*.service' => ['nullable', Rule::in(['police', 'fire', 'medical', 'rescue', 'other'])],
+            'hotlines.*.area' => 'nullable|string|max:80', 'hotlines.*.address' => 'nullable|string|max:160',
+            'hotlines.*.latitude' => 'nullable|required_with:hotlines.*.longitude|numeric|between:-90,90',
+            'hotlines.*.longitude' => 'nullable|required_with:hotlines.*.latitude|numeric|between:-180,180',
         ]);
-        foreach (['map', 'hotlines'] as $key) {
-            DB::table('municipal_settings')->updateOrInsert(['key' => $key], ['value' => json_encode($data[$key]), 'updated_at' => now()]);
-        }
+        DB::transaction(function () use ($data, $request) {
+            foreach (['map', 'hotlines'] as $key) {
+                DB::table('municipal_settings')->updateOrInsert(['key' => $key], ['value' => json_encode($data[$key]), 'updated_at' => now()]);
+            }
+            app(SecurityEvents::class)->record('municipal_settings_changed', $request->user(), $request);
+        });
 
         return $this->settings();
     }
@@ -64,7 +78,10 @@ class CommunityController extends Controller
         if ($data['reward_type'] !== 'gift') {
             $data['reward_description'] = null;
         }
-        DB::table('badges')->where('id', $badge)->update([...$data, 'updated_at' => now()]);
+        DB::transaction(function () use ($data, $badge, $request) {
+            DB::table('badges')->where('id', $badge)->update([...$data, 'updated_at' => now()]);
+            app(SecurityEvents::class)->record('badge_settings_changed', $request->user(), $request);
+        });
 
         return DB::table('badges')->where('id', $badge)->first();
     }
@@ -72,27 +89,31 @@ class CommunityController extends Controller
     public function profile(Request $request)
     {
         $user = $request->user();
-        $count = HazardReport::where('user_id', $user->id)->whereIn('status', self::CONFIRMED)->count();
+        $count = HazardReport::communityVisible()->where('user_id', $user->id)->count();
 
-        return ['user' => $user, 'verified_reports' => $count, 'badges' => DB::table('badges')->orderBy('threshold')->get()->map(fn ($badge) => [...(array) $badge, 'earned' => $count >= $badge->threshold])];
+        return ['user' => $user, 'verified_reports' => $count, 'hazard_achievements' => app(HazardAchievements::class)->forUser($user), 'badges' => DB::table('badges')->orderBy('threshold')->get()->map(fn ($badge) => [...(array) $badge, 'earned' => $count >= $badge->threshold])];
     }
 
     public function updateProfile(Request $request)
     {
-        $request->merge(['email' => strtolower(trim((string) $request->input('email')))]);
-        $data = $request->validate(['name' => 'required|string|min:2|max:120', 'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($request->user()->id)], 'current_password' => 'required_with:password|string', 'password' => 'nullable|string|min:12|confirmed']);
+        if (is_string($request->input('email'))) {
+            $request->merge(['email' => strtolower(trim($request->input('email')))]);
+        }
+        $data = $request->validate(['name' => 'required|string|min:2|max:120', 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($request->user()->id)], 'current_password' => ['required_with:password', ...PasswordInput::rules()], 'password' => ['nullable', 'confirmed', ...PasswordInput::rules(true)]]);
         $user = DB::transaction(function () use ($request, $data) {
             $user = User::whereKey($request->user()->id)->lockForUpdate()->firstOrFail();
             $changingPassword = ! empty($data['password']);
+            $changingEmail = $data['email'] !== $user->email;
             if ($changingPassword && (! $user->has_password || ! Hash::check($data['current_password'] ?? '', $user->password))) {
                 throw ValidationException::withMessages(['current_password' => 'Current password is incorrect.']);
             }
             $user->update(array_filter(['name' => $data['name'], 'email' => $data['email'], 'password' => $data['password'] ?? null]));
-            if ($changingPassword) {
-                $currentToken = $request->user()->currentAccessToken();
-                $user->tokens()->when($currentToken instanceof PersonalAccessToken,
-                    fn ($query) => $query->whereKeyNot($currentToken->id))->delete();
-                $user->forceFill(['remember_token' => Str::random(60)])->save();
+            if ($changingEmail) {
+                $user->forceFill(['local_email_verified_at' => null, 'email_verified_at' => null])->save();
+            }
+            if ($changingPassword || $changingEmail) {
+                app(SecuritySessions::class)->invalidate($user, $request);
+                app(SecurityEvents::class)->record($changingPassword ? 'password_changed' : 'email_changed', $user, $request);
             }
 
             return $user;
@@ -109,7 +130,7 @@ class CommunityController extends Controller
     public function news(Request $request)
     {
         $filter = $request->validate(['report' => 'nullable|uuid']);
-        $reports = HazardReport::with(['category', 'department'])->withCount('confirmations')->whereIn('status', self::CONFIRMED)->whereNotNull('public_title')->whereNotNull('public_summary')->when($filter['report'] ?? null, fn ($query, $id) => $query->whereKey($id))->latest('verified_at')->paginate(20);
+        $reports = HazardReport::with(['category', 'department'])->withCount('confirmations')->published()->when($filter['report'] ?? null, fn ($query, $id) => $query->whereKey($id))->latest('published_at')->paginate(20);
         $items = $reports->getCollection();
         $ids = $items->pluck('id');
         $reactionCounts = DB::table('news_reactions')->whereIn('hazard_report_id', $ids)->selectRaw('hazard_report_id, type, count(*) as total')->groupBy('hazard_report_id', 'type')->get()->groupBy('hazard_report_id');
@@ -168,7 +189,7 @@ class CommunityController extends Controller
 
     private function confirmed(HazardReport $report): void
     {
-        abort_unless(in_array($report->status, self::CONFIRMED, true) && $report->public_title && $report->public_summary, 404);
+        abort_unless($report->isPublished(), 404);
     }
 
     private function citizen(Request $request): void

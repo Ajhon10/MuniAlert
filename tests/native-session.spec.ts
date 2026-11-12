@@ -81,7 +81,7 @@ test('native login fails clearly and revokes its new token if secure storage fai
   await page.goto('/');
   await expect(page.locator('.connection')).toHaveText('Connected');
   await login(page);
-  await expect(page.getByRole('alert')).toContainText('Unable to securely save your session');
+  await expect(page.locator('.toast-message.error')).toContainText('Unable to securely save your session');
   expect(vault.size).toBe(0);
   expect(state.logoutCalls).toBe(1);
   await expect(page.locator('.sidebar-user')).toContainText('Community guest');

@@ -8,7 +8,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class InterviewAlignmentTest extends TestCase
@@ -37,6 +36,8 @@ class InterviewAlignmentTest extends TestCase
             'barangay' => 'Anambongan', 'selected_latitude' => 14.5995, 'selected_longitude' => 120.9842,
             'gps_latitude' => 14.5994, 'gps_longitude' => 120.9841, 'location_source' => 'gps_adjusted',
             'injuries' => 'yes', 'people_affected' => 2,
+            'fact_checked_at' => in_array($extra['status'] ?? 'submitted', HazardReport::ACCEPTED_STATUSES, true) ? now() : null,
+            'published_at' => ! empty($extra['public_title']) && ! empty($extra['public_summary']) ? now() : null,
         ], ...$extra]);
         if (isset($extra['created_at'])) {
             $record->forceFill(['created_at' => $extra['created_at']])->save();
@@ -68,7 +69,7 @@ class InterviewAlignmentTest extends TestCase
         $this->getJson('/api/reports?search=eyewitness')->assertJsonCount(0, 'data');
         $this->getJson('/api/reports?search=Private%20accident')->assertJsonCount(0, 'data');
         $this->getJson('/api/reports/nearby?category=accident&latitude=14.5995&longitude=120.9842')->assertOk()->assertDontSee('Private accident');
-        Sanctum::actingAs($this->admin());
+        $this->authenticateUser($this->admin());
         $this->getJson('/api/news')->assertOk()->assertJsonCount(0, 'data.0.report.photos')->assertJsonMissingPath('data.0.report.gps_latitude')->assertDontSee('Private eyewitness');
         $this->getJson('/api/admin/reports')->assertOk()->assertJsonPath('data.0.title', $report->title)->assertJsonPath('data.0.injuries', 'yes');
     }
@@ -80,15 +81,15 @@ class InterviewAlignmentTest extends TestCase
         $photo = $this->photo($report);
         $url = '/api/reports/'.$report->id.'/photos/'.$photo->id;
         $this->getJson($url)->assertUnauthorized();
-        Sanctum::actingAs(User::factory()->create());
+        $this->authenticateUser(User::factory()->create());
         $this->getJson($url)->assertForbidden();
-        Sanctum::actingAs($owner);
+        $this->authenticateUser($owner);
         $this->get($url)->assertOk()->assertHeader('Content-Type', 'image/webp')->assertHeader('Cache-Control', 'no-store, private');
         $other = $this->record($owner);
         $otherPhoto = $this->photo($other);
         $this->getJson('/api/reports/'.$report->id.'/photos/'.$otherPhoto->id)->assertNotFound();
         $this->getJson('/api/reports/'.$report->id)->assertJsonPath('data.selected_latitude', 14.5995)->assertJsonPath('data.photos.0.photo_type', 'incident');
-        Sanctum::actingAs($this->admin());
+        $this->authenticateUser($this->admin());
         $this->get($url)->assertOk();
     }
 
@@ -98,19 +99,21 @@ class InterviewAlignmentTest extends TestCase
         $report = $this->record($owner, ['status' => 'verified']);
         $this->getJson('/api/news')->assertJsonCount(0, 'data');
         $this->getJson('/api/news/'.$report->id.'/comments')->assertNotFound();
-        Sanctum::actingAs($this->admin());
-        $update = ['status' => 'verified', 'severity' => 'high', 'department_id' => 'mdrrmo', 'verified_latitude' => 14.6, 'verified_longitude' => 120.98, 'note' => 'Private response coordination note.', 'public_title' => 'Accident response update', 'public_summary' => 'Municipal responders are attending to a reported road accident.'];
-        $this->patchJson('/api/reports/'.$report->id, [...$update, 'public_summary' => ''])->assertUnprocessable();
-        $this->patchJson('/api/reports/'.$report->id, $update)->assertOk();
+        $this->authenticateUser($this->admin());
+        $post = ['public_title' => 'Accident response update', 'public_summary' => 'Municipal responders are attending to a reported road accident.', 'privacy_reviewed' => true];
+        $this->postJson('/api/admin/reports/'.$report->id.'/post', [...$post, 'public_summary' => ''])->assertUnprocessable();
+        $this->postJson('/api/admin/reports/'.$report->id.'/post', $post)->assertOk();
         $this->getJson('/api/news')->assertJsonCount(1, 'data')->assertJsonPath('data.0.report.title', 'Accident response update')->assertDontSee('Private response coordination');
-        $this->patchJson('/api/reports/'.$report->id, [...$update, 'public_title' => null, 'public_summary' => null])->assertOk();
+        $this->deleteJson('/api/admin/reports/'.$report->id.'/post')->assertOk();
         $this->getJson('/api/news')->assertJsonCount(0, 'data');
     }
 
     public function test_incident_time_and_observation_fields_are_validated_and_cannot_change_publication(): void
     {
-        Sanctum::actingAs(User::factory()->create());
-        $payload = ['category_id' => 'accident', 'title' => 'Road accident near the school', 'description' => 'Two vehicles involved near the school entrance.', 'address' => 'School entrance', 'barangay' => 'Poblacion', 'selected_latitude' => 14.6, 'selected_longitude' => 121, 'location_source' => 'manual', 'location_confirmed' => 1, 'severity' => 'high', 'injuries' => 'yes', 'people_affected' => 2, 'occurred_at' => '2026-01-02T08:00:00+08:00', 'photos' => [UploadedFile::fake()->image('proof.jpg', 20, 20)], 'public_title' => 'Unauthorized publication', 'public_summary' => 'Citizen cannot publish a municipal statement.'];
+        $this->authenticateUser(User::factory()->create());
+        $payload = ['category_id' => 'accident', 'title' => 'Road accident near the school', 'description' => 'Two vehicles involved near the school entrance.', 'address' => 'School entrance', 'barangay' => 'Poblacion', 'selected_latitude' => 14.6, 'selected_longitude' => 121, 'location_source' => 'manual', 'location_confirmed' => 1, 'severity' => 'high', 'injuries' => 'yes', 'people_affected' => 2,
+            'fact_checked_at' => in_array($extra['status'] ?? 'submitted', HazardReport::ACCEPTED_STATUSES, true) ? now() : null,
+            'published_at' => ! empty($extra['public_title']) && ! empty($extra['public_summary']) ? now() : null, 'occurred_at' => '2026-01-02T08:00:00+08:00', 'photos' => [UploadedFile::fake()->image('proof.jpg', 20, 20)], 'public_title' => 'Unauthorized publication', 'public_summary' => 'Citizen cannot publish a municipal statement.'];
         $response = $this->postJson('/api/reports', $payload)->assertCreated()->assertJsonPath('data.injuries', 'yes')->assertJsonPath('data.people_affected', 2)->assertJsonPath('data.public_title', null);
         $this->assertSame('2026-01-02 00:00:00', HazardReport::findOrFail($response->json('data.id'))->occurred_at->format('Y-m-d H:i:s'));
         $this->assertSame('evidence', DB::table('hazard_photos')->first()->disk);
@@ -125,9 +128,9 @@ class InterviewAlignmentTest extends TestCase
         $report = $this->record($owner, ['status' => 'responding']);
         $this->photo($report);
         $url = '/api/reports/'.$report->id.'/resolution-photos';
-        Sanctum::actingAs($owner);
+        $this->authenticateUser($owner);
         $this->postJson($url, ['photos' => [UploadedFile::fake()->image('after.jpg')]])->assertForbidden();
-        Sanctum::actingAs($this->admin());
+        $this->authenticateUser($this->admin());
         $this->postJson($url, ['photos' => [UploadedFile::fake()->image('after.jpg')]])->assertCreated();
         $this->assertSame(1, $report->photos()->where('photo_type', 'incident')->count());
         $this->assertSame(1, $report->photos()->where('photo_type', 'resolution')->count());
@@ -154,7 +157,7 @@ class InterviewAlignmentTest extends TestCase
         $this->record($owner, ['occurred_at' => '2026-02-01 00:00:00', 'status' => 'rejected']);
         $deleted = $this->record($owner, ['occurred_at' => '2026-02-01 00:00:00']);
         $deleted->delete();
-        Sanctum::actingAs($this->admin());
+        $this->authenticateUser($this->admin());
         $query = '/api/admin/analytics?from=2026-02-01&to=2026-02-28&group=month';
         $this->getJson($query)->assertOk()->assertJsonPath('total', 106)->assertJsonPath('known_time', 105)
             ->assertJsonPath('periods.0.period', '2026-02-01')->assertJsonPath('periods.0.accidents', 105);
@@ -167,9 +170,9 @@ class InterviewAlignmentTest extends TestCase
     {
         $url = '/api/admin/analytics?from=2026-01-01&to=2026-12-31&group=month';
         $this->getJson($url)->assertUnauthorized();
-        Sanctum::actingAs(User::factory()->create());
+        $this->authenticateUser(User::factory()->create());
         $this->getJson($url)->assertForbidden();
-        Sanctum::actingAs($this->admin());
+        $this->authenticateUser($this->admin());
         foreach (['from=2026-01-01&to=2027-12-31&group=month', 'from=2026-02-01&to=2026-01-01&group=week', 'from=wrong&to=2026-01-01&group=day'] as $invalid) {
             $this->getJson('/api/admin/analytics?'.$invalid)->assertUnprocessable();
         }

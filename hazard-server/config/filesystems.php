@@ -29,6 +29,17 @@ return [
     */
 
     'disks' => [
+        'branding' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/branding'),
+            'visibility' => 'private',
+            'throw' => true,
+        ],
+
+        'quarantine' => [
+            'driver' => 'local', 'root' => storage_path('app/security-quarantine'),
+            'visibility' => 'private', 'throw' => true,
+        ],
 
         'evidence' => [
             'driver' => 'local',

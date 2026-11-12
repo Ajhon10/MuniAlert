@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Support\SecurityLock;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 
 class WorkPush extends Command
 {
@@ -21,7 +21,7 @@ class WorkPush extends Command
 
         // Use a shared database lock, including when hPanel invokes this command
         // directly. A killed cron process releases its claim through expiry.
-        $lock = Cache::store('database')->lock('bantay:scheduled-push-worker', 180);
+        $lock = SecurityLock::make('bantay:scheduled-push-worker', 180);
         if (! $lock->get()) {
             $this->info('Another scheduled notification batch is still running.');
 

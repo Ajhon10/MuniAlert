@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect, continueReport } from './fixtures';
 import type { Locator } from '@playwright/test';
 
 async function fixedChrome(dialog: Locator, bodySelector = '.modal-body', headerSelector = '.modal-header', footerSelector = '.modal-footer') {
@@ -19,7 +19,7 @@ async function fixedChrome(dialog: Locator, bodySelector = '.modal-body', header
 
 test('report forms keep header and submit visible while only the body scrolls, including a short phone viewport', async ({ page }) => {
   await page.goto('/?demo=1');
-  await page.getByRole('button', { name: 'Report a hazard', exact: true }).click();
+  await page.getByRole('button', { name: 'Report a hazard', exact: true }).click(); await continueReport(page);
   const dialog = page.getByRole('dialog', { name: 'Report a hazard', exact: true });
   await dialog.getByRole('button', { name: 'Fallen tree', exact: true }).click();
   const image = await page.evaluate(() => { const canvas = document.createElement('canvas'); canvas.width = 600; canvas.height = 400; return canvas.toDataURL('image/png').split(',')[1]; });

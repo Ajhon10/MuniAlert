@@ -25,7 +25,6 @@ Create a new MySQL database named `municipal_hazards`, configure its credentials
 
 ```sh
 php hazard-server/artisan migrate --seed
-php hazard-server/artisan storage:link
 php hazard-server/artisan hazard:admin admin@example.test
 ```
 
@@ -67,7 +66,9 @@ Use a **plain email address**, not `[admin@example.test](mailto:admin@example.te
 
 The Vite and PHP server startup messages only confirm that HTTP servers started. They do not prove database authentication or migrations succeeded. If the MySQL password is unknown, obtain it from the owner of that local installation or follow that installation's authorized account-recovery process before continuing.
 
-For local development accounts, set three distinct `HAZARD_DEMO_*_PASSWORD` values of at least 12 characters in `hazard-server/.env`, clear configuration, then run `php hazard-server/artisan db:seed --class=DemoAccountSeeder`. The seeder creates `itsajhon@gmail.com` as an administrator plus two `example.test` citizen accounts. It is explicit, local-only, and skips existing accounts without resetting their passwords. Do not deploy these demo credentials.
+For local development accounts, set three distinct `HAZARD_DEMO_*_PASSWORD` values of at least 12 characters and at most 72 UTF-8 bytes in `hazard-server/.env`, clear configuration, then run `npm run db:seed:accounts` from the root. `HAZARD_DEMO_ADMIN_EMAIL` defaults to `admin@example.test`; two regular citizens use `example.test`. It is explicit, local/testing-only, transactional, and skips existing accounts without resetting passwords or roles. See [test accounts](TEST_ACCOUNTS.md). Do not deploy these demo credentials. Private evidence does not need a public storage symlink.
+
+Before deployment, run `node scripts/php.mjs hazard-server/artisan hazard:security-check` against the intended production configuration. It is read-only, prints no configuration values, and must fail for the normal local HTTP/root-database/demo setup. It checks only the Phase 1 configuration baseline; complete [all remaining security phases](SECURITY_IMPLEMENTATION_PLAN.md), hosting/TLS checks and operational acceptance separately. Production requests additionally suppress debug details and force Secure/HttpOnly cookies. Verify HTTPS/trusted proxy behavior on the real hosting account rather than assuming these source guards configure the server.
 
 ## R2 configuration
 
@@ -163,3 +164,31 @@ Follow [SOCIAL_AUTH_SETUP.md](SOCIAL_AUTH_SETUP.md) for server environment keys,
 ## Basista map assets
 
 The build includes `public/boundaries/` under the correct Vite base (`/app/` on the combined website and root on Android). Keep the GeoJSON files and `provenance.json` in the release. Clear/Dark basemaps use OpenFreeMap; Streets uses OpenStreetMap raster tiles. Preserve displayed attribution and validate real connectivity on the target hosting/device. Operators may set `VITE_BARANGAY_GEOJSON_URL`, `VITE_CITY_GEOJSON_URL` and `VITE_PROVINCE_GEOJSON_URL` to approved replacement FeatureCollections; use a `name` property for labels. Rebuild/synchronize Android after changing public configuration. The new camera migration replaces only the generic Manila center, retaining customized settings. See [the Basista map handover](BASISTA_MAP_2026-11-09.md).
+
+## Phase 2 activation and Phase 3 operations
+
+Review [the security operations guide](SECURITY_OPERATIONS_2026-11-10.md) before applying the additive security migration. Existing password-only administrator credentials are rejected; coordinate approved authenticator enrollment. Configure real security mail/scanner services and retain the single bounded hPanel scheduler path. `hazard:security-check --phase=2` reports readiness flags without secret values and is expected to fail until those prerequisites are met. Verify actual static CSP/HTTPS/private-storage behavior separately. Source gates and pinned workflow revisions do not establish deployed protection, remote GitHub checks, branch rules, alerts or backup restoration.
+
+## Durable devices and Phase 3 local operational tools
+
+Apply the three additive follow-up migrations without resets. `AUTH_PERSISTENT_LOGIN=true` is the new default for non-expiring native access; existing active mobile credentials are extended, expired ones stay invalid. Browser device proofs use encrypted HttpOnly cookies, current security versions and preserved MFA state. Keep the application key stable/secret and serve only Laravel public. Include private branding in the real backup scope. Review the security implications of persistent access on shared devices and retain explicit logout/security revocation.
+
+Run `hazard:security-monitor` to collect aggregate JSON and a failure exit code. The existing scheduler updates its heartbeat. `SECURITY_MONITOR_ENABLED=true` writes aggregate warnings to the configured log; integrate approved private collection/alerts separately. `node scripts/security-backup-drill.mjs` rehearses synthetic localhost MySQL restore and archive authentication with guarded temporary targets; it is not a real application backup. `MYSQL_CLIENT_DIR` may select installed matching MySQL client tools; PHP remains workstation 8.5. See [the continuation](SECURITY_PHASE_3_DASHBOARD_2026-11-10.md).
+
+## Fact-check/publication activation
+
+Apply the additive fact-check/publication migration without resets. It adds nullable fields and does not certify or publish legacy records. Operators must review old accepted statuses/text explicitly; do not backfill factual attestation from status alone. Copy the full Laravel public root, including news-share.css and news-icon.png, in addition to packaged app assets. Serve `/news/{report}` through Laravel so unpublished/rejected/deleted posts cannot remain publicly accessible from a static export. Preserve no-store/private response handling and CSP, and test real social crawlers on the intended public HTTPS host. Existing external copies cannot be recalled by unpublishing. Approve municipal factual evidence/reward policy and review standards separately from code tests.
+
+## Settings and separate Gmail delivery — 11 November 2026
+
+Apply the additive account-preferences migration with PHP8.5; do not reset the database. Default demo administrators must use a reserved .test address such as admin@example.test. Changing the seeder default does not rename or promote an existing account.
+
+Gmail SMTP is the selected provider, matching PDEA's provider with separate BANTAY credentials. Configure MAIL_ENABLED=true, MAIL_MAILER=smtp, MAIL_HOST=smtp.gmail.com, MAIL_PORT=587, MAIL_SCHEME=smtp, MAIL_REQUIRE_TLS=true, MAIL_USERNAME and MAIL_FROM_ADDRESS with the authorized sender, and MAIL_PASSWORD with its separate app password in the ignored server environment. Use SECURITY_RECOVERY_ENABLED=true and an exact public HTTPS SECURITY_FRONTEND_URL (no path/query/fragment). Local loopback HTTP is allowed only for local/testing. Keep the application key stable for encrypted delivery proofs. Run config:clear after local changes or rebuild the production config cache during deployment. Never put mail secrets in frontend variables or copy another project's app password.
+
+Keep the existing single scheduler cron; hazard:work-security-mail runs bounded batches of up to three jobs/30seconds under an overlap lock. Do not run a competing persistent daemon on shared hosting. Enable email verification in Settings before testing optional Report update emails. Validate delivery only with an authorized recipient, including spam folders, failed-job handling and the actual public HTTPS link. Current local code tests use fake mail and do not establish Gmail delivery. Google requires 2-Step Verification for [app passwords](https://support.google.com/accounts/answer/185833). See [the feature/readiness record](SETTINGS_2FA_EMAIL_2026-11-11.md).
+
+## Emergency workflow activation and local classifier
+
+Apply the two additive assistance/image-review migrations without resets. Publish municipality-approved contacts in Content management; coordinates are optional but needed for closest sorting. No real numbers are seeded. Configure image inference only with a maintained evaluated classifier on the same trusted host. IMAGE_DETECTOR_ENABLED defaults false; numeric-loopback IMAGE_DETECTOR_URL and server-only optional IMAGE_DETECTOR_TOKEN never reach frontend settings. No third-party photo egress is permitted.
+
+The existing single scheduler can run hazard:work-image-screening in bounded overlapping-safe batches when enabled. Verify actual hosting support for local inference; shared-hosting PHP alone does not supply a model/service. Leave automated screening off and use explicit human review if unavailable. Test actual browser/device sound, background/push delivery, agency contact accuracy, workload and municipal operating policy separately. See [configuration/limits](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).

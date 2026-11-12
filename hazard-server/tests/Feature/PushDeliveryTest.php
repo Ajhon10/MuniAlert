@@ -10,7 +10,6 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class PushDeliveryTest extends TestCase
@@ -42,7 +41,7 @@ class PushDeliveryTest extends TestCase
         $report = $this->report($owner);
         $this->device($owner, 'synthetic-device-one');
         $this->device($owner, 'synthetic-device-two');
-        Sanctum::actingAs(User::factory()->create(['role' => 'admin']));
+        $this->authenticateUser(User::factory()->create(['role' => 'admin']));
         DB::beginTransaction();
         $this->patchJson('/api/reports/'.$report->id, ['status' => 'under_verification', 'severity' => 'high', 'department_id' => 'engineering', 'note' => 'Reviewing synthetic report.'])->assertOk();
         $this->assertDatabaseCount('jobs', 2);

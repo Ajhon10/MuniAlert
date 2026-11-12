@@ -1,8 +1,8 @@
-import { test, expect } from './fixtures';
+import { test, expect, finishAdminMfa, adminApiToken, continueReport, reviewIncidentImagesApi } from './fixtures';
 test('demo dashboard filters, details, export, and mobile layout', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('/?demo=1');
-  await expect(page.getByRole('heading', { name: 'Community overview', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Community dashboard', exact: true })).toBeVisible();
   await expect(page.locator('.metric-value').first()).toContainText('06');
   await page.getByRole('combobox', { name: 'Filter by category' }).selectOption('tree');
   await expect(page.locator('tbody tr')).toHaveCount(2);
@@ -22,7 +22,7 @@ test('demo dashboard filters, details, export, and mobile layout', async ({ page
 });
 
 test('citizen registers, reports a compressed photo and confirmed manual location, then tracks it', async ({ page }) => {
-  await page.goto('/'); await page.getByRole('button', { name: 'Report a hazard', exact: true }).click();
+  await page.goto('/'); await page.getByRole('button', { name: 'Report a hazard', exact: true }).click(); await continueReport(page);
   await page.getByRole('button', { name: 'Create an account', exact: true }).click();
   await page.getByLabel('Full name').fill('Browser Test Citizen');
   await page.getByLabel('Email address').fill(`citizen-${Date.now()}@example.test`);
@@ -67,7 +67,7 @@ test('citizen registers, reports a compressed photo and confirmed manual locatio
 
 test('GPS location remains unconfirmed until the citizen accepts it and edits reset confirmation', async ({ page, context }) => {
   await context.grantPermissions(['geolocation']); await context.setGeolocation({ latitude: 14.6, longitude: 120.98, accuracy: 9 });
-  await page.goto('/?demo=1'); await page.getByRole('button', { name: 'Report a hazard', exact: true }).click();
+  await page.goto('/?demo=1'); await page.getByRole('button', { name: 'Report a hazard', exact: true }).click(); await continueReport(page);
   await page.getByRole('button', { name: 'Use current location' }).click();
   await expect(page.getByRole('button', { name: 'Confirm location', exact: true })).toBeVisible();
   await expect(page.locator('.source-tag')).toHaveText('gps'); await page.getByRole('button', { name: 'Confirm location', exact: true }).click();
@@ -79,21 +79,22 @@ test('administrator sees operations controls and publishes municipal CMS changes
   await page.goto('/');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
-  await auth.getByLabel('Email address').fill('itsajhon@gmail.com');
-  await auth.getByLabel('Password').fill(process.env.E2E_ADMIN_PASSWORD!);
+  await auth.getByLabel('Email address').fill('admin@example.test');
+  await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Municipal operations', exact: true })).toBeVisible();
+  await finishAdminMfa(page);
+  await expect(page.getByRole('heading', { name: 'Municipal dashboard', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Content management' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Report a hazard' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Content management' }).click();
   await expect(page.getByRole('heading', { name: 'Municipal map & emergency hotlines' })).toBeVisible();
   await page.getByRole('button', { name: 'Add hotline' }).click();
-  await page.getByLabel('Service').fill('Test municipal rescue');
+  await page.getByLabel('Service', { exact: true }).fill('Test municipal rescue');
   await page.getByLabel('Phone number').fill('+63 555 0100');
   await page.getByRole('button', { name: 'Save map and hotlines' }).click();
   await page.getByRole('dialog', { name: 'Publish CMS changes?' }).getByRole('button', { name: 'Publish changes' }).click();
   await expect(page.getByText('Map and hotlines saved.')).toBeVisible();
-  await page.getByRole('button', { name: 'Operations', exact: true }).click();
+  await page.getByRole('button', { name: 'Dashboard', exact: true }).click();
   await expect(page.getByRole('link', { name: 'Test municipal rescue' })).toHaveCount(0);
   await page.getByRole('button', { name: 'My profile' }).click();
   await expect(page.getByRole('heading', { name: 'Achievements' })).toBeVisible();
@@ -111,17 +112,16 @@ test('verified news supports citizen reactions, comments and sharing', async ({ 
   const reportResponse = await request.post(`${origin}/api/reports`, { headers: { Accept: 'application/json', Authorization: `Bearer ${citizenToken}` }, multipart: { category_id: 'tree', title: 'Verified news test hazard', description: 'An isolated confirmed report for browser testing.', address: 'Test Road', barangay: 'Anambongan', severity: 'high', selected_latitude: '14.5995', selected_longitude: '120.9842', location_source: 'manual', location_confirmed: '1', 'photos[0]': { name: 'news.png', mimeType: 'image/png', buffer: Buffer.from(image, 'base64') } } });
   expect(reportResponse.status()).toBe(201);
   const reportId = (await reportResponse.json()).data.id as string;
-  const adminLogin = await request.post(`${origin}/api/auth/login`, { data: { email: 'itsajhon@gmail.com', password: process.env.E2E_ADMIN_PASSWORD }, headers: { Accept: 'application/json' } });
-  expect(adminLogin.ok()).toBe(true);
-  const adminToken = (await adminLogin.json()).token as string;
-  for (const status of ['under_verification', 'verified']) {
-    const response = await request.patch(`${origin}/api/reports/${reportId}`, { headers: { Accept: 'application/json', Authorization: `Bearer ${adminToken}` }, data: { status, severity: 'high', department_id: 'engineering', note: 'Municipal review confirmed the reported hazard.', ...(status === 'verified' ? { public_title: 'Verified news test hazard', public_summary: 'The municipal team has confirmed a fallen tree. Please avoid the affected area.' } : {}), verified_latitude: 14.5995, verified_longitude: 120.9842 } });
-    expect(response.ok()).toBe(true);
-  }
+  const adminToken = await adminApiToken(request, origin);
+  await reviewIncidentImagesApi(request, origin, adminToken, reportId);
+  const verify = await request.post(`${origin}/api/admin/reports/${reportId}/verify`, { headers: { Accept: 'application/json', Authorization: `Bearer ${adminToken}` }, data: { confirmed_happened: true, method: 'responder_confirmation', verification_note: 'Independent municipal responders confirmed this fictional test incident.', verified_latitude: 14.5995, verified_longitude: 120.9842 } });
+  expect(verify.ok()).toBe(true);
+  const published = await request.post(`${origin}/api/admin/reports/${reportId}/post`, { headers: { Accept: 'application/json', Authorization: `Bearer ${adminToken}` }, data: { public_title: 'Verified news test hazard', public_summary: 'The municipal team has confirmed a fallen tree. Please avoid the affected area.', privacy_reviewed: true } });
+  expect(published.ok()).toBe(true);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
   await auth.getByLabel('Email address').fill(email);
-  await auth.getByLabel('Password').fill(password);
+  await auth.getByLabel('Password', { exact: true }).fill(password);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
   await page.getByRole('button', { name: 'Verified news', exact: true }).click();
   const article = page.getByRole('article').filter({ has: page.getByRole('heading', { name: 'Verified news test hazard', exact: true }) });
@@ -133,6 +133,6 @@ test('verified news supports citizen reactions, comments and sharing', async ({ 
   await article.getByRole('button', { name: 'Post comment', exact: true }).click();
   await page.getByRole('dialog', { name: 'Post your comment?' }).getByRole('button', { name: 'Post comment' }).click();
   await expect(article.locator('.comment')).toContainText('Thank you for confirming this hazard.');
-  await expect(article.getByRole('link', { name: 'Facebook' })).toHaveAttribute('href', /news%3D/);
-  await expect(article.getByRole('link', { name: 'X', exact: true })).toHaveAttribute('href', /news%3D/);
+  await expect(article.getByRole('link', { name: 'Facebook' })).toHaveAttribute('href', /%2Fnews%2F/);
+  await expect(article.getByRole('link', { name: 'X', exact: true })).toHaveAttribute('href', /%2Fnews%2F/);
 });

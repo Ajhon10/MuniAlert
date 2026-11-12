@@ -34,20 +34,29 @@ Migration `2026_10_02_000002` adds admin-managed map/hotline settings, milestone
 
 ## Local demo accounts
 
-`DemoAccountSeeder` creates one administrator (`itsajhon@gmail.com`) and two regular citizens (`citizen.one@example.test` and `citizen.two@example.test`). It only runs when called explicitly in a local or testing environment. The normal `migrate --seed` command still seeds only categories and departments.
+`DemoAccountSeeder` creates one administrator (`admin@example.test`) and two regular citizens (`citizen.one@example.test` and `citizen.two@example.test`). It only runs when called explicitly in a local or testing environment. The normal `migrate --seed` command still seeds only categories and departments.
 
-Set **three different** passwords of at least 12 characters in your local `.env`:
+Set **three different** passwords of at least 12 characters and at most 72 UTF-8 bytes in your local `.env`. The default administrator email is configurable:
 
 ```dotenv
-HAZARD_DEMO_ADMIN_PASSWORD=choose-a-private-admin-password
-HAZARD_DEMO_CITIZEN_ONE_PASSWORD=choose-a-private-citizen-one-password
-HAZARD_DEMO_CITIZEN_TWO_PASSWORD=choose-a-private-citizen-two-password
+HAZARD_DEMO_ADMIN_EMAIL=admin@example.test
+HAZARD_DEMO_ADMIN_PASSWORD=
+HAZARD_DEMO_CITIZEN_ONE_PASSWORD=
+HAZARD_DEMO_CITIZEN_TWO_PASSWORD=
 ```
 
-Then run `php artisan config:clear` and `php artisan db:seed --class=DemoAccountSeeder`. The seeder hashes passwords and skips any account whose email already exists; it never resets existing credentials. Keep these settings out of Git and remove or rotate them before a real deployment.
+Fill all three password values with your own different passwords, then run `php artisan config:clear` and `php artisan db:seed --class=DemoAccountSeeder`. The seeder hashes passwords and skips any account whose email already exists; it never resets existing credentials. Keep these settings out of Git and remove or rotate them before a real deployment.
+
+From the workspace root, use `npm.cmd run db:seed:accounts`. See [the full test-account guide](../documentation/TEST_ACCOUNTS.md) and [security phases](../documentation/SECURITY_IMPLEMENTATION_PLAN.md). `hazard:security-check` is a read-only Phase 1 production configuration check; a pass is not complete production security acceptance.
 
 ## Persistent sessions
 
-Use SESSION_LIFETIME=129600 (minutes), SESSION_EXPIRE_ON_CLOSE=false and AUTH_SESSION_DAYS=90 for the default remembered-login policy. Set SESSION_SECURE_COOKIE=true with HTTPS in production. New web logins receive an HttpOnly remember cookie. Native mobile tokens renew only after successful authentication; expired/revoked tokens never renew. Password changes revoke other mobile credentials, rotate remember tokens and invalidate old browser password-hash sessions while retaining the current device. After changing environment configuration, run config:clear with the workstation PHP 8.5 CLI.
+Use AUTH_PERSISTENT_LOGIN=true (default) to keep native logins until explicit logout or security revocation. Browser logins register a revocable device proof in an encrypted HttpOnly cookie, restoring session/MFA state after closure without granting recent-action verification. Keep SESSION_EXPIRE_ON_CLOSE=false and set SESSION_SECURE_COOKIE=true with HTTPS in production. The server session still has its configurable lifetime; device proof can rebuild it while browser storage remains. AUTH_SESSION_DAYS=90 controls the optional expiring native policy when persistence is disabled. The migration never revives expired credentials. Password/security changes revoke affected credentials while retaining the intended current device. After environment changes, run config:clear with PHP 8.5. See documentation/SECURITY_PHASE_3_DASHBOARD_2026-11-10.md at the workspace root.
 
 Interview alignment (8 November): run the additive migrations. New evidence uses `HAZARD_EVIDENCE_DISK=evidence` (private local storage), or `r2` with a verified private bucket. A public storage link is not required for evidence. Inspect legacy local public files with `php artisan hazard:secure-evidence`; after backup use `--apply` to verify/copy/remove public copies. Raw evidence is owner/admin only; news requires separate reviewed public text. New admin endpoints support resolution-photo uploads and bounded weekly/monthly PHT summaries.
+
+## Account Settings and Gmail
+
+Apply the additive 2026_11_11_000001 preferences migration without resets. Personal preference APIs require the authenticated account and a matching account_id. Demo admin defaults must be sample .test addresses and never promote an existing personal account.
+
+Gmail SMTP uses a separate server-only app password. Delivery is unavailable with missing credentials or log transport; reserved sample addresses are excluded. Settings provides verification and opt-in own-report status mail alongside existing reset links. Keep the existing bounded hazard:work-security-mail scheduler; no persistent worker is required. See [configuration and verification limits](../documentation/SETTINGS_2FA_EMAIL_2026-11-11.md).

@@ -28,7 +28,7 @@ test('compact header uses bottom More, preserves reading space and remains legib
   await expect(header).not.toHaveAttribute('data-liquid-glass');
   await page.screenshot({ path: 'test-results/header-tablet-reading.png', animations: 'disabled' });
   await page.getByRole('button', { name: 'More navigation', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Overview', exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Dashboard', exact: true })).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('button', { name: 'More navigation', exact: true })).toBeFocused();
 });

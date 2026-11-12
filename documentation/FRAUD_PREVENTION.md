@@ -13,7 +13,7 @@ False reports cannot be eliminated by a photo or GPS reading. Treat them as evid
 | Separate GPS, selected and verified locations | Lets an administrator inspect accuracy, source and discrepancy | GPS can be inaccurate/spoofed; a manual pin may be legitimate |
 | Basista's 13-barangay allowlist | Keeps new report names within the configured coverage | Reference polygons do not prove the reporter was physically present |
 | Administrator workflow and audit | Records verification, rejection reasons, assignment and response notes | A human must actually examine the evidence; administrators have broad municipal access |
-| Separate reviewed news summary | Verification alone does not publish raw incident text/images | Public map/list entries can include reports still awaiting verification; they must not be treated as confirmed facts |
+| Separate reviewed news summary | Verification alone does not publish raw incident text/images | Only fact-checked, accepted records appear in public discovery; a separate explicit publication is required for news |
 
 ## Review procedure for municipal administrators
 
@@ -34,3 +34,7 @@ Badges depend on verified reports, and rewards are not automatically paid. Any r
 - Add risk-based bot challenges only where abuse warrants them, preserving an accessible reporting path. Do not require government-ID uploads by default merely to prevent spam.
 
 These recommendations apply the idea of protecting sensitive submission flows against automated misuse described by [OWASP API6:2023](https://api-security.owasp.org/editions/2023/en/0xa6-unrestricted-access-to-sensitive-business-flows/). They require Basista's policy decisions, implementation and separate validation; no automatic fraud-classification accuracy is claimed.
+
+## Recorded fact-check and publication workflow
+
+The current interface requires **Fact-check incident** with a method, internal supporting note, explicit factual attestation and verified location. The record is administrator-only; the reporter receives the acceptance outcome. Acceptance does not create a post. Create/review/confirm a separate public title and summary to publish; original evidence and identifying details remain private. Category milestones use only accepted own reports. Rejected/deleted records lose eligibility and confirmation taps do not earn credit. These controls record human review; they do not detect fabricated photographs or establish factual correctness automatically. See [the continuation](COMMUNITY_REVIEW_ACHIEVEMENTS_2026-11-10.md).

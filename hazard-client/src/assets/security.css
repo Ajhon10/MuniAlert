@@ -1,0 +1,7 @@
+.security-form { display: grid; gap: 18px; overflow-wrap: anywhere; }
+.security-form h3 { font-size: 1.125rem; }
+.security-form p { font-size: 1rem; line-height: 1.65; }
+.mfa-qr { display: block; width: min(240px, 100%); height: auto; background: #fff; border: 8px solid #fff; margin-inline: auto; }
+.recovery-code-list { display: grid; gap: 10px; padding: 0; list-style: none; }
+.recovery-code-list code { font-size: 1rem; user-select: all; overflow-wrap: anywhere; }
+.account-security { margin-top: 24px; }

@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-10",
+  "state": "local uncommitted UI follow-up",
+  "ownership": { "restoredToLenovo": true, "sampledAccessPermissionsPreserved": true },
+  "typecheck": {
+    "passed": true
+  },
+  "productionWebBuild": {
+    "passed": true
+  },
+  "focusedBrowser": {
+    "passed": true,
+    "tests": 7
+  },
+  "finalBrowserRegression": {
+    "passed": true,
+    "tests": 65,
+    "beforeFinalPercentageBadgePolish": true
+  },
+  "freshFullBackendSecurityGate": false,
+  "deployed": false,
+  "physicalAndroidAccepted": false,
+  "finalFocusedBrowser": {
+    "passed": true,
+    "tests": 8,
+    "afterFinalPercentageBadgePolish": true
+  },
+  "nativeProductionBuild": {
+    "passed": true
+  },
+  "androidAssetSync": {
+    "passed": true,
+    "physicalPhoneVerified": false
+  },
+  "manualExportsUpdated": true,
+  "screenshot": "reading-slider-165-phone-2026-11-10.png"
+}

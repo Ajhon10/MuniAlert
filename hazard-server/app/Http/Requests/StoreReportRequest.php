@@ -40,6 +40,7 @@ class StoreReportRequest extends FormRequest
             'occurred_at' => ['nullable', 'date', 'before_or_equal:now'],
             'injuries' => ['sometimes', Rule::in(['unknown', 'yes', 'no'])],
             'people_affected' => ['nullable', 'integer', 'min:0', 'max:1000000'],
+            'assistance_needed' => ['sometimes', 'boolean'],
             'photos' => ['required', 'array', 'min:1', 'max:3'], 'photos.*' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:1024', 'dimensions:max_width=1920,max_height=1920'],
         ];
     }

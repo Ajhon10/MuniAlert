@@ -2,6 +2,68 @@ export type ManualAudience = 'citizen' | 'admin';
 export type ManualSection = { id: string; audience: ManualAudience | 'all'; title: string; summary: string; steps: string[]; note?: string; keywords?: string };
 
 export const manualSections: ManualSection[] = [
+  { id: 'emergency-first', audience: 'all', title: 'Get immediate help before reporting', summary: 'Search agency contacts, then continue online if you cannot call.', steps: [
+    'Report a hazard first asks whether someone needs immediate assistance. Choose Yes for an accident, serious injury, fire or person in danger; choose No for the normal reporting flow.',
+    'On Yes, search by agency, service, phone number or area. Show closest agencies asks permission and sorts contacts with saved coordinates by straight-line distance, not travel time or availability. Without location permission, search still works.',
+    'Use a call button if possible. No cellular load or unable to call? Continue to report online remains available; the app needs internet and does not guarantee immediate dispatch. Ask someone nearby to call when safe.',
+    'After sign-in, submit safe photos and a confirmed incident location. Your assistance request is highlighted privately to staff. It does not certify the report or call an agency automatically.',
+  ], keywords: 'emergency accident assistance urgent yes no hotline agency nearby search no load call internet' },
+  { id: 'notification-center', audience: 'all', title: 'Open a report from a notification', summary: 'The bell opens your private updates without a sidebar page.', steps: [
+    'Open the bell, or Updates in the mobile dock. Sign in if prompted. Notifications is no longer a sidebar destination.',
+    'Select an item to open its report in My reports or the administrator review queue. Only that item becomes read. Mark all read is available separately.',
+    'Unavailable or unauthorized reports stay protected and show a message. Never assume a notification means an emergency team was dispatched.',
+    'The highlighted Help tour is a floating button in the bottom-right above the phone dock. Close or Escape returns focus to it. The searchable manual remains in Settings.',
+  ], keywords: 'notification bell inbox update unread navigate report floating help highlighted tour guide' },
+  { id: 'attention-image-review', audience: 'admin', title: 'Hear alerts, contact agencies and review images', summary: 'Per-hazard sounds, responder contacts and private image checks.', steps: [
+    'Enable sound alerts with a tap, then open Settings → Hazard sound alerts to choose a pattern per hazard, volume, test or mute. Sound preferences are saved for this administrator on this device. Old unread alerts do not ring after sign-in.',
+    'Sound works while the app is open and the browser allows audio. A closed app, suspended browser or silent device may not play it. The bell and visual assistance flag remain available.',
+    'Open the reported hazard from the bell. Contact agencies & responders is available before image/factual review. Call a published number or Copy responder brief, then review it before forwarding to an authorized agency. Copying does not send it automatically.',
+    'Private image authenticity review shows Not assessed when no local detector is configured. Otherwise it shows advisory estimates; neither low nor high AI likelihood proves the photo or incident authentic/false. Photos stay on BANTAY.',
+    'Inspect each new incident photo and independent corroboration. Choose a decision, record notes and confirm inspection. Save image review before accepting the incident. Suspected or inconclusive evidence requires further checks. Manual review can stop a pending automated check; a late score cannot overwrite it.',
+    'Factual verification and public news publication remain separate. Contact responders promptly when needed; documentary checks must not delay that contact.',
+  ], keywords: 'admin sound ringtone mute volume alert image AI generated authenticity review confirm local detector agency responder' },
+  { id: 'validation-passwords', audience: 'all', title: 'Read validation messages and show a password', summary: 'One clear message and a show/hide button for each password.', steps: [
+    'If a field needs attention, read the Please check toast. Required fields still prevent submission. Go to field returns you to the highlighted field; correct it and retry. Validation messages stay available until corrected, cleared or dismissed.',
+    'Use Show password beside a password input to check what you typed, then Hide password to mask it again. Each password field has its own control. Toggling visibility does not save or submit the form.',
+    'Password visibility starts off, is not remembered and is hidden when the page goes into the background. Password rules and administrator authenticator verification still apply.',
+  ], keywords: 'password show hide eye validation toast error required check duplicate focus' },
+  { id: 'community-visibility', audience: 'all', title: 'Understand which reports are visible', summary: 'Your submissions are private; accepted hazards and published news are separate.', steps: [
+    'Dashboard and Hazard map show incidents fact-checked and accepted by the municipality. The separate Verified hazards menu was removed to avoid repeating these views. Other members cannot browse your pending, rejected or unreviewed submissions.',
+    'Open My reports to follow all your undeleted submissions: Submitted, Under verification, Verified, Assigned, Responding, Resolved, Closed and Rejected. Use All statuses to see everything, or filter by a status. Only you and authorized municipal administrators can see original evidence, exact locations and private response notes.',
+    'Verified news contains posts an administrator explicitly published after accepting the incident. Read the reviewed update, submitter credit and Incident details. A name may be withheld for safety. Share the public post using Share, Facebook, X, WhatsApp or Copy link.',
+  ], keywords: 'private pending other users members visibility verified accepted reports newsfeed share' },
+  { id: 'hazard-collection', audience: 'all', title: 'Build your hazard achievement collection', summary: 'Creative milestones in ten hazard categories.', steps: [
+    'Open My profile and find Hazard achievement collection. Each category has three milestones at 1, 5 and 15 accepted reports, with its own names, icons and progress.',
+    'Your own fact-checked, accepted report counts once in its category. Pending, rejected, deleted and other members reports and confirmation taps do not add progress. Publishing a post does not add extra credit.',
+    'Explore three milestones to see earned and upcoming badges. Fire includes Firewatch Scout, Flame Sentinel and Firewatch Beacon; streetlights include Light Finder, Nightwatch Guide and Beacon Keeper.',
+    'Your collection is private to your account. Rejected or withdrawn eligible records can change progress. Stay at a safe distance; do not approach danger for an achievement. Cash and gift fulfillment is a separate municipal decision.',
+  ], keywords: 'achievement badge category milestone fire flooding road tree electrical streetlight waste reward progress' },
+  { id: 'dashboard-appearance', audience: 'admin', title: 'Choose the dashboard background', summary: 'Preview, publish or remove an approved community image.', steps: [
+    'Open Content management and find Dashboard background. Choose a JPG, PNG or WebP up to 1 MB, no more than 1920 pixels per side. Landscape images fit best.',
+    'Check the preview. Use an approved community image without personal information or incident evidence. Publish dashboard background asks for confirmation before making the image visible to everyone.',
+    'The dashboard keeps a soft overlay and readable cards. High contrast hides the decorative background on that device. Remove background returns everyone to the default appearance.',
+  ], keywords: 'dashboard overview operations background image upload photo preview appearance' },
+  { id: 'stay-signed-in', audience: 'all', title: 'Stay signed in on this device', summary: 'Close and reopen without signing in again.', steps: [
+    'Once you finish signing in, closing the browser or Android app does not sign you out. Reopen MuniAlert on the same device to continue. Keep browser cookies and app storage to retain the saved login.',
+    'To leave a shared device, choose Sign out and confirm. This signs out that device. Password resets, suspension and other security changes can also revoke saved access.',
+    'Administrators may still need a fresh password and authenticator code before sensitive changes. Reopening the app does not grant fresh verification for an administrative action.',
+  ], keywords: 'login session persistent close reopen restart logout sign out device' },
+  { id: 'account-security', audience: 'all', title: 'Protect and recover your account', summary: 'Authenticator codes, verified email and municipal support.', steps: [
+    'Administrators need an operator-approved enrollment window before initial authenticator setup. Sign in, scan the private QR code or enter the setup key in your authenticator, then verify a fresh code.',
+    'Save the ten recovery codes privately outside the phone. Each authenticator time step and recovery code works once. If a code was already used, wait for the next code. Never include these values in a report, comment or support screenshot.',
+    'Sensitive administrative changes may ask for your password and authenticator or recovery code again. Your pending edit is kept; cancelling verification does not save it. Verification lasts five minutes on the current session/device.',
+    'Settings → Account security & email shows the unused recovery-code count and allows replacing codes after verification. Replacing codes revokes other credentials.',
+    'When municipal email delivery is enabled, verify your local account email from Settings → Account security & email. Enable Report update emails there to receive references and status changes for your own reports. Forgot your password? requests a single-use 30-minute link for an eligible verified account. A provider email assertion is separate; provider-only accounts use their provider recovery process.',
+    'A password reset revokes prior credentials and still requires administrator MFA. If your phone and recovery codes are lost, use the approved municipal support process. Email/scanner/hosting and physical-device acceptance are separate from source implementation.',
+  ], keywords: 'security mfa authenticator two factor password reset recovery email codes login lost phone' },
+  { id: 'reading', audience: 'all', title: 'Make text easier to read', summary: 'Text size, contrast, spacing, motion and action messages.', steps: [
+    'Open Settings from the header or navigation (More → Settings on a phone), then Reading and accessibility settings. The user guide is also in Settings. You do not need to sign in to read the guide or adjust text.',
+    'Drag the Text size slider from 100% to 200%. The preview changes while you drag; release to apply it to the app. Use minus/plus or keyboard arrow keys for 5% steps. Bold text, High contrast and More reading space can be used together.',
+    'Enable Reduce motion to stop decorative animations and show final counts immediately. Your device reduced-motion preference is always respected.',
+    'Enable Keep messages visible if you need more time to read. Otherwise, success and information messages close after eight seconds, pausing while focused or hovered. Errors wait until dismissed.',
+    'Action messages use an icon and words to describe success, information or an error. Read the error beside the form as well, correct the problem and try again. A download message means a file was prepared, not that it was saved to your phone.',
+    'Signed-in preferences are saved separately to your account and restored on other devices after sign-in. Guest preferences stay on this device. A sync error keeps your local changes and offers Retry saving preferences in Settings. Reset reading settings restores the defaults. Browser zoom and phone text settings remain available.',
+  ], keywords: 'accessibility read text size large font bold contrast spacing animation motion toast messages android older elderly' },
   { id: 'getting-started', audience: 'all', title: 'Sign in and find your way around', summary: 'Your account, navigation and the preview workspace.', steps: [
     'Use Sign in or the account button. Create a citizen account with your name, email and password. Google or Facebook sign-in is available only when enabled by the municipality.',
     'On a phone, use Home, Map, Report, Updates and More. More opens the complete navigation, including this guide. Administrator navigation shows Review and Manage instead of citizen reporting.',
@@ -31,7 +93,7 @@ export const manualSections: ManualSection[] = [
     'Tap Confirm location. Changing the pin clears that confirmation, so confirm again before submitting. Original phone GPS, the selected incident pin and later verified location are kept separately.',
   ], note: 'A public map marker is an approximate area. Use the private report details for a precise incident location.', keywords: 'gps permission denied coordinates latitude longitude mapa lokasyon accuracy manual pin' },
   { id: 'duplicates', audience: 'citizen', title: 'Check a similar nearby report', summary: 'Help the municipality avoid duplicate incident records.', steps: [
-    'When a recent similar hazard is nearby, the form shows a suggestion before submission.',
+    'When a recent similar accepted hazard is nearby, the form shows a suggestion before submission. Other members pending submissions remain private.',
     'If it is the same incident, choose Same hazard to record your confirmation. This does not submit another incident report.',
     'If it is a separate incident, select This is a different hazard; submit a new report, then continue.',
   ], keywords: 'same duplicate nearby confirmation similar' },
@@ -39,19 +101,19 @@ export const manualSections: ManualSection[] = [
     'Open My reports and select your report. Its timeline shows municipal status changes and response notes.',
     'The usual stages are Submitted, Under verification, Verified, Assigned, Responding, Resolved and Closed. Rejected reports include a municipal note. A saved report or a verified status does not itself guarantee dispatch.',
     'Incident photos and resolution photos are shown as separate private groups. Response notes explain action taken; only the reporter and authorized administrators can view private details.',
-    'Open Updates or Notifications for your inbox. Enable push if offered; delivery depends on permission, connectivity and the municipality enabling the service. The inbox remains the place to check saved updates.',
+    'Open the bell or mobile Updates for your notification dialog. Select an update to open its related private report. Enable push if offered; delivery depends on permission, connectivity and the municipality enabling the service. The inbox remains the place to check saved updates.',
     'Only your own unverified report can be deleted from the interface. Deletion removes its listing; retention and records handling remain the municipality’s responsibility.',
   ], keywords: 'status timeline history notifications inbox resolution resolved closed deleted tracking' },
   { id: 'privacy', audience: 'all', title: 'Understand what stays private', summary: 'Original evidence and exact incident details are protected.', steps: [
-    'Original report titles and descriptions, precise landmarks and coordinates, injury observations, reporter identity, incident photos and resolution photos are private to the reporter and authorized municipal administrators.',
-    'Community maps use approximate areas. Public news uses a separate title and summary reviewed by an administrator. Verifying a report does not automatically publish its original description or images.',
+    'Original report titles and descriptions, precise landmarks and coordinates, injury observations, private account/contact information, incident photos and resolution photos are private to the reporter and authorized municipal administrators. Published news can credit your display name and show reviewed incident details; an administrator may withhold your name for safety.',
+    'Community maps show only fact-checked, accepted incidents in approximate areas. Public news requires a separate published title and summary reviewed by an administrator. Verifying a report does not automatically publish its original description or images.',
     'Comments on public news show the commenter’s account name and text. Do not post victim names, injury details, contact information or other private records in comments.',
     'There is no automatic face blurring or automatic removal of personal information. Avoid collecting unnecessary identifying details, even in private evidence.',
   ], keywords: 'privacy private public photos identity name gps evidence consent comment news' },
   { id: 'review', audience: 'admin', title: 'Review, verify and coordinate a response', summary: 'Inspect private evidence, priority, location and team assignment.', steps: [
     'Open Review reports and choose a record. Inspect the incident category, time if supplied, private observations, photos, barangay and landmark.',
     'Compare the original GPS, selected pin, accuracy and distance. A large difference is a review prompt, not proof that a report is false. Set independent verified coordinates without replacing original evidence.',
-    'Move from Submitted to Under verification, then Verified or Rejected, using a clear response note. Verification requires a verified location.',
+    'Review and accept each required incident image in Private image authenticity review first. Then use Fact-check incident to record the verification method, internal notes and confirmation that the incident actually happened. Confirm its location and select Verify and accept incident. A response note records later status changes or rejection.',
     'Select the responsible department and enter an assigned responder or team before moving to Assigned. Move to Responding as the documented response progresses, then Resolved and Closed.',
     'Record action taken and coordination with other offices in response notes. Notes are private to the reporter and administrators. Closed and rejected records cannot be reopened in the current workflow.',
   ], note: 'Emergency calls and field response must not wait for documentary verification. Assignment in the app does not automatically contact an outside agency.', keywords: 'verification admin priority department police rhu rescue assignment responder severity' },
@@ -59,8 +121,8 @@ export const manualSections: ManualSection[] = [
     'Keep a new report Under verification while checking the description, category, photos, time and location evidence. A photo or GPS reading alone cannot prove authenticity.',
     'Check nearby reports and response records. Repeated photos or large GPS differences are prompts to review, not automatic proof of fraud. Manual pins can be legitimate.',
     'Use the municipality’s approved contact or field-confirmation process. Verify only when supported by the evidence standard; record a specific note when rejecting an editable unverified or verified report.',
-    'Do not publish raw evidence or unreviewed claims as news. Public map entries can still be awaiting verification, so check each record’s status.',
-    'Sign-in, submission limits, duplicate suggestions and audit records are implemented. Verified-email/phone enrollment, account suspension and automatic image/fraud detection are not implemented. Urgent assistance must not wait for the documentary process.',
+    'Do not publish raw evidence or unreviewed claims as news. Only fact-checked, accepted incidents appear in community discovery.',
+    'Sign-in, submission limits, duplicate suggestions and audit records are implemented. Local email verification/recovery and operator suspension are implemented; delivery and municipal policy still need approval. Phone verification is not implemented. Local image screening requires a configured, evaluated classifier and still needs explicit human review. Urgent assistance must not wait for the documentary process.',
   ], keywords: 'fraud false fake spam suspicious abuse verification duplicate evidence reject' },
   { id: 'resolution', audience: 'admin', title: 'Add resolution photos', summary: 'Document action taken with a separate evidence group.', steps: [
     'Open an Assigned, Responding or Resolved report and find Add resolution photos.',
@@ -68,10 +130,10 @@ export const manualSections: ManualSection[] = [
     'Check that the saved photos appear under Resolution photos. Add action taken in the response note when updating the report.',
   ], note: 'Resolution photos stay private. Do not delay assistance or require unsafe photography to complete a field response.', keywords: 'resolution after evidence upload photo action taken remarks' },
   { id: 'publication', audience: 'admin', title: 'Publish a reviewed community update', summary: 'Create a public summary without exposing original evidence.', steps: [
-    'Open a report in a confirmed status: Verified, Assigned, Responding, Resolved or Closed. Publication edits must be completed before a terminal record is closed.',
-    'Select Publish a separate community summary. Write a public title and summary that leave out names, injury details, precise addresses and identifying information.',
-    'Save and confirm the response update. Only the separate reviewed text is eligible for public news; original descriptions and photos remain private.',
-    'To unpublish an editable confirmed report, remove the publication check and save. Rejection also clears publication text. Review public comments separately.',
+    'Open an accepted, fact-checked report in Verified, Assigned, Responding, Resolved or Closed. Find Create community news post or Manage community news post.',
+    'Write the Public title and Public summary with what happened, the response and useful safety advice. Review the preview, incident time, area, priority, office and reference number. The submitter display name is included by default for a new post; uncheck Include the submitter name when attribution could put someone at risk. Email, account ID and contact information are not published. Confirm Reviewed for public sharing.',
+    'Choose Publish news post and confirm publication. The reviewed update, incident details and chosen submitter credit enter the newsfeed and share page; original descriptions and evidence photos remain private.',
+    'Use Unpublish news post to remove the feed entry and share page. Rejection also removes publication. Copies already shared elsewhere may remain. Review public comments separately.',
   ], keywords: 'publish news community summary unpublish privacy moderation' },
   { id: 'analytics', audience: 'admin', title: 'Summarize weekly or monthly records', summary: 'Date filters, category filters and complete summary exports.', steps: [
     'Open Incident summary. On a phone, open More to find it.',

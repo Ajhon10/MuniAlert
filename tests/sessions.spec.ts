@@ -18,7 +18,7 @@ test('remembered web login returns in a new browser context and logout removes i
   expect(remember).toHaveLength(1);
   expect(remember[0].httpOnly).toBe(true);
   expect(remember[0].expires).toBeGreaterThan(Date.now() / 1000 + 89 * 86400);
-  const reopened = await browser.newContext({ baseURL, storageState: { cookies: remember, origins: [] } });
+  const reopened = await browser.newContext({ baseURL, storageState: { cookies: state.cookies.filter(cookie => cookie.name === 'munialert_device'), origins: [] } });
   try {
     const returned = await reopened.newPage();
     await returned.goto('/');
@@ -30,6 +30,19 @@ test('remembered web login returns in a new browser context and logout removes i
     await expect(returned.locator('.sidebar-user')).toContainText('Community guest');
     expect((await reopened.cookies()).filter(cookie => cookie.name.startsWith('remember_'))).toHaveLength(0);
   } finally { await reopened.close(); }
+});
+
+test('signing out this browser preserves another registered browser after restart', async ({ page, browser, baseURL }) => {
+  const other = await browser.newContext({ baseURL });
+  try {
+    const second = await other.newPage(); await login(second); await login(page);
+    const proof = (await other.cookies()).filter(cookie => cookie.name === 'munialert_device');
+    await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+    await page.getByRole('dialog', { name: 'Sign out?' }).getByRole('button', { name: 'Sign out', exact: true }).click();
+    await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+    await other.clearCookies(); await other.addCookies(proof); await second.reload();
+    await expect(second.locator('.sidebar-user')).toContainText('Sample Citizen One');
+  } finally { await other.close(); }
 });
 
 test('password change keeps this browser signed in and rejects another browser session', async ({ page, browser, baseURL }) => {

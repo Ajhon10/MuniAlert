@@ -5,8 +5,13 @@ import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const checks = [
   ['Repository publication safety', 'node scripts/check-publication.mjs'],
+  ['Expanded source secret scan', 'node scripts/run-secret-scan.mjs'],
+  ['Secret-scanner regression', 'node --test scripts/tests/secret-scanner.test.mjs'],
   ['Composer manifest', 'composer --working-dir=hazard-server validate --strict'],
   ['PHP formatting', 'php hazard-server/vendor/bin/pint --test hazard-server/app hazard-server/bootstrap/app.php hazard-server/bootstrap/providers.php hazard-server/config hazard-server/database hazard-server/routes hazard-server/tests'],
+  ['PHP static analysis', 'node scripts/analyze-php.mjs'],
+  ['Browser policy checks', 'node --test scripts/tests/security-policy.test.mjs'],
+  ['Backup rehearsal safeguards', 'node --test scripts/tests/backup-drill.test.mjs'],
   ['Development launcher checks', 'node --test scripts/tests/launchers.test.mjs'],
   ['Vue type checking', 'npm run typecheck'],
   ['Frontend production build', 'npm run build'],

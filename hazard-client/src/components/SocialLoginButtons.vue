@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { api } from '../services/api';
-import { cancelSocialAuth, socialBusy, socialError, startSocialAuth, type SocialProvider } from '../services/socialAuth';
+import { cancelSocialAuth, socialBusy, startSocialAuth, type SocialProvider } from '../services/socialAuth';
 const props = withDefaults(defineProps<{ intent?: string; mode?: 'login' | 'link'; currentPassword?: string; connected?: string[]; disabled?: boolean }>(), { intent: 'overview', mode: 'login', connected: () => [] });
 const providers = ref<Record<SocialProvider, { enabled: boolean }>>({ google: { enabled: false }, facebook: { enabled: false } });
 const loading = ref(true);
@@ -20,7 +20,7 @@ function start(provider: SocialProvider) { void startSocialAuth(provider, { inte
     <p v-if="loading" class="field-help" role="status">Checking sign-in options…</p>
     <p v-else-if="!providers.google?.enabled && !providers.facebook?.enabled" class="field-help">Google and Facebook sign-in aren’t available right now. You can continue with email.</p>
     <p v-if="socialBusy" class="field-help" role="status">Complete sign-in in your browser. <button type="button" class="text-button" @click="cancelSocialAuth().catch(() => {})">Cancel sign-in</button></p>
-    <p v-if="socialError" class="form-error" role="alert">{{ socialError }}</p>
+
   </div>
 </template>
 <style scoped>

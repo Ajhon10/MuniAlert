@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect, finishAdminMfa, adminApiToken, continueReport } from './fixtures';
 import { demoReports } from '../hazard-client/src/data/demo';
 
 test('phone dock navigates, opens reporting, and browser back restores the view', async ({ page }) => {
@@ -11,8 +11,8 @@ test('phone dock navigates, opens reporting, and browser back restores the view'
   await expect(page.locator('h1')).toHaveText('Community hazard map');
   await expect(page).toHaveURL(/view=map/);
   await page.goBack();
-  await expect(page.locator('h1')).toHaveText('Community overview');
-  await dock.getByRole('button', { name: 'Create hazard report' }).click();
+  await expect(page.locator('h1')).toHaveText('Community dashboard');
+  await dock.getByRole('button', { name: 'Create hazard report' }).click(); await continueReport(page);
   await expect(page.getByRole('dialog', { name: 'Report a hazard', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close dialog' }).click();
   await page.getByRole('dialog', { name: 'Discard this report?' }).getByRole('button', { name: 'Discard report', exact: true }).click();
@@ -31,16 +31,17 @@ test('packaged web client signs in through the same Laravel origin', async ({ pa
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(origin);
-  await expect(page.locator('h1')).toHaveText('Community overview');
+  await expect(page.locator('h1')).toHaveText('Community dashboard');
   const script = await page.locator('script[type=module]').getAttribute('src');
   expect(script).toMatch(/^\/app\/assets\//);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
-  await auth.getByLabel('Email address').fill('itsajhon@gmail.com');
-  await auth.getByLabel('Password').fill(process.env.E2E_ADMIN_PASSWORD!);
+  await auth.getByLabel('Email address').fill('admin@example.test');
+  await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await finishAdminMfa(page);
   await expect(auth).toHaveCount(0);
-  await expect(page.locator('h1')).toHaveText('Municipal operations');
+  await expect(page.locator('h1')).toHaveText('Municipal dashboard');
   await page.reload();
   await expect(page.locator('.sidebar-user')).toContainText('Municipal administrator');
   const cookie = (await page.context().cookies()).find(item => item.name.includes('session'));
@@ -50,14 +51,16 @@ test('packaged web client signs in through the same Laravel origin', async ({ pa
 
 test('sign-in resumes the protected destination selected by a guest', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Notifications', exact: true }).click();
+  await page.getByRole('button', { name: 'Open notifications', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Notifications', exact: true }).getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
   await auth.getByLabel('Email address').fill('citizen.one@example.test');
-  await auth.getByLabel('Password').fill(process.env.E2E_CITIZEN_PASSWORD!);
+  await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_CITIZEN_PASSWORD!);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(auth).toHaveCount(0);
-  await expect(page.locator('h1')).toHaveText('Notifications');
-  await expect(page).toHaveURL(/view=activity/);
+  await expect(page.getByRole('dialog', { name: 'Notifications', exact: true })).toBeVisible();
+  await expect(page.locator('h1')).toHaveText('Community dashboard');
+  await expect(page).not.toHaveURL(/view=activity/);
 });
 
 test('community comments load subsequent pages without duplicates and display an error on failure', async ({ page }) => {
@@ -74,7 +77,7 @@ test('community comments load subsequent pages without duplicates and display an
   await page.getByRole('button', { name: 'Comments 30', exact: true }).click();
   await expect(page.locator('.comment')).toHaveCount(25);
   await page.getByRole('button', { name: 'Load more comments' }).click();
-  await expect(page.getByRole('alert')).toContainText('Synthetic connection interruption');
+  await expect(page.locator('.toast-message.error')).toContainText('Synthetic connection interruption');
   await expect(page.locator('.comment')).toHaveCount(25);
   await page.getByRole('button', { name: 'Load more comments' }).click();
   await expect(page.locator('.comment')).toHaveCount(30);

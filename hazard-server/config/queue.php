@@ -30,6 +30,16 @@ return [
 
     'connections' => [
 
+        'image-screening' => [
+            'driver' => 'database', 'connection' => null, 'table' => 'jobs',
+            'queue' => 'image-screening', 'retry_after' => 90, 'after_commit' => false,
+        ],
+
+        'security-mail' => [
+            'driver' => 'database', 'connection' => null, 'table' => 'jobs',
+            'queue' => 'security-mail', 'retry_after' => 90, 'after_commit' => false,
+        ],
+
         // The report, inbox row and per-device jobs share one database transaction.
         // Keep this connection on the application's default database and jobs table.
         'report-push' => [

@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import { pendingMfa, mfaIntent, type MfaChallenge } from './accountSecurity';
 import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { api, acceptSession, csrf, native, revokeIssuedToken } from './api';
@@ -46,7 +47,8 @@ async function receiveNative(url: string) {
   try {
     if (pending.expiresAt < Date.now()) throw new Error(socialMessage('expired'));
     if (!['success', 'linked'].includes(target.searchParams.get('social_auth') || '')) throw new Error(socialMessage(target.searchParams.get('social_error')));
-    const result = await api<SocialResult & { token?: string }>('/api/auth/social/exchange', { method: 'POST', body: JSON.stringify({ attempt: pending.attempt, code: target.searchParams.get('code'), code_verifier: pending.verifier }) });
+    const result = await api<(SocialResult & { token?: string }) | (MfaChallenge & { intent: string; linked: false })>('/api/auth/social/exchange', { method: 'POST', body: JSON.stringify({ attempt: pending.attempt, code: target.searchParams.get('code'), code_verifier: pending.verifier }) });
+    if ('mfa_required' in result) { if (generation === attemptGeneration) { mfaIntent.value = result.intent; pendingMfa.value = result; } return; }
     if (generation !== attemptGeneration) { if (result.token) await revokeIssuedToken(result.token); return; }
     if (!result.linked) {
       if (!result.token) throw new Error('Sign-in could not be securely completed. Please try again.');

@@ -1,5 +1,6 @@
 import { ref, watch } from 'vue';
 import { mapModes, type BoundaryLevel, type MapMode } from '../config/maps';
+import { notify } from './feedback';
 
 type Preferences = { mode: MapMode; boundaries: Record<BoundaryLevel, boolean> };
 const key = 'munialert.map-preferences.v1';
@@ -14,3 +15,8 @@ function read(): Preferences {
 }
 export const mapPreferences = ref<Preferences>(read());
 watch(mapPreferences, value => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* Preferences are optional. */ } }, { deep: true });
+watch(() => mapPreferences.value.mode, value => notify(`${mapModes.find(mode => mode.id === value)?.label || 'Selected'} map selected.`, 'info'));
+for (const level of ['province', 'city', 'barangay'] as const) {
+  const label = { province: 'Province', city: 'City and municipality', barangay: 'Barangay' }[level];
+  watch(() => mapPreferences.value.boundaries[level], enabled => notify(`${label} boundaries ${enabled ? 'shown' : 'hidden'}.`, 'info'));
+}

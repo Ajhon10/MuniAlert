@@ -1,12 +1,13 @@
-import { test, expect } from './fixtures';
+import { test, expect, finishAdminMfa, adminApiToken, reviewIncidentImages } from './fixtures';
 import type { Page } from '@playwright/test';
 
 async function signIn(page: Page, email: string, password: string) {
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Welcome to your community' });
   await dialog.getByLabel('Email address').fill(email);
-  await dialog.getByLabel('Password').fill(password);
+  await dialog.getByLabel('Password', { exact: true }).fill(password);
   await dialog.getByRole('button', { name: 'Sign in', exact: true }).click();
+  if (email === 'admin@example.test') await finishAdminMfa(page);
   await expect(dialog).toHaveCount(0);
 }
 
@@ -36,7 +37,7 @@ test('municipal lifecycle reaches the citizen inbox, profile edits persist, and 
     expect(response.status()).toBe(201);
     reports.push((await response.json()).data);
   }
-  await signIn(page, 'itsajhon@gmail.com', process.env.E2E_ADMIN_PASSWORD!);
+  await signIn(page, 'admin@example.test', process.env.E2E_ADMIN_PASSWORD!);
   await page.getByRole('button', { name: /^Review reports(?: \d+)?$/ }).click();
   await page.getByRole('button', { name: /Municipal lifecycle test hazard/ }).click();
   const detail = page.getByRole('dialog', { name: 'Hazard report', exact: true });
@@ -44,6 +45,16 @@ test('municipal lifecycle reaches the citizen inbox, profile edits persist, and 
   await detail.getByLabel('Verified latitude', { exact: true }).fill('14.6001');
   await detail.getByLabel('Verified longitude', { exact: true }).fill('120.9843');
   for (const status of ['under_verification', 'verified', 'assigned', 'responding', 'resolved', 'closed']) {
+    if (status === 'verified') {
+      await reviewIncidentImages(page);
+    await detail.getByLabel('Verification method', { exact: true }).selectOption('responder_confirmation');
+      await detail.getByLabel('Internal verification notes', { exact: true }).fill('A municipal responder independently checked this fictional incident.');
+      await detail.getByRole('checkbox', { name: 'I verified that this incident actually happened.' }).check();
+      await detail.getByRole('button', { name: 'Verify and accept incident', exact: true }).click();
+      await page.getByRole('dialog', { name: 'Accept this verified incident?' }).getByRole('button', { name: 'Accept incident', exact: true }).click();
+      await expect(detail.locator('.detail-badges .status')).toHaveClass('status verified');
+      continue;
+    }
     if (status === 'resolved') {
       await detail.getByLabel('Resolution evidence', { exact: true }).setInputFiles({ name: 'resolution.png', mimeType: 'image/png', buffer: Buffer.from(image, 'base64') });
       await detail.getByRole('button', { name: 'Upload resolution photos', exact: true }).click();
@@ -64,7 +75,7 @@ test('municipal lifecycle reaches the citizen inbox, profile edits persist, and 
   await page.getByRole('dialog', { name: 'Sign out?' }).getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(page.locator('.sidebar-user')).toContainText('Community guest');
   await signIn(page, email, password);
-  await page.getByRole('button', { name: /^Notifications/ }).click();
+  await page.getByRole('button', { name: 'Open notifications', exact: true }).click();
   await expect(page.locator('.notification-row')).toHaveCount(6);
   await page.getByRole('button', { name: 'Mark all read' }).click();
   await expect(page.locator('.notification-row.unread')).toHaveCount(0);

@@ -14,7 +14,7 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $attributes = ['role' => 'citizen'];
+    protected $attributes = ['role' => 'citizen', 'is_active' => true, 'security_version' => 0, 'mfa_failures' => 0];
 
     /**
      * The attributes that are mass assignable.
@@ -36,9 +36,22 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'password_enabled',
+        'mfa_secret',
+        'mfa_recovery_codes',
+        'mfa_last_step',
+        'mfa_failures',
+        'mfa_locked_until',
+        'mfa_enrollment_until',
+        'security_version',
+        'is_active',
     ];
 
-    protected $appends = ['has_password'];
+    protected $appends = ['has_password', 'mfa_enabled'];
+
+    public function getMfaEnabledAttribute(): bool
+    {
+        return $this->mfa_confirmed_at !== null && $this->mfa_secret !== null;
+    }
 
     public function getHasPasswordAttribute(): bool
     {
@@ -55,6 +68,17 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
+            'security_version' => 'integer',
+            'mfa_secret' => 'encrypted',
+            'mfa_recovery_codes' => 'encrypted:array',
+            'mfa_confirmed_at' => 'datetime',
+            'mfa_enrollment_until' => 'datetime',
+            'mfa_locked_until' => 'datetime',
+            'mfa_failures' => 'integer',
+            'local_email_verified_at' => 'datetime',
+            'reading_preferences' => 'array',
+            'email_report_updates' => 'boolean',
         ];
     }
 }

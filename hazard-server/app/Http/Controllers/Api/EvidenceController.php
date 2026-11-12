@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ScreenReportImage;
 use App\Models\HazardReport;
 use App\Services\PhotoStorage;
+use App\Services\SecurityEvents;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -40,7 +42,13 @@ class EvidenceController extends Controller
                 if ($locked->photos()->where('photo_type', 'resolution')->count() + count($photos) > 3) {
                     throw ValidationException::withMessages(['photos' => 'A report may have up to three resolution photos.']);
                 }
-                $locked->photos()->createMany($photos);
+                $images = $locked->photos()->createMany($photos);
+                foreach ($images as $image) {
+                    if ($image->ai_status === 'queued') {
+                        ScreenReportImage::dispatch($image->id)->onConnection('image-screening')->onQueue('image-screening')->beforeCommit();
+                    }
+                }
+                app(SecurityEvents::class)->record('resolution_evidence_added', $request->user(), $request);
                 DB::table('audit_logs')->insert(['actor_id' => $request->user()->id, 'hazard_report_id' => $locked->id, 'action' => 'resolution_photos_added', 'data' => json_encode(['count' => count($photos)]), 'created_at' => now(), 'updated_at' => now()]);
             });
         } catch (\Throwable $error) {

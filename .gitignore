@@ -1,5 +1,6 @@
 /.cache/
 /node_modules/
+**/.phpstan-cache/
 /.npm-cache/
 /test-results/
 /playwright-report/

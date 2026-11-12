@@ -1,11 +1,11 @@
-import { test, expect } from './fixtures';
+import { test, expect, continueReport } from './fixtures';
 
 test('a delayed anonymous startup response preserves an opened signup form and its values', async ({ page }) => {
   let release: () => void = () => {};
   const waiting = new Promise<void>(resolve => { release = resolve; });
   await page.route('**/api/auth/me', async route => { await waiting; await route.fulfill({ status: 401, json: { message: 'Unauthenticated.' } }); });
   await page.goto('/');
-  await page.getByRole('button', { name: 'Report a hazard', exact: true }).click();
+  await page.getByRole('button', { name: 'Report a hazard', exact: true }).click(); await continueReport(page);
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
   await auth.getByRole('button', { name: 'Create an account', exact: true }).click();
   await auth.getByLabel('Full name').fill('Pending Signup Citizen');
@@ -43,10 +43,10 @@ for (const provider of ['google', 'facebook']) {
     });
     await page.route(`**/auth/social/${provider}/redirect?*`, route => route.fulfill({ status: 302, headers: { location: `/?social_auth=error&social_error=cancelled&social_intent=report&provider=${provider}` } }));
     await page.goto('/');
-    await page.getByRole('button', { name: 'Report a hazard', exact: true }).first().click();
+    await page.getByRole('button', { name: 'Report a hazard', exact: true }).first().click(); await continueReport(page);
     const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
     await auth.getByRole('button', { name: `Continue with ${provider === 'google' ? 'Google' : 'Facebook'}` }).click();
-    await expect(auth.getByRole('alert')).toContainText('Sign-in was cancelled');
+    await expect(auth.locator('.toast-message.error')).toContainText('Sign-in was cancelled');
     expect(submitted).toMatchObject({ platform: 'web', mode: 'login', intent: 'report', return_origin: new URL(page.url()).origin });
     expect(submitted).not.toHaveProperty('current_password');
     await expect(page).not.toHaveURL(/social_auth=/);
@@ -71,7 +71,7 @@ test('a successful web return resumes reporting only with a real authenticated s
 
 test('a forged web success query cannot authenticate a guest', async ({ page }) => {
   await page.goto('/?social_auth=success&social_intent=profile&provider=google');
-  await expect(page.getByRole('dialog', { name: 'Welcome to your community' }).getByRole('alert')).toContainText('expired');
+  await expect(page.getByRole('dialog', { name: 'Welcome to your community' }).locator('.toast-message.error')).toContainText('expired');
   await expect(page.locator('.sidebar-user')).toContainText('Community guest');
 });
 

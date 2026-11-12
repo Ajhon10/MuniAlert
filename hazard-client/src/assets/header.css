@@ -23,8 +23,8 @@
 .topbar .breadcrumb > span { flex-shrink: 0; }
 .topbar .breadcrumb > strong { overflow-wrap: anywhere; }
 .topbar .top-actions { min-width: 0; gap: 10px; }
-.topbar .ph-clock { white-space: nowrap; font-size: 12px; }
-.topbar .connection { font-size: 12px; }
+.topbar .ph-clock { white-space: nowrap; font-size: 0.75rem; }
+.topbar .connection { font-size: 0.75rem; }
 .topbar .icon-button, .topbar .top-avatar { width: 44px; height: 44px; min-width: 44px; }
 @media (max-width: 1023px) {
   .topbar {
@@ -41,13 +41,13 @@
     justify-content: space-between;
   }
   .topbar .breadcrumb { flex: 1; }
-  .topbar .breadcrumb > span { display: block; min-width: 0; flex-shrink: 1; overflow-wrap: anywhere; font-size: 17px; font-weight: 750; color: #244d3b; }
+  .topbar .breadcrumb > span { display: block; min-width: 0; flex-shrink: 1; overflow-wrap: anywhere; font-size: 1.0625rem; font-weight: 750; color: #244d3b; }
   .topbar .breadcrumb > strong, .topbar .breadcrumb > svg, .topbar .ph-clock, .topbar .notification-button { display: none; }
   .topbar .top-actions { gap: 8px; flex-shrink: 0; }
   .topbar .icon-button, .topbar .top-avatar { width: 48px; height: 48px; min-width: 48px; }
   .topbar .connection { width: 8px; font-size: 0; gap: 0; }
   .topbar .connection i { width: 8px; height: 8px; }
-  .mobile-clock { display: block; margin-top: 8px; font-size: 12px; color: var(--text-muted); }
+  .mobile-clock { display: block; margin-top: 8px; font-size: 0.75rem; color: var(--text-muted); }
   .heading-tools { align-items: flex-start; }
 }
 @media (max-width: 359px) {

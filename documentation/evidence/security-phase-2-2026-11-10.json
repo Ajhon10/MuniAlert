@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-10",
+  "state": "local uncommitted implementation",
+  "focusedMySql": {
+    "passed": true,
+    "tests": 37,
+    "assertions": 339
+  },
+  "mySqlBrowser": {
+    "passed": true,
+    "tests": 7,
+    "independentPhpProcessesForMfaRace": 2
+  },
+  "intermediateBrowserRegression": {
+    "passed": true,
+    "tests": 58
+  },
+  "finalExpandedGate": {
+    "passed": true,
+    "requiredChecks": 18,
+    "startedAt": "2026-11-10T03:01:05.390Z",
+    "completedAt": "2026-11-10T03:04:41.690Z",
+    "backendTests": 98,
+    "backendAssertions": 786,
+    "browserTests": 58,
+    "launcherTests": 5,
+    "phpStanErrors": 0,
+    "secretScanAndNegativeFixturePassed": true,
+    "npmVulnerabilities": 0,
+    "composerAdvisories": 0,
+    "documentationAndManualExportsUpdated": true,
+    "runtime": "PHP 8.5.1; locked platform requirements verified"
+  },
+  "localActivation": {
+    "localhostMySqlOnly": true,
+    "additiveMigrationApplied": true,
+    "accountCountUnchanged": true,
+    "reportCountUnchanged": true,
+    "existingAccountsApprovedOrEnrolled": 0,
+    "realMailEnabled": false,
+    "realScannerEnabled": false,
+    "productionConfigurationReady": false
+  },
+  "ownership": {
+    "restoredToLenovo": true,
+    "affectedScopes": 60,
+    "sampledDaclsPreserved": 9,
+    "wildcardGitExceptionAdded": false
+  },
+  "deployed": false,
+  "remoteCiVerified": false,
+  "externalAcceptance": [
+    "real mail",
+    "real scanner",
+    "Hostinger headers/network",
+    "staging scan",
+    "backup restore",
+    "alerts",
+    "physical Android",
+    "municipal/workload acceptance"
+  ]
+}

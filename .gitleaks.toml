@@ -1,0 +1,12 @@
+title = "MuniAlert source secret scanning"
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+[[rules.allowlists]]
+description = "Reviewed historical evidence: PHP/TS/Vue source filenames mapped to SHA-256 file hashes, not credentials"
+condition = "AND"
+paths = ['''documentation[/\\]evidence[/\\](startup-repair-2026-11-04|responsive-sessions-2026-11-03|interview-alignment-2026-11-08|social-auth-2026-11-04|feature-review-2026-11-03)\.json$''']
+regexTarget = "match"
+regexes = ['''[A-Za-z0-9_-]+\.(php|ts|vue)"\s*:\s*"[a-f0-9]{64}"''']

@@ -1,0 +1,102 @@
+{
+  "recordedAt": "2026-11-11T06:31:02.287Z",
+  "implemented": true,
+  "locallyVerified": true,
+  "deployed": false,
+  "userDecision": "Keep photos on BANTAY; use a local detector when configured.",
+  "behaviors": {
+    "noNotificationSidebarOrPage": true,
+    "ownedSingleReadAndAuthorizedDestination": true,
+    "immediateAssistanceQuestionBeforeReporting": true,
+    "searchableApprovedHotlinesAndOptionalDistanceSort": true,
+    "onlineReportWithoutCall": true,
+    "activeAdminTransactionalAlerts": true,
+    "categoryPatternsVolumeMuteWithExplicitAudioGesture": true,
+    "oldInboxAlertsDoNotRing": true,
+    "responderBriefExcludesPrivateIdentityPhotosNotes": true,
+    "floatingHighlightedTourAboveDockWithFocusRestore": true,
+    "privateVersionedHumanImageReview": true,
+    "loopbackOnlyBoundedDetectorAdapter": true,
+    "outageNeverClaimsAuthenticity": true,
+    "noAutomaticAcceptanceRejectionOrPublication": true
+  },
+  "activation": {
+    "additiveMigrationsApplied": true,
+    "countsPreserved": true,
+    "counts": {
+      "users": 4,
+      "reports": 0
+    },
+    "hotlineEntries": 0,
+    "geocodedEntries": 0,
+    "localDetectorConfigured": false,
+    "photosSentToExternalServices": false,
+    "existingEvidenceOrAccountsRewritten": false
+  },
+  "currentReadiness": {
+    "users": 4,
+    "reports": 0,
+    "hotlineEntries": 0,
+    "geocodedEntries": 0,
+    "localDetectorConfigured": false,
+    "photosSentToExternalServices": false
+  },
+  "verification": {
+    "checksPassed": 19,
+    "backendTests": 122,
+    "backendAssertions": 1131,
+    "browserTests": 77,
+    "mysqlTests": 33,
+    "mysqlAssertions": 427,
+    "staticAnalysisErrors": 0,
+    "dependencyAuditFindings": 0,
+    "isolatedDatabasesOnly": true,
+    "realClassifierTested": false,
+    "realAgencyContacted": false,
+    "physicalAudioOrAndroidAccepted": false,
+    "corrections": [
+      "Dropdown label matching made explicit without removing assertions.",
+      "Initial-inbox readiness prevents old notifications from replaying sounds.",
+      "Floating launcher/nav label geometry corrected at 200% phone text.",
+      "Web-session inbox checks use the browser fetch context.",
+      "CMS service field locator made exact after adding Service area.",
+      "Urgent flag and contacts placed before long report details; automatic versus custom audio made explicit."
+    ]
+  },
+  "pending": [
+    "Publish approved agency numbers and optional coordinates",
+    "Configure and evaluate a maintained local classifier on supported hosting",
+    "Validate real audio/push/device/hosting/municipal/workload behavior"
+  ],
+  "artifacts": [
+    "documentation/evidence/emergency-hotlines-phone-200-2026-11-11.png",
+    "documentation/evidence/admin-emergency-image-review-2026-11-11.png",
+    "documentation/evidence/private-image-review-2026-11-11.png",
+    "documentation/evidence/actionable-notifications-2026-11-11.png",
+    "documentation/evidence/floating-guide-phone-200-2026-11-11.png"
+  ],
+  "sourceSha256": {
+    "hazard-client/src/composables/useDashboard.ts": "ad6df49608d5a9abfe06df2005d29666b4d1604226fea7fc18c489c5fb6bf371",
+    "hazard-client/src/composables/useAdminReportAlerts.ts": "45fb776abd0017af27bf8f4255812d72914d076e95cf60411b7a04c3f0fc175a",
+    "hazard-client/src/services/adminSounds.ts": "1758432822df4f17d79248d3e4d2c026a0e4abd770ebfdf634f44ce13e95613e",
+    "hazard-client/src/components/EmergencyFirst.vue": "41e5d7d8727d542eb1fa40dbbc923e27aeb1259e24c112e8c9bc8fc78de5605b",
+    "hazard-client/src/components/NotificationPanel.vue": "a31ce1a93b1d14b619d38e7c18f106ae573562436c913bdf0888897d3b105b72",
+    "hazard-client/src/components/ImageReviewPanel.vue": "fe928cdf1b2fee9af1146be6a8de6393ca54d6540415976abd000f792657f2e3",
+    "hazard-server/app/Http/Controllers/Api/ImageReviewController.php": "b25f5c9989a6fab59e1cc36c5f7880e40cd744fc2c5b6cf271ef69bcf85f3daf",
+    "hazard-server/app/Http/Controllers/Api/NotificationController.php": "1665fd9379c7bdd0da7da7067feafac766f582caacd9549b535343cb838d2bb9",
+    "hazard-server/app/Services/AdminReportAlerts.php": "3e4265ea25b3ca0e0fad031206e8ebef3065d49d365bfb87b8d1bc06c30d7572",
+    "hazard-server/app/Services/LocalImageDetector.php": "e5f17c3b5fae05b1cfb314700ab6a76e9c08b5a763177c0ecce99ebe0b7685ab",
+    "hazard-server/app/Jobs/ScreenReportImage.php": "aeeaa663f0958c564e53915d83893c147fc79913a48221d5db2aa22dc0485408"
+  },
+  "ownership": {
+    "scopes": 75,
+    "samples": 42,
+    "accessPermissionsPreserved": true,
+    "wildcardSafeDirectoryAdded": false
+  },
+  "postRecordChecks": {
+    "documentation": true,
+    "expandedSourceSecretScan": true,
+    "whitespace": true
+  }
+}

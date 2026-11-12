@@ -42,6 +42,8 @@ class PersistentSessionTest extends TestCase
 
     public function test_mobile_token_survives_long_absence_and_renews_but_expired_tokens_are_rejected(): void
     {
+        // The optional expiring policy remains supported for existing credentials.
+        config(['hazards.persistent_login' => false]);
         $this->travelTo(now()->startOfSecond());
         $user = $this->citizen();
         $response = $this->postJson('/api/auth/login', ['email' => $user->email, 'password' => self::PASSWORD])->assertOk();
@@ -54,6 +56,30 @@ class PersistentSessionTest extends TestCase
         $this->travel(91)->days();
         $this->me($plain)->assertUnauthorized();
         $this->travelBack();
+    }
+
+    public function test_default_mobile_login_has_no_automatic_expiry_and_explicit_logout_revokes_it(): void
+    {
+        $user = $this->citizen();
+        $plain = $this->postJson('/api/auth/login', ['email' => $user->email, 'password' => self::PASSWORD])->assertOk()->json('token');
+        $this->assertNull($user->tokens()->sole()->expires_at);
+        $this->travel(400)->days();
+        $this->me($plain)->assertOk();
+        $this->withToken($plain)->postJson('/api/auth/logout')->assertOk();
+        $this->me($plain)->assertUnauthorized();
+    }
+
+    public function test_persistence_migration_does_not_revive_expired_or_change_other_token_types(): void
+    {
+        $user = $this->citizen();
+        $active = $user->createToken('mobile', ['*'], now()->addDays(2))->accessToken;
+        $expired = $user->createToken('mobile', ['*'], now()->subDay())->accessToken;
+        $other = $user->createToken('integration', ['*'], now()->addDays(2))->accessToken;
+        $migration = require database_path('migrations/2026_11_10_000004_persist_active_mobile_logins.php');
+        $migration->up();
+        $this->assertNull($active->fresh()->expires_at);
+        $this->assertTrue($expired->fresh()->expires_at->isPast());
+        $this->assertNotNull($other->fresh()->expires_at);
     }
 
     public function test_logout_revokes_only_the_current_mobile_device(): void

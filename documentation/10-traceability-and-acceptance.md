@@ -88,3 +88,46 @@ Implementation: `SocialAuthController`, `SocialAccounts`, social-auth migration,
 | FR-22 | Independent `promo-video/` Remotion authoring project | Studio preview, source checks, sampled frames, MP4 metadata/audio and recorded rendering result |
 | FR-23 | `MapControls`, map preferences, boundary-layer service and persistent MapLibre instance | `maps.spec.ts`: actual rendered boundary change, fire/accident/empty filtering, synchronized expansion, retained markers/preferences, failed-style recovery and 320–1440px reflow |
 | FR-24 | Client/server municipality config, report allowlist, local GeoJSON/provenance and conditional camera migration | `BasistaScopeTest`, map-asset name/hash consistency, 13-feature browser check, count-preserving local migration and real-provider visual review |
+
+## FR-25 — Reading, feedback and motion extension
+
+| Requirement | Implementation | Evidence and remaining acceptance |
+| --- | --- | --- |
+| FR-25 | Shared toast service/host; component action feedback; Reading & accessibility panel; relative typography; cancellable numbers and device/app reduced motion | `accessibility-feedback.spec.ts`, dialog/workflow/browser regressions and builds. Saved/reset preferences, blocked storage, 200% phone/desktop/landscape reflow, toast visibility/dismissal/timing and accurate counts are automated locally. Physical Android/TalkBack and older-user/low-vision trials remain open. |
+
+See [the dated review](ACCESSIBILITY_FEEDBACK_2026-11-10.md). Local evidence is separate from deployment and municipal acceptance.
+
+## FR-26 — Continued security phases
+
+| Requirement | Implementation | Local evidence / remaining acceptance |
+| --- | --- | --- |
+| FR-26 | Shared MFA/full-credential boundary across password/social/native; approved enrollment; replay/expiry/attempt guards; recent verification; version/status enforcement; verified-local-email recovery; private queued mail; CSP; fail-closed scanner adapter; redacted events; static/secret CI checks | AccountSecurityTest, SocialAuthenticationTest, UploadSecurityTest, security-phase2 browser tests, isolated MySQL dual-process consumption, PHPStan/TypeScript, Gitleaks positive/negative fixtures and full gate. Real enrollment/recovery policy, mail/scanner/Hostinger, staging, backup, alerts, Android and municipal/workload acceptance remain pending. |
+
+Detailed states: [implementation](SECURITY_PHASE_2_2026-11-10.md), [operations](SECURITY_OPERATIONS_2026-11-10.md), [evidence](evidence/security-phase-2-2026-11-10.json).
+
+## FR-27 — Durable device access and dashboard appearance
+
+| Requirement | Implementation | Evidence / remaining acceptance |
+| --- | --- | --- |
+| FR-27 | WebDeviceSessions/restore middleware; default persistent native credentials; per-device logout/version revocation; sanitized current-only background API and preview/publish/remove UI; aligned text-size shortcut; map-preserving entry motion; aggregate monitor and synthetic restore rehearsal | PersistentSessionTest, DashboardBackgroundTest, SecurityMonitorTest, dashboard-followup/sessions/native-session browser tests, negative archive/schema checks and synthetic MySQL drill. Exact final local counts are in [the continuation evidence](evidence/security-phase-3-dashboard-2026-11-10.json). Physical Android, real mail/scanner/alerts, hosting, production restore, remote CI/branch rules, authorized staging and municipal/workload acceptance remain pending. |
+
+## FR-28 — Community privacy, factual review, news and category achievements
+
+The user's navigation/news refinement removes the duplicated community list, preserves all eight own statuses, and adds reviewed submitter-name/time snapshots and incident metadata to preview/feed/share pages. CommunityReviewTest covers all-status ownership, snapshot derivation/escaping/withholding and withdrawal; browser checks cover legacy map redirects, rejected history and 200% news reflow. See [the refinement](COMMUNITY_NAVIGATION_NEWS_DETAILS_2026-11-10.md).
+
+| Requirement | Implementation | Evidence / limits |
+| --- | --- | --- |
+| FR-28 | Shared accepted/published scopes; private own/admin views and admin statistics; explicit factual review and separate news-post controllers/forms; redacted server-rendered share page; ten category tracks at 1/5/15; client snapshot clearing on authority changes | CommunityReviewTest plus workflow/community/interview/push regressions; community-review browser cases for admin/member/owner sharing, category milestones/large text and pending-public-read privacy. See [the evidence](evidence/community-review-achievements-2026-11-10.json). Real incident truth, municipal review/reward policy, live social/host/device/workload acceptance remain separate. |
+
+## FR-25/FR-26 Settings and email refinement — 11 November 2026
+
+FR-25 now puts reading preferences and the guide in Settings and saves signed-in preferences per account, retaining separate device-local guest state. FR-26 retains authenticator TOTP and adds PDEA-style six-digit entry plus separately configured Gmail SMTP, verification/recovery and optional own-report status mail. AccountPreferencesMailTest covers ownership, invalid/stale writes, transaction rollback, private ID-only jobs, eligibility/opt-out/deletion and real-transport readiness; account-settings browser tests cover account switching, a fresh browser, Settings navigation and phone200% code entry. Existing enrollment/replay/recent-verification/browser security checks remain required. Real Gmail delivery, deployed HTTPS links, Android/TalkBack and municipal/workload acceptance remain separate. See [the feature/readiness record](SETTINGS_2FA_EMAIL_2026-11-11.md).
+
+## FR-29/FR-30 emergency, attention and image-review extension
+
+| Requirement | Implementation | Evidence / remaining acceptance |
+| --- | --- | --- |
+| FR-29 | EmergencyFirst/HotlineDirectory, owned actionable NotificationPanel, active-admin transactional alerts, scoped bounded Web Audio preferences, ResponderContacts and floating highlighted tour | EmergencyImageReviewTest, emergency-notifications browser cases, updated workflow/navigation suites. Approved real contacts, physical audio/push/call behavior, hosting/device/municipal/workload remain pending. |
+| FR-30 | Optional numeric-loopback LocalImageDetector, bounded image-screening queue, private per-photo versioned results and explicit admin review gating factual acceptance | PHP fake-local responses test malformed/outage/late results/privacy/rollback; UI checks manual confirmation. No actual classifier is configured or calibrated; model evaluation and host capability remain open. |
+
+See [dated implementation and limits](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).

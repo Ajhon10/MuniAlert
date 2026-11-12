@@ -1,0 +1,80 @@
+{
+  "recordedAt": "2026-11-11T02:59:33.657Z",
+  "implemented": true,
+  "locallyVerified": true,
+  "deployed": false,
+  "userDecisions": {
+    "twoFactor": "Authenticator-app six-digit TOTP; email is separate",
+    "emailProvider": "Gmail SMTP with separate BANTAY credentials",
+    "senderStoredOnlyInIgnoredEnvironment": true
+  },
+  "ui": {
+    "shortcutsMovedToSettings": true,
+    "sidebarCommunityCardRemoved": true,
+    "accountScopedReadingPreferences": true,
+    "separateGuestScope": true,
+    "freshBrowserRestoration": true,
+    "staleAccountWritesRejected": true,
+    "emailOptOutAvailableDuringOutage": true,
+    "codePasteKeyboardAndPhone200": true
+  },
+  "localActivation": {
+    "sampleSeederConfigured": true,
+    "provider": "Gmail SMTP",
+    "tlsRequired": true,
+    "separatePasswordPresent": false,
+    "mailReady": false,
+    "preferencesMigrationApplied": true,
+    "users": 4,
+    "reports": 0,
+    "realEmailSent": false,
+    "countsPreserved": true,
+    "existingAccountsReseededOrChanged": false,
+    "referenceCredentialsCopied": false
+  },
+  "verification": {
+    "checksPassed": 19,
+    "phpTests": 114,
+    "phpAssertions": 1030,
+    "browserTests": 74,
+    "mysqlTests": 25,
+    "mysqlAssertions": 190,
+    "isolatedDatabasesOnly": true,
+    "staticAnalysisErrors": 0,
+    "dependencyAuditFindings": 0,
+    "initialFailures": [
+      "Old motion expectation included the new Settings transition; baseline moved to after enabling reduced motion, with both news and dashboard checked.",
+      "Screenshot cleanup clicked a toast twice during its leave transition; it now dismisses once and asserts removal. Preference and opt-out assertions were already passing."
+    ],
+    "outcomeAssertionsRemoved": false
+  },
+  "realEmailSent": false,
+  "physicalAndroidOrTalkBackAccepted": false,
+  "municipalOrWorkloadAccepted": false,
+  "pending": [
+    "Separate Gmail app password directly in BANTAY server environment",
+    "Authorized real SMTP delivery and public HTTPS recovery links",
+    "Hosting, physical Android/TalkBack and municipal/workload acceptance"
+  ],
+  "artifacts": [
+    "documentation/evidence/settings-account-saved-2026-11-11.png",
+    "documentation/evidence/two-factor-phone-200-2026-11-11.png",
+    "documentation/evidence/settings-reading-phone-200-2026-11-11.png"
+  ],
+  "sourceSha256": {
+    "hazard-client/src/components/SettingsPanel.vue": "0248c3fae1d9efde476ff5146c0eddac6a3182709e7b48067ed0f9fbfbca0661",
+    "hazard-client/src/components/AccountSecurityPanel.vue": "ecc2d20b4485b0d5ca05c6dec92a6c4a808b770a9c63b2569a74ce2ad2d0966e",
+    "hazard-client/src/components/TwoFactorInput.vue": "d5185250bc5ebb16c4cecb62cca079aadbf4872a4a3d0a7842080af7ad8c64c3",
+    "hazard-client/src/services/readingAccount.ts": "ba8fc8ebf277734a327782913a0ae69605731b72214fec0702558454574c050c",
+    "hazard-server/app/Services/AccountMailDelivery.php": "3b02a82a5b73003bcc9c967d5c293db7b59b2487a87496ba6d2694223ac1ef64",
+    "hazard-server/app/Jobs/SendReportEmail.php": "738c7b68a61899d4abac12c34d8eb35289f435be1b761fd37c5c3a314aeb963a",
+    "hazard-server/app/Http/Controllers/Api/AccountPreferencesController.php": "4bf6e3a9b7561c835f425c940c1879a0dce3ed6c715cac708e91890eb576e927",
+    "hazard-server/database/seeders/DemoAccountSeeder.php": "bec98d1d15fee1fd752ae0b11d13ab4380f02b48ac4996398eb2346149721c85"
+  },
+  "ownership": {
+    "scopes": 64,
+    "samples": 32,
+    "accessPermissionsPreserved": true,
+    "wildcardSafeDirectoryAdded": false
+  }
+}

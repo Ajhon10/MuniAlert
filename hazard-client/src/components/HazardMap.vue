@@ -9,13 +9,14 @@ import { mapPreferences } from '../services/mapPreferences';
 import { mapStyle, mapModes } from '../config/maps';
 import { updateBoundaryLayers } from '../services/mapBoundaries';
 import municipality from '../config/municipality.json';
+import { reducedMotion } from '../services/accessibility';
 maplibregl.setWorkerUrl(mapWorkerUrl);
 const props = withDefaults(defineProps<{ reports?: Hazard[]; pin?: Point; gps?: GPS; editable?: boolean; selected?: string; styleSelector?: boolean }>(), { reports: () => [] });
 const emit = defineEmits<{ pick: [point: Point]; select: [report: Hazard]; zoom: [value: number] }>();
 const container = ref<HTMLDivElement>(); const failed = ref(false); const mapError = ref(false);
 let map: maplibregl.Map | undefined; let markers: maplibregl.Marker[] = []; let pinMarker: maplibregl.Marker | undefined; let gpsMarker: maplibregl.Marker | undefined; let observer: ResizeObserver | undefined;
 let ready = false; let styleReady = false; let styleTimer: ReturnType<typeof setTimeout>; let lastReportLocations = '';
-const motion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 250;
+const motion = () => reducedMotion.value ? 0 : 250;
 function renderReports() {
   markers.forEach(marker => marker.remove()); markers = [];
   if (!map) return;
@@ -75,6 +76,7 @@ onMounted(() => {
   observer = new ResizeObserver(() => map?.resize()); observer.observe(container.value!);
 });
 watch(() => mapPreferences.value.mode, changeStyle);
+watch(reducedMotion, reduce => { if (reduce) map?.stop(); });
 watch(() => mapPreferences.value.boundaries, () => { if (map && styleReady) updateBoundaryLayers(map); }, { deep: true });
 watch(() => props.reports, () => {
   if (!ready) return;

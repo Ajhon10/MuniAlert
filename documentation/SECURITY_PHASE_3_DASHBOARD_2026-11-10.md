@@ -1,0 +1,36 @@
+# Phase 3 local operations, durable login and dashboard follow-up
+
+The user requested the next security phase, login persistence after closing the app, a different/aligned reading icon, an administrator-uploaded dashboard background and visible initial/navigation motion. This continuation preserves the accepted Vue/Capacitor/Laravel/MySQL stack and the earlier uncommitted changes. No push or deployment is included.
+
+## Durable device login
+
+The earlier 90-day inactivity policy is superseded for new default mobile logins. `AUTH_PERSISTENT_LOGIN=true` issues native tokens without automatic expiry; the existing OS secure-storage lifecycle still holds them. An additive migration removes expiry only from currently active `mobile` tokens, never expired/revoked tokens or other token types. Setting the flag false retains the optional rolling-expiry policy for new mobile credentials; existing expiring tokens remain checked/renewed by the middleware.
+
+Browser login now registers a per-device hashed proof and security/MFA snapshot in `web_device_sessions`, and queues an encrypted, HttpOnly, same-site cookie. The cookie lasts one year and renews on use; browser/OS cookie retention and user-cleared app storage still apply. The device registration has no automatic server expiry. Restoration runs after session startup and before authentication, validates current status/version/MFA, and regenerates the session. It restores access without granting fresh sensitive-action verification. Password/security changes revoke affected registrations. Logout deletes the current device registration and clears its cookies without rotating other devices' shared remember credential. Replaying a logged-out proof fails. No browser bearer token is saved in localStorage.
+
+Existing administrators still need independently approved MFA enrollment. This continuation does not approve a real account or bypass MFA to make testing easier. Real Android secure storage and lifecycle acceptance remain pending; browser bridge tests are simulations.
+
+## Dashboard and reading controls
+
+The overview destination is labeled Dashboard while its established `overview` URL/state remains compatible. The reading shortcut uses the existing Lucide family's text-size icon (`ALargeSmall`), with an explicit icon/label/arrow grid. It sits above the community card. This fixes the previous generic `svg:last-child` auto-margin behavior when the first icon was also the only SVG. The redundant bottom guide link is removed; the main guide navigation remains.
+
+Content management offers local preview, explicit publish confirmation, discard and remove actions for an approved shared dashboard image. The public background must contain no private incident/personal information. Only an authenticated administrator with recent verification can publish/remove. JPG/PNG/WebP are limited to 1 MB and 1920 pixels per side, decoded and re-encoded without original metadata, and checked by the existing optional scanner adapter. Images live on a private branding disk; only the currently selected opaque ID is publicly served as WebP. Replacement/removal deletes the old image, and settings never expose its storage path. Images are intentionally public approved decoration, separate from private incident evidence. The dashboard keeps opaque readable cards and an overlay; High contrast hides decoration locally.
+
+Initial load and navigation play a brief main-content fade plus heading entrance using the browser animation API. The persistent map is not remounted to animate navigation. Both OS and app Reduce motion cancel/skip these effects; count animations retain their existing accessible values and reduced-motion behavior.
+
+## Phase 3 operational source work
+
+`hazard:security-monitor` emits aggregate JSON and a nonzero exit code for stale scheduler heartbeat, repeated authentication failures, failed/old push or security-mail jobs, near-full quarantine, or unavailable dependencies. It exposes no account identifiers, source hashes, incident bodies, credentials or raw queue payloads. The scheduler records a database-cache heartbeat each minute. `SECURITY_MONITOR_ENABLED=true` additionally writes aggregate warnings to the configured server log; default is false. No email/webhook/third-party message is sent. Real alert collection, contacts, delivery, acknowledgment and escalation require operator configuration and acceptance.
+
+`node scripts/security-backup-drill.mjs` rehearses an authenticated encrypted archive and MySQL dump/restore with two fictional report rows and synthetic evidence bytes. It only accepts local configuration and two fixed new drill schemas, refuses pre-existing schemas, passes credentials through a private temporary option file, never prints private subprocess output, checks database ownership markers before dropping its own schemas, and validates its absolute temporary cleanup path. The ephemeral AES-GCM key is never written. Wrong-key/tamper/schema refusal checks are in the mandatory gate. The actual drill verifies restored rows and evidence hashes, then removes its own temporary resources. It does not read/dump the application's tables, package the real app key, back up real R2/local evidence or establish production RPO/RTO/key custody. The earlier incompatible MariaDB client attempt failed authentication without creating schemas; selecting the installed matching MySQL 8 client completed the rehearsal. This helper is a synthetic rehearsal, not a production backup product.
+
+The expanded gate now has 19 checks. Final counts/results are recorded in [the evidence](evidence/security-phase-3-dashboard-2026-11-10.json). Local functional/negative tests and the synthetic rehearsal remain separate from remote GitHub branch protection/exact-SHA CI, an authorized staging scan, actual Hostinger TLS/network/private-storage checks, real mail/scanning, production restore, physical Android/TalkBack and municipal/workload acceptance.
+
+Implementation references: [Laravel authentication](https://laravel.com/docs/12.x/authentication), [OWASP session management](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html) and the repository-local Phase 2/operations guides.
+
+
+## Final local verification
+
+All **19 required checks passed**: **103 backend tests / 825 assertions, 63 browser tests and five launcher tests**, no PHPStan errors, secret/schema/archive negative fixtures, current builds/web packaging/Android asset synchronization and zero dependency audit findings. Separate MySQL checks passed **22 backend tests / 171 assertions and 14 browser tests**, including two independent PHP processes consuming one MFA challenge. The synthetic encrypted dump/restore authenticated the archive, rejected tampering and matched restored rows/evidence hashes. Real application data was not dumped.
+
+Three additive migrations are applied to localhost with unchanged account/report counts and no account approval/enrollment/role/password change. The normal development monitor correctly flags the absent scheduler heartbeat; this is not a deployed cron/alert pass. Both manual PDFs and the technical appendix were refreshed. Lenovo ownership was restored on 55 affected scopes with nine sampled DACLs preserved. No push/deployment or external acceptance is claimed.

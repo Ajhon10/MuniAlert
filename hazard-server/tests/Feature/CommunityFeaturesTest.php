@@ -6,7 +6,6 @@ use App\Models\HazardReport;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class CommunityFeaturesTest extends TestCase
@@ -35,16 +34,16 @@ class CommunityFeaturesTest extends TestCase
 
     private function report(User $owner, string $status): HazardReport
     {
-        return HazardReport::create(['reference_number' => 'HZ-COM-'.uniqid(), 'user_id' => $owner->id, 'category_id' => 'tree', 'department_id' => 'engineering', 'title' => 'Confirmed tree hazard', 'public_title' => $status === 'verified' ? 'Confirmed tree hazard' : null, 'public_summary' => $status === 'verified' ? 'A fallen tree has been confirmed by the municipality.' : null, 'description' => 'A synthetic hazard report for API testing.', 'address' => 'Test Road', 'barangay' => 'Anambongan', 'selected_latitude' => 14.5995, 'selected_longitude' => 120.9842, 'gps_latitude' => 14.6, 'gps_longitude' => 120.98, 'location_source' => 'gps_adjusted', 'status' => $status, 'verified_at' => $status === 'verified' ? now() : null]);
+        return HazardReport::create(['reference_number' => 'HZ-COM-'.uniqid(), 'user_id' => $owner->id, 'category_id' => 'tree', 'department_id' => 'engineering', 'title' => 'Confirmed tree hazard', 'public_title' => $status === 'verified' ? 'Confirmed tree hazard' : null, 'public_summary' => $status === 'verified' ? 'A fallen tree has been confirmed by the municipality.' : null, 'description' => 'A synthetic hazard report for API testing.', 'address' => 'Test Road', 'barangay' => 'Anambongan', 'selected_latitude' => 14.5995, 'selected_longitude' => 120.9842, 'gps_latitude' => 14.6, 'gps_longitude' => 120.98, 'location_source' => 'gps_adjusted', 'status' => $status, 'verified_at' => $status === 'verified' ? now() : null, 'fact_checked_at' => $status === 'verified' ? now() : null, 'published_at' => $status === 'verified' ? now() : null]);
     }
 
     public function test_only_admin_can_publish_settings_and_badge_rewards(): void
     {
         $settings = ['map' => ['latitude' => 15.2, 'longitude' => 121.3, 'zoom' => 11], 'hotlines' => [['name' => 'Municipal rescue', 'number' => '+63 123 456 7890']]];
-        Sanctum::actingAs($this->citizen());
+        $this->authenticateUser($this->citizen());
         $this->putJson('/api/admin/settings', $settings)->assertForbidden();
         $this->patchJson('/api/admin/badges/1', ['name' => 'Bronze', 'description' => 'Test reward', 'reward_type' => 'cash', 'cash_amount' => 500])->assertForbidden();
-        Sanctum::actingAs($this->admin());
+        $this->authenticateUser($this->admin());
         $this->putJson('/api/admin/settings', $settings)->assertOk()->assertJsonPath('map.latitude', 15.2)->assertJsonPath('hotlines.0.name', 'Municipal rescue');
         $this->patchJson('/api/admin/badges/1', ['name' => 'Bronze responder', 'description' => 'Fifty verified reports.', 'reward_type' => 'cash', 'cash_amount' => 500])->assertOk()->assertJsonPath('threshold', 50)->assertJsonPath('reward_type', 'cash');
         $this->getJson('/api/badges')->assertOk()->assertJsonPath('0.threshold', 50);
@@ -57,14 +56,14 @@ class CommunityFeaturesTest extends TestCase
         $verified = $this->report($owner, 'verified');
         $this->getJson('/api/news')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.report.id', $verified->id)->assertJsonMissingPath('data.0.report.gps_latitude')->assertJsonMissingPath('data.0.report.reporter');
         $this->getJson('/api/news/'.$pending->id.'/comments')->assertNotFound();
-        Sanctum::actingAs($this->citizen());
+        $this->authenticateUser($this->citizen());
         $this->postJson('/api/news/'.$pending->id.'/reactions', ['type' => 'helpful'])->assertNotFound();
         $this->postJson('/api/news/'.$verified->id.'/reactions', ['type' => 'helpful'])->assertOk();
         $this->postJson('/api/news/'.$verified->id.'/reactions', ['type' => 'support'])->assertOk();
         $this->assertDatabaseCount('news_reactions', 1);
         $this->postJson('/api/news/'.$verified->id.'/comments', ['body' => 'Thank you for the update.'])->assertCreated();
         $this->getJson('/api/news/'.$verified->id.'/comments')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('meta.has_more', false);
-        Sanctum::actingAs($this->admin());
+        $this->authenticateUser($this->admin());
         $this->postJson('/api/news/'.$verified->id.'/comments', ['body' => 'Admin comment'])->assertForbidden();
         $comment = DB::table('news_comments')->first();
         $this->deleteJson('/api/news/'.$verified->id.'/comments/'.$comment->id)->assertNoContent();
@@ -100,7 +99,7 @@ class CommunityFeaturesTest extends TestCase
             $this->report($user, 'verified');
         }
         $this->report($user, 'rejected');
-        Sanctum::actingAs($user);
+        $this->authenticateUser($user);
         $this->getJson('/api/profile')->assertOk()->assertJsonPath('verified_reports', 50)->assertJsonPath('badges.0.earned', true)->assertJsonPath('badges.1.earned', false);
         $this->patchJson('/api/profile', ['name' => 'Updated Citizen', 'email' => $user->email, 'password' => 'a-different-password', 'password_confirmation' => 'a-different-password', 'current_password' => 'wrong'])->assertUnprocessable();
         $this->patchJson('/api/profile', ['name' => 'Updated Citizen', 'email' => $user->email])->assertOk()->assertJsonPath('user.name', 'Updated Citizen');
@@ -112,9 +111,9 @@ class CommunityFeaturesTest extends TestCase
         $other = $this->citizen();
         $pending = $this->report($owner, 'submitted');
         $verified = $this->report($owner, 'verified');
-        Sanctum::actingAs($other);
+        $this->authenticateUser($other);
         $this->deleteJson('/api/reports/'.$pending->id)->assertForbidden();
-        Sanctum::actingAs($owner);
+        $this->authenticateUser($owner);
         $this->deleteJson('/api/reports/'.$verified->id)->assertForbidden();
         $this->deleteJson('/api/reports/'.$pending->id)->assertNoContent();
         $this->getJson('/api/reports/'.$pending->id)->assertNotFound();

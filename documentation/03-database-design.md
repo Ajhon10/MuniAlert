@@ -41,7 +41,7 @@ Notifications and personal access tokens use Laravel's polymorphic owner fields.
 | email | String, unique | Login identifier, normalized to lowercase on registration |
 | password | String, hidden | Password hash via Laravel's hashed cast |
 | role | String, default `citizen` | `citizen` or `admin`; not mass-assignable from registration |
-| email_verified_at | Nullable timestamp | Framework field; email verification workflow not implemented |
+| email_verified_at | Nullable timestamp | Provider email assertion; local recovery uses separate local_email_verified_at |
 | remember_token | Nullable, hidden | Framework authentication field |
 | created_at / updated_at | Timestamps | Account lifecycle |
 
@@ -147,3 +147,42 @@ The system does not retain the original full-resolution phone image. The stored 
 | social_auth_attempts | UUID id; provider/platform/mode; allowlisted return_origin; intent; code_challenge (43); link_user_id/user_id FKs/null-on-delete; auth_fingerprint (64); access_token_id; exchange_code_hash (64); failures; expires_at index; started_at/completed_at/consumed_at; timestamps. Start lifetime 10 minutes; completed Android code lifetime 90 seconds; row-locked one-use consumption. |
 
 Both tables relate to users. Link proof includes a password/remember-token fingerprint and optional mobile credential ID; it is rechecked at callback. No foreign key is attached to access_token_id so expired/revoked tokens may be pruned and detected as absent. Schedule cleanup removes attempts expired for more than a day. Additive migration preserves existing user/report data; do not reset/reseed a normal database. Schema rollback drops social identities and would strand social-only accounts: plan recovery before any production rollback.
+
+## Account security extension — 10 November 2026
+
+Additive migration: `2026_11_10_000001_add_account_security.php`. Existing roles, passwords, reports and location evidence are preserved.
+
+| Table | Added state / constraints |
+| --- | --- |
+| users | `is_active` default true; `security_version` default zero; encrypted nullable `mfa_secret` and recovery-hash array; nullable MFA confirmation/enrollment-window/last-step state; `mfa_failures` and `mfa_locked_until` account-wide verification limit; separate `local_email_verified_at` |
+| personal_access_tokens | Credential security version, MFA verification timestamp and recent reauthentication timestamp; old admin tokens lack a verified factor and fail closed |
+| security_challenges | UUID primary key, cascading user FK, unique SHA-256 proof hash, purpose/version/role/fingerprint/platform/binding, encrypted nullable payload, bounded attempts, consumed flag, indexed expiry and timestamps |
+| security_events | Primary key, nullable user FK with null-on-delete, indexed event name/time, nullable keyed source-IP hash; no credential/incident context column |
+
+Local email verification enables account recovery only when delivery is configured. Provider `email_verified_at` remains a separate assertion. Security challenges use user-first row locking and atomic consumption; recovery/enrollment changes invalidate older proofs. Cleanup batches are bounded. This does not establish municipal retention for incident records or production backups.
+
+## Durable devices and dashboard background
+
+`2026_11_10_000002` adds `web_device_sessions`: UUID primary key, cascading user FK, SHA-256 token hash, security version, nullable MFA verification time, last-used and creation times. Only a matching encrypted HttpOnly cookie can restore a new session. Current sessions check the device registration remains valid. Rows persist until logout/revocation; restoration does not grant recent-action verification.
+
+`2026_11_10_000003` adds a nullable `dashboard_background` setting, privately storing the active UUID/path; the public API projects only the approved image URL. `2026_11_10_000004` removes expiry only from active mobile tokens when the persistence flag is enabled. It never revives expired tokens or changes other token types. Schema rollback cannot reconstruct original expiration dates. Back up private branding alongside private evidence, the database and separately held application keys; the synthetic drill is not a real backup.
+
+## Explicit factual review and news publication
+
+Migration `2026_11_10_000006_add_reviewed_news_attribution.php` adds nullable `public_reporter_name` (display-name snapshot) and `public_occurred_at` (incident-time snapshot). It never backfills names or times on existing posts. Explicit admin publication takes these values from the private report/account; the optional name can be withheld. Account-name/private incident-time edits do not silently change published snapshots. Unpublish/reject clears both snapshots.
+
+Migration 2026_11_10_000005 adds nullable indexed `fact_checked_at` and `published_at`, nullable `fact_checked_by`/`published_by` user foreign keys (null on delete), `fact_check_method` and private `fact_check_note`. Existing public title/summary columns remain. Legacy states/text are retained privately without fabricating fact checks or publication times. Actual acceptance/publication is an explicit admin action.
+
+Accepted-status plus factual review defines public hazard eligibility; accepted status plus factual review/publication time/nonempty public text defines published news. Verification/notification/audit writes are transactional and publication/rejection serialize on the report row. Category achievements are derived with an owner-scoped grouped count; pending/rejected/deleted/other-user records and confirmations contribute nothing, and repeated workflow/publication cannot duplicate a report's credit. No extra award table is needed for these reversible milestones.
+
+## Private account preferences — 11 November 2026
+
+Additive migration 2026_11_11_000001_add_account_preferences adds nullable users.reading_preferences JSON and users.email_report_updates boolean default false. Display preferences contain textSize (100–200, steps of five), boldText, highContrast, readingSpace, reduceMotion and keepMessages. They appear only in the authenticated user's account/profile representation; public report/news resources do not serialize them. No account, role, password, MFA or report is rewritten. The localhost application migration preserved four accounts and zero reports. Tests use isolated schemas.
+
+Existing notifications hold a safe status snapshot used for optional report emails. Jobs contain only the notification UUID, with no recipient, private note, original evidence or location. Email opt-in is rechecked with local email verification and current report ownership at delivery; deleting a report or opting out prevents pending delivery.
+
+## Assistance and private image review fields
+
+Migration 2026_11_11_000002 adds hazard_reports.assistance_needed default false. The flag is private, reporter-declared and cannot certify severity/facts. Existing reports remain unchanged. Admin report_submitted and reporter report_updated notifications share the existing table but are role-scoped on reads; single read is owner-scoped. Submission alert insertion is transactional.
+
+Migration 2026_11_11_000003 adds hazard_photos.authenticity_review_required default false, ai_status, nullable ai_probability/model/time, assessment_version and nullable review_verdict/note/by/at/reviewed_assessment_version. New stored photos require review; legacy photos are not retroactively certified. Only required incident images gate factual acceptance. Results/notes are admin-only and never public/reporter projections. A separate image-screening queue contains opaque photo UUIDs only. Localhost additive migration preserved four accounts/zero reports.

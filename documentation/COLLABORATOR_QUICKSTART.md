@@ -114,6 +114,8 @@ Answer the name prompt and choose a password of at least 12 characters. The pass
 
 For a citizen test, register another account through the application's sign-in dialog. Use separate citizen/admin accounts to test permissions. The optional `DemoAccountSeeder` is not required, and the repository does not distribute a shared administrator password.
 
+Alternatively, [seed local administrator and citizen test accounts](TEST_ACCOUNTS.md) using three different passwords from your private server `.env` and `npm.cmd run db:seed:accounts`. The default admin email is `admin@example.test`, configurable with `HAZARD_DEMO_ADMIN_EMAIL`; the seeder preserves existing accounts and refuses production. New passwords must be at least 12 characters and no more than 72 UTF-8 bytes.
+
 ## 6. Test the website on the PC
 
 ```powershell

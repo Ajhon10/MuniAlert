@@ -8,8 +8,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\PersonalAccessToken;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\FacebookProvider;
+use Laravel\Socialite\Two\GoogleProvider;
 use Laravel\Socialite\Two\User as ProviderUser;
 use Mockery;
+use PragmaRX\Google2FA\Google2FA;
 use Tests\TestCase;
 
 class SocialAuthenticationTest extends TestCase
@@ -19,7 +22,8 @@ class SocialAuthenticationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config(['cors.allowed_origins' => ['http://localhost:5173']]);
+        $this->withHeader('Origin', 'http://localhost');
+        config(['cors.allowed_origins' => ['http://localhost:5173'], 'sanctum.stateful' => ['localhost']]);
         foreach (['google', 'facebook'] as $provider) {
             config(['services.'.$provider => ['client_id' => 'test-client', 'client_secret' => 'test-secret', 'redirect' => 'http://localhost/auth/social/'.$provider.'/callback']]);
         }
@@ -37,7 +41,7 @@ class SocialAuthenticationTest extends TestCase
 
     private function fakeProvider(string $provider, ProviderUser $identity): void
     {
-        $driver = Mockery::mock();
+        $driver = Mockery::mock($provider === 'google' ? GoogleProvider::class : FacebookProvider::class);
         $driver->shouldReceive('setHttpClient')->andReturnSelf();
         $driver->shouldReceive('enablePKCE')->andReturnSelf();
         $driver->shouldReceive('fields')->with(['id', 'name', 'email'])->andReturnSelf();
@@ -213,6 +217,35 @@ class SocialAuthenticationTest extends TestCase
         return ['attempt' => $id, 'code' => $query['code'], 'code_verifier' => $verifier];
     }
 
+    public function test_administrator_social_web_sign_in_is_limited_until_mfa_enrollment_finishes(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'mfa_enrollment_until' => now()->addMinutes(15)]);
+        DB::table('social_accounts')->insert(['user_id' => $admin->id, 'provider' => 'google', 'provider_id' => 'provider-subject', 'created_at' => now(), 'updated_at' => now()]);
+        $id = $this->attempt();
+        $this->fakeProvider('google', $this->identity());
+        $response = $this->finishCallback($id)->assertRedirectContains('social_auth=mfa');
+        $this->assertStringNotContainsString('challenge_token', $response->headers->get('Location'));
+        $this->assertGuest('web');
+        $this->assertDatabaseCount('personal_access_tokens', 0);
+        $pending = $this->getJson('/auth/mfa/pending')->assertOk()->json();
+        $this->getJson('/api/admin/reports')->assertUnauthorized();
+        $code = (new Google2FA)->oathTotp($pending['secret'], intdiv(now()->timestamp, 30));
+        $this->postJson('/auth/mfa/verify', ['challenge_token' => $pending['challenge_token'], 'code' => $code])->assertOk()->assertJsonMissingPath('token');
+        $this->getJson('/api/auth/me')->assertOk()->assertJsonPath('id', $admin->id);
+    }
+
+    public function test_administrator_native_social_exchange_cannot_issue_a_full_token_without_mfa(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'mfa_secret' => 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP', 'mfa_confirmed_at' => now()]);
+        DB::table('social_accounts')->insert(['user_id' => $admin->id, 'provider' => 'google', 'provider_id' => 'provider-subject', 'created_at' => now(), 'updated_at' => now()]);
+        $data = $this->androidResult();
+        $pending = $this->postJson('/api/auth/social/exchange', $data)->assertOk()->assertJsonPath('mfa_required', true)->assertJsonMissingPath('token')->assertJsonMissingPath('user');
+        $this->assertDatabaseCount('personal_access_tokens', 0);
+        $code = (new Google2FA)->oathTotp($admin->mfa_secret, intdiv(now()->timestamp, 30));
+        $this->postJson('/api/auth/mfa/verify', ['challenge_token' => $pending->json('challenge_token'), 'code' => $code])->assertOk()->assertJsonPath('user.id', $admin->id);
+        $this->assertDatabaseCount('personal_access_tokens', 1);
+    }
+
     public function test_android_code_requires_verifier_and_can_be_exchanged_only_once(): void
     {
         $data = $this->androidResult();
@@ -221,7 +254,7 @@ class SocialAuthenticationTest extends TestCase
         $response = $this->postJson('/api/auth/social/exchange', $data)->assertOk()->assertJsonPath('intent', 'report')->assertJsonPath('linked', false)->assertJsonPath('user.has_password', false);
         $this->assertNotEmpty($response->json('token'));
         $token = PersonalAccessToken::sole();
-        $this->assertEqualsWithDelta(90, now()->diffInDays($token->expires_at), 0.1);
+        $this->assertNull($token->expires_at);
         $this->postJson('/api/auth/social/exchange', $data)->assertUnprocessable();
         $this->assertDatabaseCount('personal_access_tokens', 1);
     }
@@ -270,7 +303,7 @@ class SocialAuthenticationTest extends TestCase
     public function test_provider_failure_does_not_expose_remote_exception_details(): void
     {
         $id = $this->attempt();
-        $driver = Mockery::mock();
+        $driver = Mockery::mock(GoogleProvider::class);
         $driver->shouldReceive('setHttpClient')->andReturnSelf();
         $driver->shouldReceive('enablePKCE')->andReturnSelf();
         $driver->shouldReceive('user')->once()->andThrow(new \RuntimeException('provider-secret-or-token'));
