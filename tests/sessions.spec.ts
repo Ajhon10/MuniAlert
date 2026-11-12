@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect, accountOption } from './fixtures';
 import type { Page } from '@playwright/test';
 
 async function login(page: Page) {
@@ -8,7 +8,7 @@ async function login(page: Page) {
   await dialog.getByLabel('Email address').fill('citizen.one@example.test');
   await dialog.getByLabel('Password', { exact: true }).fill(process.env.E2E_CITIZEN_PASSWORD!);
   await dialog.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.locator('.sidebar-user')).toContainText('Sample Citizen One');
+  await expect(page.locator('.header-account')).toContainText('Sample Citizen One');
 }
 
 test('remembered web login returns in a new browser context and logout removes it', async ({ page, context, browser, baseURL }) => {
@@ -22,12 +22,12 @@ test('remembered web login returns in a new browser context and logout removes i
   try {
     const returned = await reopened.newPage();
     await returned.goto('/');
-    await expect(returned.locator('.sidebar-user')).toContainText('Sample Citizen One');
-    await returned.getByRole('button', { name: 'Sign out', exact: true }).click();
+    await expect(returned.locator('.header-account')).toContainText('Sample Citizen One');
+    await accountOption(returned, 'Log out');
     await returned.getByRole('dialog', { name: 'Sign out?' }).getByRole('button', { name: 'Sign out', exact: true }).click();
-    await expect(returned.locator('.sidebar-user')).toContainText('Community guest');
+    await expect(returned.locator('.header-account')).toContainText('Community guest');
     await returned.reload();
-    await expect(returned.locator('.sidebar-user')).toContainText('Community guest');
+    await expect(returned.locator('.header-account')).toContainText('Community guest');
     expect((await reopened.cookies()).filter(cookie => cookie.name.startsWith('remember_'))).toHaveLength(0);
   } finally { await reopened.close(); }
 });
@@ -37,11 +37,11 @@ test('signing out this browser preserves another registered browser after restar
   try {
     const second = await other.newPage(); await login(second); await login(page);
     const proof = (await other.cookies()).filter(cookie => cookie.name === 'munialert_device');
-    await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+    await accountOption(page, 'Log out');
     await page.getByRole('dialog', { name: 'Sign out?' }).getByRole('button', { name: 'Sign out', exact: true }).click();
-    await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+    await expect(page.locator('.header-account')).toContainText('Community guest');
     await other.clearCookies(); await other.addCookies(proof); await second.reload();
-    await expect(second.locator('.sidebar-user')).toContainText('Sample Citizen One');
+    await expect(second.locator('.header-account')).toContainText('Sample Citizen One');
   } finally { await other.close(); }
 });
 
@@ -51,7 +51,7 @@ test('password change keeps this browser signed in and rejects another browser s
     const other = await otherContext.newPage();
     await login(other);
     await login(page);
-    await page.getByRole('button', { name: 'My profile', exact: true }).click();
+    await accountOption(page, 'My profile');
     await page.getByLabel('Current password', { exact: true }).fill(process.env.E2E_CITIZEN_PASSWORD!);
     await page.getByLabel('New password', { exact: true }).fill('changed-isolated-browser-password');
     await page.getByLabel('Confirm new password', { exact: true }).fill('changed-isolated-browser-password');
@@ -59,8 +59,8 @@ test('password change keeps this browser signed in and rejects another browser s
     await page.getByRole('dialog', { name: 'Save profile changes?' }).getByRole('button', { name: 'Save profile', exact: true }).click();
     await expect(page.getByText('Profile updated.', { exact: true })).toBeVisible();
     await page.reload();
-    await expect(page.locator('.sidebar-user')).toContainText('Sample Citizen One');
+    await expect(page.locator('.header-account')).toContainText('Sample Citizen One');
     await other.reload();
-    await expect(other.locator('.sidebar-user')).toContainText('Community guest');
+    await expect(other.locator('.header-account')).toContainText('Community guest');
   } finally { await otherContext.close(); }
 });

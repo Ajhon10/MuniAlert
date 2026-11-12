@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Development: Node 22.12 or later compatible with the lockfile, npm, PHP 8.2+ with `gd` (WebP), `fileinfo`, `mbstring`, `openssl`, PDO MySQL and PDO SQLite, Composer 2, and MySQL. SQLite is required for default tests, not the production database. PHP upload limits must permit the accepted multipart request: `upload_max_filesize=2M`, `post_max_size=8M` are sufficient for three 1-MB photos.
+Development: Node 22.12 or later compatible with the lockfile, npm, PHP 8.2+ with `gd` (WebP/FreeType), `fileinfo`, `mbstring`, `openssl`, XML/DOM/SimpleXML/XMLReader/XMLWriter, ZIP, PDO MySQL and PDO SQLite, Composer 2, and MySQL. Document exports use locked Dompdf, PHPWord and PhpSpreadsheet packages. Composer resolves against PHP 8.2 to preserve the hosting baseline; this workstation runs commands with PHP 8.5. Run `composer install` after pulling and `composer check-platform-reqs --lock` against the actual CLI/web host. SQLite is required for default tests, not the production database. PHP upload limits must permit the accepted multipart request: `upload_max_filesize=2M`, `post_max_size=8M` are sufficient for three 1-MB photos.
 
 Production target: **Hostinger Web/Cloud hosting**, one HTTPS origin, PHP/MySQL, compiled Vue assets and one hPanel scheduler cron with bounded push batches. Clients are **Android app + responsive web**. Node is needed only at build time. Follow [the concrete Web/Cloud guide](HOSTINGER_WEB_CLOUD.md), including the private Laravel/public_html split and relocated entry point. No hosting account is provisioned by this repository.
 

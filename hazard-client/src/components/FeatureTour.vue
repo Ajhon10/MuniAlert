@@ -12,7 +12,7 @@ const steps = computed(() => [
   { selector: '.filter-bar', title: 'Find the right record', body: 'Search by the fields available to you, then narrow the results by incident category or status. Clear filters to return to the full list.' },
   { selector: '.map-panel', title: 'Read the incident map', body: props.admin ? 'Open a report to inspect the exact selected and verified locations. Original phone GPS stays separate from the incident pin.' : 'Community markers show approximate areas. Original photos, exact locations and sensitive incident details stay private.' },
   { selector: '.reports-panel', title: props.admin ? 'Review and document action' : 'Open a report and follow progress', body: props.admin ? 'Open a record to verify evidence, set priority, assign a department/team and save response notes. Add separate resolution photos as action is completed.' : 'Cards summarize the reports you can browse. My reports holds your private timeline, response notes and incident/resolution photos after sign-in.' },
-  { selector: '.top-avatar', title: 'Keep the guide within reach', body: 'Use your account button for sign-in or profile access. Open Settings for the user guide, reading preferences and account security, including GPS fallback, privacy and weekly/monthly records.' },
+  { selector: '.top-avatar', title: 'Keep the guide within reach', body: 'Open the account menu for My profile, Settings and Log out. Guests can sign in from the header. Settings contains the user guide, reading preferences and account security, including privacy and daily/monthly/yearly statistics.' },
 ]);
 const current = computed(() => steps.value[index.value]!);
 async function position() {

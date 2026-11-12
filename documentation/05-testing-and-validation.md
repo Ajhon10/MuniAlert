@@ -1,5 +1,9 @@
 # 05 — Testing and validation
 
+## Administrative chart/export and account navigation checks — 12 November 2026
+
+Four `StatisticsExportTest` cases pass with 67 assertions: Philippine day/year boundaries, category and date-basis selection, zero periods, admin-only access, bounded invalid inputs, six-per-minute export limits, actual PDF/Word/Excel structures, embedded charts, numeric/literal spreadsheet cells and private temporary-file cleanup. The eight existing InterviewAlignmentTest cases pass with 85 assertions, retaining all-record weekly/monthly contracts. Two new statistics/account browser cases pass alongside ten existing account/reusable/phone cases. They compare UI totals with the API, exercise all three downloads and retained applied filters, check keyboard/guest settings access and enlarged-text notification sizing. The required full nineteen-check hook remains the publication gate on the exact committed state. Office application review, physical Android file saving, hosting and municipal workload acceptance remain separate; see [scope](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).
+
 ## Shared workflow verification — 12 November 2026
 
 The [shared-interface update](REUSABLE_WORKFLOWS_2026-11-12.md) adds backend and browser checks for administrator routing, repeat CSV seeding, saved-code password reset/replay/lockout/revocation, floating server validation, bounded notifications/destination opening, independent achievement expansion, prepared public sharing and recovery choices. The focused backend run passed 127 tests / 1176 assertions. Initial browser failures exposed old removed-control selectors and a real overlay interaction with persistent messages; all original privacy, location confirmation, field-focus and MFA assertions remain active. The exact-state full gate is required before publication; these intermediate results do not claim deployment or real social/email/device acceptance.

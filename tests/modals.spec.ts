@@ -52,7 +52,7 @@ test('report forms keep header and submit visible while only the body scrolls, i
 test('sign-in and report details share body padding and optional action footers with server field validation', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 600 });
   await page.goto('/');
-  await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
   await auth.getByRole('button', { name: 'Create an account', exact: true }).click();
   await fixedChrome(auth);

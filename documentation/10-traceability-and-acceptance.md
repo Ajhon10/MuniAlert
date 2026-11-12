@@ -131,3 +131,7 @@ FR-25 now puts reading preferences and the guide in Settings and saves signed-in
 | FR-30 | Optional numeric-loopback LocalImageDetector, bounded image-screening queue, private per-photo versioned results and explicit admin review gating factual acceptance | PHP fake-local responses test malformed/outage/late results/privacy/rollback; UI checks manual confirmation. No actual classifier is configured or calibrated; model evaluation and host capability remain open. |
 
 See [dated implementation and limits](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
+
+## FR-31 administrative statistics and header navigation
+
+`IncidentStatistics`, `StatisticsExport`, `IncidentAnalytics`, `StatisticsChart` and `AccountMenu` implement category counts, daily/weekly/monthly/yearly charts, bounded administrator PDF/DOCX/XLSX exports and the requested account navigation. `StatisticsExportTest` verifies counts, dates, empty periods, authorization and document contents. `admin-statistics.spec.ts` exercises charts/downloads and keyboard account access; the notification preview test compares row/header height at normal/enlarged text. Hosting, native downloads, actual office-application rendering and municipal workload acceptance remain separate. See [implementation scope](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).

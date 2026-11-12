@@ -1,4 +1,4 @@
-import { test, expect, finishAdminMfa, adminApiToken, openReading, navigateWorkspace, reviewIncidentImages, reviewIncidentImagesApi } from './fixtures';
+import { test, expect, finishAdminMfa, adminApiToken, openReading, navigateWorkspace, reviewIncidentImages, reviewIncidentImagesApi, accountOption } from './fixtures';
 import type { APIRequestContext, Page } from '@playwright/test';
 const password = 'isolated-community-review-password';
 async function register(request: APIRequestContext, origin: string, name: string) {
@@ -7,7 +7,7 @@ async function register(request: APIRequestContext, origin: string, name: string
   expect(response.status()).toBe(201); return { email, token: (await response.json()).token as string };
 }
 async function login(page: Page, email: string, secret: string) {
-  await page.goto('/'); await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.goto('/'); await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Welcome to your community' });
   await dialog.getByLabel('Email address', { exact: true }).fill(email);
   await dialog.getByLabel('Password', { exact: true }).fill(secret);
@@ -29,7 +29,7 @@ test('private submissions become accepted alerts and only an explicit admin post
   const outsider = await browser.newContext({ baseURL }); const ownerBrowser = await browser.newContext({ baseURL });
   try {
     const community = await outsider.newPage(); await login(community, member.email, password);
-    await expect(community.locator('.sidebar-user')).toContainText('ReviewMember');
+    await expect(community.locator('.header-account')).toContainText('ReviewMember');
     await expect(community.getByRole('button', { name: 'Verified hazards', exact: true })).toHaveCount(0);
     await community.getByRole('button', { name: 'Hazard map', exact: true }).click();
     await expect(community.locator('main')).not.toContainText(privateTitle);
@@ -92,13 +92,13 @@ test('private submissions become accepted alerts and only an explicit admin post
     await expect(article.locator('.news-reporter')).toContainText('ReviewOwner');
     await community.setViewportSize({ width: 1280, height: 900 });
     const mine = await ownerBrowser.newPage(); await login(mine, owner.email, password);
-    await expect(mine.locator('.sidebar-user')).toContainText('ReviewOwner');
-    await mine.getByRole('button', { name: 'My profile', exact: true }).click();
+    await expect(mine.locator('.header-account')).toContainText('ReviewOwner');
+    await accountOption(mine, 'My profile');
     const fire = mine.locator('.hazard-achievement-track.fire');
     await expect(fire).toContainText('1 accepted report');
     await expect(fire.locator('.hazard-levels li.earned')).toHaveCount(1);
     await expect(fire).toContainText('Firewatch Scout');
-    await community.getByRole('button', { name: 'My profile', exact: true }).click();
+    await accountOption(community, 'My profile');
     await expect(community.locator('.hazard-achievement-track.fire')).toContainText('0 accepted reports');
   } finally { await outsider.close(); await ownerBrowser.close(); }
 });
@@ -117,7 +117,7 @@ test('My reports shows pending accepted and rejected own submissions and legacy 
   expect((await request.post(`${origin}/api/admin/reports/${accepted}/verify`, { headers, data: { confirmed_happened: true, method: 'official_record', verification_note: 'Independent synthetic incident confirmation for the status collection.', verified_latitude: 15.864, verified_longitude: 120.399 } })).ok()).toBe(true);
   expect((await request.patch(`${origin}/api/reports/${rejected}`, { headers, data: { status: 'rejected', severity: 'high', department_id: 'fire', note: 'Synthetic review found this submission was inaccurate.' } })).ok()).toBe(true);
   await login(page, owner.email, password);
-  await expect(page.locator('.sidebar-user')).toContainText('AllStatusesOwner');
+  await expect(page.locator('.header-account')).toContainText('AllStatusesOwner');
   await page.goto('/?view=reports');
   await expect(page).toHaveURL(/view=map/);
   await expect(page.getByRole('heading', { name: 'Community hazard map', exact: true })).toBeVisible();
@@ -149,8 +149,8 @@ test('category milestones unlock separately and stay readable with large phone t
     expect(verified.ok()).toBe(true);
   }
   await login(page, owner.email, password);
-  await expect(page.locator('.sidebar-user')).toContainText('AchievementOwner');
-  await page.getByRole('button', { name: 'My profile', exact: true }).click();
+  await expect(page.locator('.header-account')).toContainText('AchievementOwner');
+  await accountOption(page, 'My profile');
   const collection = page.locator('.hazard-achievements'); const fire = collection.locator('.hazard-achievement-track.fire');
   await expect(collection.locator('.hazard-achievement-track')).toHaveCount(10);
   await expect(fire.locator('.hazard-levels li.earned')).toHaveCount(2);
@@ -185,7 +185,7 @@ test('expired admin access clears cached private reports before public requests 
   await page.route('**/api/notifications', route => route.fulfill({ status: 401, json: { message: 'Synthetic credential revocation' } }));
   try {
     await page.getByRole('button', { name: 'Refresh reports', exact: true }).click();
-    await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+    await expect(page.locator('.header-account')).toContainText('Community guest');
     await expect(page.locator('main')).not.toContainText(secret);
     await expect(page.locator('.reports-panel')).toContainText('Loading reports');
   } finally { release(); }

@@ -1,11 +1,11 @@
-import { test, expect, finishAdminMfa, navigateWorkspace } from './fixtures';
+import { test, expect, finishAdminMfa, navigateWorkspace, accountOption } from './fixtures';
 import type { Page, APIRequestContext } from '@playwright/test';
 async function browserInbox(page: Page) {
   const result = await page.evaluate(async () => { const response = await fetch('/api/notifications', { headers: { Accept: 'application/json' } }); return { status: response.status, data: await response.json() }; });
   expect(result.status).toBe(200); expect(Array.isArray(result.data)).toBe(true); return result.data;
 }
 async function adminLogin(page: Page) {
-  await page.goto('/'); const initialInbox = page.waitForResponse(response => new URL(response.url()).pathname === '/api/notifications'); await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.goto('/'); const initialInbox = page.waitForResponse(response => new URL(response.url()).pathname === '/api/notifications'); await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
   await auth.getByLabel('Email address', { exact: true }).fill('admin@example.test');
   await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
@@ -68,7 +68,7 @@ test('admin gets distinct configured sounds for fresh hazards and a notification
     class FakeAudioContext { state = 'suspended'; currentTime = 0; destination = {}; async resume() { this.state = 'running'; } createOscillator() { const frequency = { value: 0 }; return { frequency, type: 'sine', onended: null, connect() {}, disconnect() {}, start(time: number) { (window as any).playedAlerts.push({ frequency: frequency.value, time }); }, stop() {} }; } createGain() { return { gain: { setValueAtTime() {}, linearRampToValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {}, disconnect() {} }; } }
     (window as any).AudioContext = FakeAudioContext;
   });
-  await adminLogin(page); await page.getByRole('button', { name: 'Open settings', exact: true }).click();
+  await adminLogin(page); await accountOption(page, 'Settings');
   const sounds = page.locator('.admin-alert-settings');
   await sounds.getByRole('button', { name: 'Enable sound alerts', exact: true }).click();
   await sounds.getByLabel('Fire sound', { exact: true }).selectOption('urgent'); await sounds.getByRole('slider', { name: 'Alert volume', exact: true }).fill('70');

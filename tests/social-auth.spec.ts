@@ -20,7 +20,7 @@ test('a delayed anonymous startup response preserves an opened signup form and i
 test('signup and login hide inactive provider actions and preserve email signup', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
-  await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
   await expect(auth.getByRole('button', { name: 'Continue with Google' })).toHaveCount(0);
   await expect(auth.getByRole('button', { name: 'Continue with Facebook' })).toHaveCount(0);
@@ -73,7 +73,7 @@ test('a successful web return resumes reporting only with a real authenticated s
 test('a forged web success query cannot authenticate a guest', async ({ page }) => {
   await page.goto('/?social_auth=success&social_intent=profile&provider=google');
   await expect(page.getByRole('dialog', { name: 'Welcome to your community' }).locator('.toast-message.error')).toContainText('expired');
-  await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+  await expect(page.locator('.header-account')).toContainText('Community guest');
 });
 
 for (const cancelled of [false, true]) {
@@ -117,13 +117,13 @@ test(`Android cold launch ${cancelled ? 'shows provider cancellation without iss
   await page.goto('/');
   if (cancelled) {
     await expect(page.locator('.toast')).toContainText('Sign-in was cancelled');
-    await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+    await expect(page.locator('.header-account')).toContainText('Community guest');
     expect(exchanged).toBe(false);
     expect(pendingAvailable).toBe(false);
     expect(vault.size).toBe(0);
     return;
   }
-  await expect(page.locator('.sidebar-user')).toContainText(user.name);
+  await expect(page.locator('.header-account')).toContainText(user.name);
   await expect(page.getByRole('dialog', { name: 'Report a hazard', exact: true })).toBeVisible();
   expect(exchanged).toBe(true);
   expect(vault.size).toBe(1);

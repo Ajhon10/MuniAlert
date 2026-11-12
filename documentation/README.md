@@ -1,5 +1,7 @@
 # Capstone technical documentation
 
+[Admin charts, PDF/Word/Excel exports and the header account menu](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md) describes the shared statistics workflow and updated notification sizing.
+
 [Emergency-first reports, actionable notifications, hazard sounds and private image review](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md) records the current workflow; real contacts and a local classifier need configuration.
 
 [Settings, saved reading preferences, authenticator 2FA and Gmail readiness](SETTINGS_2FA_EMAIL_2026-11-11.md) records the current refinement; real delivery needs BANTAY's separate app password.

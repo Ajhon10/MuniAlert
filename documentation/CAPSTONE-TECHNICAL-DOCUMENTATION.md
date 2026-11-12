@@ -6,7 +6,7 @@ Application name: **MuniAlert**. Baseline: 2026-10-02. Institution, proponents a
 
 This appendix documents the implementation and testing evidence. It does not invent field research, cloud deployment or evaluation findings.
 
-<!-- Source SHA256: 32893478fd9f0a781f2c78392d37f641516bde232cce5395625eb0fcaf708cab -->
+<!-- Source SHA256: cc012917daa3b6bd69077f096ed2f6407a540bd70bad55ddb27695f293f50b2e -->
 
 # 01 — Project overview and requirements
 
@@ -126,6 +126,10 @@ Notifications use the bell/mobile Updates dialog with owned single-item read and
 ## FR-30 — Private local image screening and administrator confirmation
 
 Photos remain on BANTAY; an optional loopback-only local classifier produces advisory estimates through bounded ID-only jobs. Unavailable/unconfigured checks never claim authenticity. New incident images need explicit recorded human review and independent corroboration before factual acceptance; stale results cannot overwrite manual decisions. Public/reporting-user responses exclude internal assessment metadata. A maintained configured classifier, measured accuracy and hosting capability remain pending. See [implementation/readiness](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
+
+## FR-31 — Administrative statistical charts and office exports
+
+Administrators compare counts by hazard type on Dashboard and Incident summary using daily, weekly, monthly or yearly charts, exact tables, date/category filters and an explicit submission/incident date basis in Philippine time. Downloadable PDF, Word DOCX and Excel XLSX reports include the selected aggregate chart and counts without private report details. The shared header account menu contains Profile, Settings and Log out, with guest Sign in in the header and reading settings available to guests. Notification previews remain bounded to the notification header height. See [details](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).
 
 
 ---
@@ -318,7 +322,7 @@ The camera migration changes only the former generic Manila center to Basista; i
 
 ## Compact header and team publication — 9 November 2026
 
-Compact widths (up to 1023 CSS pixels) use bottom **More** as their navigation entry; the redundant header menu is removed. The header shows the app name, Settings action, connection indicator and account. Clock/page context remains in the content heading. Desktop utilities share the page-heading row, with no dedicated blank toolbar row. A shared `WorkspaceHeader` renders in the appropriate location when the breakpoint changes. The header uses a solid reading surface so scrolling manual text does not bleed through the decorative material. Keyboard drawer dismissal restores focus to More.
+Compact widths (up to 1023 CSS pixels) use bottom **More** as their workspace navigation entry. The header shows the app name, connection indicator and account menu; guest Sign in is in the header. Profile, Settings and Log out are in the account dropdown, with Settings also available to guests. The former Settings icon and sidebar account/profile/settings controls are removed. Clock/page context remains in the content heading. Desktop utilities share the page-heading row, with no dedicated blank toolbar row. A shared `WorkspaceHeader` and `AccountMenu` render in the appropriate location when the breakpoint changes. The menu supports arrow keys, Home/End, Escape, outside dismissal and focus return. The header uses a solid reading surface. Keyboard drawer dismissal restores focus to More.
 
 The compact header attaches to the viewport's top edge with no forced margin or sticky breathing offset. Real device safe-area padding is inside the header surface, rather than an empty band above it. Desktop heading placement is unchanged by this compact-only rule.
 
@@ -367,6 +371,10 @@ EmergencyFirst precedes authentication/report entry and reuses HotlineDirectory,
 AdminReportAlerts inserts active-admin inbox rows inside the report transaction. useAdminReportAlerts uses an authenticated-inbox readiness baseline to avoid replaying old reports, bounded seen history and account-scoped Web Audio preferences. Visible clients poll every15seconds; initial/navigation data refresh remains separate. Browser gesture/audio limitations preserve visible notifications when sound cannot play.
 
 LocalImageDetector accepts numeric-loopback endpoints only, bounded sanitized private bytes and strictly validated small JSON responses. Separate image-screening database jobs are atomic with photo creation and run in bounded scheduled batches. ImageReviewController locks report then photo, checks assessment version and records confirmed administrator verdict/notes. A queued manual decision cancels late automatic mutation. Factual acceptance enforces required incident-image review independently of a score. No local model installation, external image transfer, real inference or dispatch is implied. See [contract/readiness](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
+
+## Admin statistics and document generation — 12 November
+
+`IncidentAnalytics` and `StatisticsChart` are shared by administrator Dashboard and Incident summary. `IncidentStatistics` aggregates SQL counts by category and Philippine period across all matching records. Daily/weekly/monthly queries allow 366 days and annual queries allow 20 calendar years. The UI selects submission dates by default; explicit incident-time fallback remains available and is still the default for old API callers. `StatisticsExport` generates PDF/DOCX/XLSX attachments with a GD chart, counts and date metadata, using Dompdf/PHPWord/PhpSpreadsheet. Generation is admin-only, bounded, rate-limited and private, with no remote PDF resources or spreadsheet formula inference. No schema change is needed. NotificationPanel observes its dialog header to keep rows equally sized. See [implementation and verification scope](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).
 
 
 ---
@@ -602,7 +610,8 @@ All API/authentication responses now use private/no-store caching and baseline s
 | GET | `/api/health` | Public | Database-backed API health check |
 | GET | `/api/catalog` | Public | Categories and departments |
 | GET | `/api/stats` | Public | Accepted-only counts; pending is always zero |
-| GET | `/api/admin/analytics` | Administrator | Bounded weekly/monthly record totals by PHT date and optional category |
+| GET | `/api/admin/analytics` | Administrator | Daily/weekly/monthly/yearly category statistics by PHT dates and submission/incident basis |
+| GET | `/api/admin/analytics/export/{format}` | Administrator | Genuine PDF/DOCX/XLSX with the same aggregate filters and an embedded chart; 6 requests/minute |
 | GET | `/api/reports/{report}/photos/{photo}` | Owner/admin | Authorized WebP bytes; private/no-store; scoped photo ID |
 | POST | `/api/reports/{report}/resolution-photos` | Administrator | One to three private resolution uploads; three total per report |
 | GET | `/api/reports` | Public | Only fact-checked, accepted reports with safe public fields |
@@ -746,7 +755,9 @@ Response PATCH cannot publish text or bypass factual acceptance. Use the explici
 
 Private photo GET returns authorized `image/webp` bytes with `Cache-Control: private, no-store`, `nosniff` and no-referrer. Guests receive 401, other citizens 403, and a mismatched report/photo pair 404. Android sends its bearer credential on the image request and uses a temporary blob URL, never a token URL. Resolution-photo POST uses multipart `photos[]`, the same image limits as incident uploads, and a separate maximum of three resolution photos per report. Only an administrator on assigned/responding/resolved records may upload; invalid writes clean up newly stored files. It adds an audit entry but does not independently claim dispatch or change the report status.
 
-Admin analytics GET requires `from`/`to` as `YYYY-MM-DD`, `group=week|month`, and optional category ID. The range is at most 366 calendar days, inclusive in Asia/Manila; weeks begin Monday. It aggregates all matching records in SQL rather than the displayed report page. Response: `from`, `to`, `group`, `timezone`, `date_basis`, `total`, `known_time`, and `periods[{period,total,accidents,known_time}]`. Incident time is used when known and submission time otherwise. First/last periods may be partial. Unverified reports count; rejected and deleted records do not. The aggregate has no victim identity, injury totals or diagnosis, and does not prove unique incidents or causation. Invalid input returns 422, and non-admin access fails. The client exports the returned summary as CSV with its dates/group in the filename.
+Admin analytics GET requires `from`/`to` as `YYYY-MM-DD`, `group=day|week|month|year`, optional category ID and `basis=submitted|incident`. The UI defaults to submission dates; omitting basis in an API call retains the original incident-time/submission-fallback contract. Daily/weekly/monthly ranges allow at most 366 inclusive calendar days; yearly ranges allow at most 20 calendar years. Dates are in Asia/Manila; weeks begin Monday. SQL aggregates all matching records, independent of report-list pagination. Response adds `basis`, `category`, `categories[{id,name,total}]` and per-period `categories` keyed by category ID to the existing `from`, `to`, `group`, `timezone`, `date_basis`, `total`, `known_time` and `periods[{period,total,accidents,known_time}]` fields. Empty periods/categories remain zero; first/last buckets may be partial. Unverified reports count; rejected and deleted records do not. The aggregate has no victim identity, injury totals or diagnosis, and does not establish unique incidents or causation. Invalid input returns JSON 422 field errors; anonymous/non-admin access returns 401/403.
+
+GET `/api/admin/analytics/export/{format}` accepts the identical query and only `pdf`, `docx` or `xlsx`. Each response is an attachment with its proper document MIME type, aggregate table, date basis, range and embedded category trend chart. Exports recompute the selected statistics from current records. No individual report content, identity, GPS or evidence is included. The route independently enforces administrator access, bounded inputs, a six-per-minute throttle and no-store caching. PDF rendering disables remote resources, JavaScript and PHP; spreadsheet text is explicitly typed to prevent formula execution. Random private temporary files are removed after generation. Requires GD, XML and ZIP plus the locked Composer document libraries.
 
 
 ## Basista reporting scope
@@ -822,6 +833,10 @@ Hotline settings additionally accept optional service police/fire/medical/rescue
 ---
 
 # 05 — Testing and validation
+
+## Administrative chart/export and account navigation checks — 12 November 2026
+
+Four `StatisticsExportTest` cases pass with 67 assertions: Philippine day/year boundaries, category and date-basis selection, zero periods, admin-only access, bounded invalid inputs, six-per-minute export limits, actual PDF/Word/Excel structures, embedded charts, numeric/literal spreadsheet cells and private temporary-file cleanup. The eight existing InterviewAlignmentTest cases pass with 85 assertions, retaining all-record weekly/monthly contracts. Two new statistics/account browser cases pass alongside ten existing account/reusable/phone cases. They compare UI totals with the API, exercise all three downloads and retained applied filters, check keyboard/guest settings access and enlarged-text notification sizing. The required full nineteen-check hook remains the publication gate on the exact committed state. Office application review, physical Android file saving, hosting and municipal workload acceptance remain separate; see [scope](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).
 
 ## Shared workflow verification — 12 November 2026
 
@@ -1289,7 +1304,7 @@ The bottom-right **Help tour** button launches the highlighted walkthrough above
 
 ## Prerequisites
 
-Development: Node 22.12 or later compatible with the lockfile, npm, PHP 8.2+ with `gd` (WebP), `fileinfo`, `mbstring`, `openssl`, PDO MySQL and PDO SQLite, Composer 2, and MySQL. SQLite is required for default tests, not the production database. PHP upload limits must permit the accepted multipart request: `upload_max_filesize=2M`, `post_max_size=8M` are sufficient for three 1-MB photos.
+Development: Node 22.12 or later compatible with the lockfile, npm, PHP 8.2+ with `gd` (WebP/FreeType), `fileinfo`, `mbstring`, `openssl`, XML/DOM/SimpleXML/XMLReader/XMLWriter, ZIP, PDO MySQL and PDO SQLite, Composer 2, and MySQL. Document exports use locked Dompdf, PHPWord and PhpSpreadsheet packages. Composer resolves against PHP 8.2 to preserve the hosting baseline; this workstation runs commands with PHP 8.5. Run `composer install` after pulling and `composer check-platform-reqs --lock` against the actual CLI/web host. SQLite is required for default tests, not the production database. PHP upload limits must permit the accepted multipart request: `upload_max_filesize=2M`, `post_max_size=8M` are sufficient for three 1-MB photos.
 
 Production target: **Hostinger Web/Cloud hosting**, one HTTPS origin, PHP/MySQL, compiled Vue assets and one hPanel scheduler cron with bounded push batches. Clients are **Android app + responsive web**. Node is needed only at build time. Follow [the concrete Web/Cloud guide](HOSTINGER_WEB_CLOUD.md), including the private Laravel/public_html split and relocated entry point. No hosting account is provisioned by this repository.
 
@@ -1799,3 +1814,7 @@ FR-25 now puts reading preferences and the guide in Settings and saves signed-in
 | FR-30 | Optional numeric-loopback LocalImageDetector, bounded image-screening queue, private per-photo versioned results and explicit admin review gating factual acceptance | PHP fake-local responses test malformed/outage/late results/privacy/rollback; UI checks manual confirmation. No actual classifier is configured or calibrated; model evaluation and host capability remain open. |
 
 See [dated implementation and limits](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
+
+## FR-31 administrative statistics and header navigation
+
+`IncidentStatistics`, `StatisticsExport`, `IncidentAnalytics`, `StatisticsChart` and `AccountMenu` implement category counts, daily/weekly/monthly/yearly charts, bounded administrator PDF/DOCX/XLSX exports and the requested account navigation. `StatisticsExportTest` verifies counts, dates, empty periods, authorization and document contents. `admin-statistics.spec.ts` exercises charts/downloads and keyboard account access; the notification preview test compares row/header height at normal/enlarged text. Hosting, native downloads, actual office-application rendering and municipal workload acceptance remain separate. See [implementation scope](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).

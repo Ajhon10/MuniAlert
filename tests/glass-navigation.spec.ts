@@ -43,7 +43,7 @@ test('packaged web client signs in through the same Laravel origin', async ({ pa
   await expect(auth).toHaveCount(0);
   await expect(page.locator('h1')).toHaveText('Municipal dashboard');
   await page.reload();
-  await expect(page.locator('.sidebar-user')).toContainText('Municipal administrator');
+  await expect(page.locator('.header-account')).toContainText('Municipal administrator');
   const cookie = (await page.context().cookies()).find(item => item.name.includes('session'));
   expect(cookie?.httpOnly).toBe(true);
   expect(errors).toEqual([]);

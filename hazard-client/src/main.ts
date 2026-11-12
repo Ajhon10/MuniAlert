@@ -16,4 +16,5 @@ import './assets/dashboard-personalization.css';
 import './assets/security.css';
 import './assets/community-review.css';
 import './assets/emergency-workflow.css';
+import './assets/statistics.css';
 createApp(App).directive('liquid-glass', vLiquidGlass).mount('#app');

@@ -27,7 +27,7 @@ test('MuniAlert branding and the complete title are readable in the public phone
 test('manual search, audience selection and no-match recovery preserve useful instructions', async ({ page }) => {
   await page.goto('/?demo=1&view=guide');
   await page.getByRole('button', { name: 'Administrator guide', exact: true }).click();
-  await page.getByRole('button', { name: 'Read instructions: Weekly and monthly records', exact: true }).click();
+  await page.getByRole('button', { name: 'Read instructions: Daily, monthly and yearly charts', exact: true }).click();
   await expect(page.locator('#manual-analytics')).toHaveAttribute('open', '');
   await expect(page.locator('#manual-analytics')).toContainText('Weeks start Monday');
   await expect(page.locator('#manual-analytics')).toContainText('Counts describe reports');
@@ -83,7 +83,7 @@ test('the bundled manual stays readable when the API is unavailable', async ({ p
 
 test('sign-in from the guide and an authenticated provider return preserve the manual destination', async ({ page }) => {
   await page.goto('/?view=guide');
-  await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
   await auth.getByRole('button', { name: 'Create an account', exact: true }).click();
   await auth.getByLabel('Full name').fill('Guide Return Citizen');

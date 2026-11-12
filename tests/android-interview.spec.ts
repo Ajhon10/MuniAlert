@@ -65,7 +65,7 @@ test.describe('Android phone interview alignment', () => {
 
   test('administrator can read period records and export on an Android viewport', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('button', { name: 'Account', exact: true }).click();
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
     const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
     await auth.getByLabel('Email address').fill('admin@example.test');
     await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
@@ -75,13 +75,13 @@ test.describe('Android phone interview alignment', () => {
     await page.getByRole('button', { name: 'More navigation', exact: true }).click();
     await page.getByRole('button', { name: 'Incident summary', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Incident records by period', exact: true })).toBeVisible();
-    await expect(page.locator('.analytics-period')).not.toHaveCount(0);
+    await expect(page.getByRole('img', { name: /report counts by hazard category/ })).toBeVisible();
     await page.getByRole('combobox', { name: 'Group records', exact: true }).selectOption('week');
     await page.getByRole('button', { name: 'Update summary', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Export summary', exact: true })).toBeEnabled();
     const download = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Export summary', exact: true }).click();
-    expect((await download).suggestedFilename()).toContain('munialert-week-');
+    expect((await download).suggestedFilename()).toMatch(/^munialert-statistics-week-.*\.pdf$/);
     await expect(page.getByText(/Counts describe reports, not confirmed casualties/)).toBeVisible();
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: 'test-results/android-incident-summary.png', fullPage: true });

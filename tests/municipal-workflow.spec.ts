@@ -1,4 +1,4 @@
-import { test, expect, finishAdminMfa, adminApiToken, reviewIncidentImages } from './fixtures';
+import { test, expect, finishAdminMfa, adminApiToken, reviewIncidentImages, accountOption } from './fixtures';
 import type { Page } from '@playwright/test';
 
 async function signIn(page: Page, email: string, password: string) {
@@ -71,9 +71,9 @@ test('municipal lifecycle reaches the citizen inbox, profile edits persist, and 
   }
   await expect(detail.getByRole('heading', { name: 'Municipal response' })).toHaveCount(0);
   await detail.getByRole('button', { name: 'Close dialog' }).click();
-  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await accountOption(page, 'Log out');
   await page.getByRole('dialog', { name: 'Sign out?' }).getByRole('button', { name: 'Sign out', exact: true }).click();
-  await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+  await expect(page.locator('.header-account')).toContainText('Community guest');
   await signIn(page, email, password);
   await page.getByRole('button', { name: 'Open notifications', exact: true }).click();
   await expect(page.locator('.notification-row')).toHaveCount(6);
@@ -84,13 +84,13 @@ test('municipal lifecycle reaches the citizen inbox, profile edits persist, and 
   await expect(detail.locator('.location-evidence')).toContainText('14.600100, 120.984300');
   await expect(detail.getByRole('img', { name: 'Resolution evidence photo 1' })).toBeVisible();
   await detail.getByRole('button', { name: 'Close dialog' }).click();
-  await page.getByRole('button', { name: 'My profile', exact: true }).click();
+  await accountOption(page, 'My profile');
   await page.getByLabel('Name', { exact: true }).fill('Updated Workflow Citizen');
   await page.getByRole('button', { name: 'Save profile', exact: true }).click();
   await page.getByRole('dialog', { name: 'Save profile changes?' }).getByRole('button', { name: 'Save profile', exact: true }).click();
   await expect(page.getByText('Profile updated.', { exact: true })).toBeVisible();
   await page.reload();
-  await expect(page.locator('.sidebar-user')).toContainText('Updated Workflow Citizen');
+  await expect(page.locator('.header-account')).toContainText('Updated Workflow Citizen');
   await page.getByRole('button', { name: 'My reports', exact: true }).click();
   await page.getByRole('button', { name: /Unverified deletion test hazard/ }).click();
   await expect(detail.getByRole('button', { name: 'Delete unverified report' })).toBeVisible();

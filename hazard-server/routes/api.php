@@ -79,6 +79,7 @@ Route::middleware('throttle:120,1,api-global')->group(function () {
         Route::get('reports/mine', [ReportController::class, 'index'])->name('reports.mine');
         Route::get('admin/reports', [ReportController::class, 'index'])->name('reports.admin');
         Route::get('admin/analytics', [AnalyticsController::class, 'index']);
+        Route::get('admin/analytics/export/{format}', [AnalyticsController::class, 'export'])->whereIn('format', ['pdf', 'docx', 'xlsx'])->middleware('throttle:6,1,statistics-export');
         Route::get('admin/stats', [ReportController::class, 'stats'])->name('reports.admin.stats');
         Route::post('admin/reports/{report}/verify', [ReportVerificationController::class, 'store'])->name('reports.verify');
         Route::post('admin/reports/{report}/photos/{photo}/review', [ImageReviewController::class, 'store'])->whereUuid('photo');

@@ -59,13 +59,18 @@ export async function reviewIncidentImagesApi(request: APIRequestContext, origin
 }
 
 export async function navigateWorkspace(page: Page, name: string) {
+  if (['My profile', 'Settings'].includes(name)) { await accountOption(page, name); return; }
   const target = page.locator('.sidebar nav').getByRole('button', { name, exact: true });
   if (!await target.isVisible()) await page.getByRole('button', { name: 'More navigation', exact: true }).click();
   await target.click();
 }
 export async function openReading(page: Page) {
-  await page.getByRole('button', { name: 'Open settings', exact: true }).click();
+  await accountOption(page, 'Settings');
   await page.getByRole('button', { name: 'Reading and accessibility settings', exact: true }).click();
+}
+export async function accountOption(page: Page, name: string) {
+  await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.getByRole('menu', { name: 'Account options' }).getByRole('menuitem', { name, exact: true }).click();
 }
 export async function fillTwoFactor(page: Page, code: string) {
   const backup = page.getByRole('button', { name: 'Use authenticator code', exact: true });

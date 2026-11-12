@@ -1,8 +1,8 @@
-import { test, expect, openReading, navigateWorkspace } from './fixtures';
+import { test, expect, openReading, navigateWorkspace, accountOption } from './fixtures';
 
 test('backend validation returns field errors and one floating linked toast without moving modal content', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const form = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
   const before = await form.locator('.modal-body').boundingBox();
   const response = page.waitForResponse(r => new URL(r.url()).pathname === '/auth/login' && r.request().method() === 'POST');
@@ -32,7 +32,7 @@ test('password visibility preserves values and autocomplete, never submits, rese
   await page.getByRole('slider', { name: 'Text size', exact: true }).fill('200');
   await page.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await page.setViewportSize({ width: 375, height: 900 });
-  await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const form = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
   const password = form.getByLabel('Password', { exact: true });
   const sample = 'Synthetic visibility example'; let submissions = 0;
@@ -60,13 +60,13 @@ test('password visibility preserves values and autocomplete, never submits, rese
 
 test('profile and password recovery offer independent visibility controls for every password field', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const login = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
   await login.getByLabel('Email address', { exact: true }).fill('citizen.two@example.test');
   await login.getByLabel('Password', { exact: true }).fill(process.env.HAZARD_DEMO_CITIZEN_TWO_PASSWORD!);
   await login.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.locator('.sidebar-user')).toContainText('Sample Citizen Two');
-  await page.getByRole('button', { name: 'My profile', exact: true }).click();
+  await expect(page.locator('.header-account')).toContainText('Sample Citizen Two');
+  await accountOption(page, 'My profile');
   for (const label of ['Current password', 'New password', 'Confirm new password']) {
     const input = page.getByLabel(label, { exact: true });
     await input.fill('Synthetic visibility example');

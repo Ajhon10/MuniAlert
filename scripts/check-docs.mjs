@@ -12,7 +12,7 @@ for (const file of files) {
   for (const match of text.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)) { const target = match[1].split('#')[0]; if (!target || /^(https?:|mailto:)/.test(target)) continue; if (!existsSync(resolve(dirname(file), decodeURIComponent(target)))) throw Error(`Broken documentation link in ${file}: ${target}`); }
 }
 const requirements = readFileSync(resolve(docs, '01-project-overview.md'), 'utf8'); const traceability = readFileSync(resolve(docs, '10-traceability-and-acceptance.md'), 'utf8');
-for (let id = 1; id <= 30; id++) { const key = `FR-${String(id).padStart(2, '0')}`; if (!requirements.includes(key) || !traceability.includes(key)) throw Error(`Missing requirement or traceability entry: ${key}`); }
+for (let id = 1; id <= 31; id++) { const key = `FR-${String(id).padStart(2, '0')}`; if (!requirements.includes(key) || !traceability.includes(key)) throw Error(`Missing requirement or traceability entry: ${key}`); }
 const municipality = JSON.parse(readFileSync(resolve(root, 'hazard-client/src/config/municipality.json'), 'utf8'));
 const serverScope = spawnSync(php, ['-r', 'echo json_encode(require "hazard-server/config/municipality.php");'], { cwd: root, encoding: 'utf8' });
 if (serverScope.status !== 0 || JSON.stringify(JSON.parse(serverScope.stdout).barangays) !== JSON.stringify(municipality.barangays)) throw Error('Client/server Basista coverage differs.');
@@ -28,4 +28,4 @@ const hook = readFileSync(resolve(root, '.githooks/pre-push'), 'utf8');
 if (!hook.includes('npm run verify') || !hook.includes('check-publication.mjs --clean')) throw Error('The workspace pre-push verification/clean-publication hook is missing.');
 const generated = spawnSync(process.execPath, ['scripts/build-docs.mjs', '--check'], { cwd: root, stdio: 'inherit' });
 if (generated.status !== 0) process.exit(1);
-console.log(`Documentation verified: ${files.length} source files, 30 requirements, Basista scope/boundary provenance, all API routes and generated attachments.`);
+console.log(`Documentation verified: ${files.length} source files, 31 requirements, Basista scope/boundary provenance, all API routes and generated attachments.`);

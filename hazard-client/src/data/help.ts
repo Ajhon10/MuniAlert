@@ -45,7 +45,7 @@ export const manualSections: ManualSection[] = [
   ], keywords: 'dashboard overview operations background image upload photo preview appearance' },
   { id: 'stay-signed-in', audience: 'all', title: 'Stay signed in on this device', summary: 'Close and reopen without signing in again.', steps: [
     'Once you finish signing in, closing the browser or Android app does not sign you out. Reopen MuniAlert on the same device to continue. Keep browser cookies and app storage to retain the saved login.',
-    'To leave a shared device, choose Sign out and confirm. This signs out that device. Password resets, suspension and other security changes can also revoke saved access.',
+    'To leave a shared device, open the header account icon, choose Log out and confirm Sign out. This signs out that device. Password resets, suspension and other security changes can also revoke saved access.',
     'Administrators may still need a fresh password and authenticator code before sensitive changes. Reopening the app does not grant fresh verification for an administrative action.',
   ], keywords: 'login session persistent close reopen restart logout sign out device' },
   { id: 'account-security', audience: 'all', title: 'Protect and recover your account', summary: 'Authenticator codes, verified email and municipal support.', steps: [
@@ -58,16 +58,16 @@ export const manualSections: ManualSection[] = [
     'A password reset revokes prior credentials and still requires administrator MFA. If your phone and recovery codes are lost, use the approved municipal support process. Email/scanner/hosting and physical-device acceptance are separate from source implementation.',
   ], keywords: 'security mfa authenticator two factor password reset recovery email codes login lost phone' },
   { id: 'reading', audience: 'all', title: 'Make text easier to read', summary: 'Text size, contrast, spacing, motion and action messages.', steps: [
-    'Open Settings from the header or navigation (More → Settings on a phone), then Reading and accessibility settings. The user guide is also in Settings. You do not need to sign in to read the guide or adjust text.',
+    'Open the account icon in the header, choose Settings, then Reading and accessibility settings. The user guide is also in Settings. Guests can use these settings without signing in.',
     'Drag the Text size slider from 100% to 200%. The preview changes while you drag; release to apply it to the app. Use minus/plus or keyboard arrow keys for 5% steps. Bold text, High contrast and More reading space can be used together.',
     'Enable Reduce motion to stop decorative animations and show final counts immediately. Your device reduced-motion preference is always respected.',
     'Enable Keep messages visible if you need more time to read. Otherwise, success and information messages close after eight seconds, pausing while focused or hovered. Errors wait until dismissed.',
-    'Action messages use an icon and words to describe success, information or an error. Read the error beside the form as well, correct the problem and try again. A download message means a file was prepared, not that it was saved to your phone.',
+    'Floating action messages use an icon and words to describe success, information or an error. Read the message, correct the problem and try again. A download message means a file was prepared, not that it was saved to your phone.',
     'Signed-in preferences are saved separately to your account and restored on other devices after sign-in. Guest preferences stay on this device. A sync error keeps your local changes and offers Retry saving preferences in Settings. Reset reading settings restores the defaults. Browser zoom and phone text settings remain available.',
   ], keywords: 'accessibility read text size large font bold contrast spacing animation motion toast messages android older elderly' },
   { id: 'getting-started', audience: 'all', title: 'Sign in and find your way around', summary: 'Your account, navigation and the preview workspace.', steps: [
-    'Use Sign in or the account button. Create a citizen account with your name, email and password. Google and Facebook sign-in buttons are currently hidden; use your email and password.',
-    'On a phone, use Home, Map, Report, Updates and More. More opens the complete navigation, including this guide. Administrator navigation shows Review and Manage instead of citizen reporting.',
+    'Use Sign in in the header. Create a citizen account with your name, email and password. Google and Facebook sign-in buttons are currently hidden; use your email and password. The header account icon opens My profile, Settings and Log out after sign-in.',
+    'On a phone, use Home, Map, Report, Updates and More. More opens workspace navigation. Find this guide in account icon → Settings. Administrator navigation shows Review and Manage instead of citizen reporting.',
     'In a popup, scroll the middle to read all fields or details. The title, close button and bottom actions stay visible. Use Go back to cancel a confirmation without losing the form underneath.',
     'A Demo workspace banner means the records are fictional. Exit preview before sending a real report. A report is accepted only when the system returns a reference number.',
     'Stay signed in on your own device. Use Sign out on shared devices; clearing app data, revocation or session expiry requires a new sign-in.',
@@ -136,13 +136,13 @@ export const manualSections: ManualSection[] = [
     'Choose Publish news post and confirm publication. The reviewed update, incident details and chosen submitter credit enter the newsfeed and share page; original descriptions and evidence photos remain private.',
     'Use Unpublish news post to remove the feed entry and share page. Rejection also removes publication. Copies already shared elsewhere may remain. Review public comments separately.',
   ], keywords: 'publish news community summary unpublish privacy moderation' },
-  { id: 'analytics', audience: 'admin', title: 'Summarize weekly or monthly records', summary: 'Date filters, category filters and complete summary exports.', steps: [
-    'Open Incident summary. On a phone, open More to find it.',
-    'Choose From date and To date, a weekly or monthly grouping, and an optional incident category. Select Update summary. A range may cover up to 366 calendar days.',
-    'Read dates in Philippine time. Weeks start Monday; the first or last period may cover only part of a week or month.',
-    'Incident time is used when supplied. Otherwise, submission time is used and the fallback count is shown. Totals include unverified reports and exclude rejected or deleted records.',
-    'Choose Export summary for every matching record in the selected period. Export page on the report list covers only the displayed result page.',
-  ], note: 'Counts describe reports, not confirmed casualties or necessarily unique incidents. A change in counts does not establish why accidents occurred.', keywords: 'weekly monthly summary analytics csv export statistics dates count period records' },
+  { id: 'analytics', audience: 'admin', title: 'Chart daily, monthly and yearly reports', summary: 'Category trends and complete PDF, Word and Excel statistics.', steps: [
+    'Use the statistics section on Dashboard or open Incident summary. On a phone, open More to find Incident summary. Both pages provide the same chart and export controls.',
+    'Choose From date, To date, Daily, Weekly, Monthly or Yearly, and an optional category. Count reports by Date submitted (the default) or Incident date with a submission-time fallback. Select Update summary. Shortcuts show daily counts this month, monthly counts this year or the last five years.',
+    'Read dates in Philippine time. Weeks start Monday; first and last periods may be partial. Daily, weekly and monthly ranges allow up to 366 days; yearly ranges allow up to 20 calendar years.',
+    'Select a chart period to read its category breakdown. Hazard category totals and View counts in a data table show exact values, including zero periods. Totals include unverified reports and exclude rejected or deleted records.',
+    'Choose PDF, Word (.docx) or Excel (.xlsx), then Export summary. Each file includes the selected date range, date basis, chart and complete category counts. Apply changed controls before exporting; unapplied edits do not change the displayed report. Export page on a report list remains a separate export of its displayed rows.',
+  ], note: 'Counts describe reports, not confirmed casualties or necessarily unique incidents. A change in counts does not establish why accidents occurred.', keywords: 'daily weekly monthly yearly summary analytics pdf word excel docx xlsx export statistics dates count period records' },
   { id: 'settings', audience: 'admin', title: 'Manage approved municipal information', summary: 'Hotlines, map starting location and badge descriptions.', steps: [
     'Open Content management or Manage. Set the starting map location and zoom for your municipality.',
     'Enter only locally approved emergency service names and phone numbers. Verify the numbers with the municipality before publishing them.',
@@ -164,6 +164,6 @@ export const guideFeatures = [
   { id: 'privacy', icon: 'shield', title: 'Private original evidence', description: 'Precise details and photos are limited to authorized viewers.', audience: 'all' },
   { id: 'review', icon: 'review', title: 'Organized report review', description: 'Verify location, set priority and assign a responsible team.', audience: 'admin' },
   { id: 'resolution', icon: 'camera', title: 'Resolution evidence', description: 'Keep action-taken photos separate from incident photos.', audience: 'admin' },
-  { id: 'analytics', icon: 'chart', title: 'Weekly and monthly records', description: 'Filter periods and export a complete record summary.', audience: 'admin' },
+  { id: 'analytics', icon: 'chart', title: 'Daily, monthly and yearly charts', description: 'Compare hazard types and export PDF, Word or Excel statistics.', audience: 'admin' },
   { id: 'publication', icon: 'news', title: 'Reviewed community news', description: 'Publish a separate summary without exposing original evidence.', audience: 'admin' },
 ] as const;

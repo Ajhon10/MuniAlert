@@ -70,7 +70,7 @@ test('reading controls remain usable with denied local storage and device reduce
 test('errors stay in the active dialog, keep input focus and can be dismissed', async ({ page }) => {
   await page.goto('/');
   await page.route('**/auth/login', route => route.fulfill({ status: 422, contentType: 'application/json', body: JSON.stringify({ message: 'The email or password is incorrect. Please try again.' }) }));
-  await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
   await auth.getByLabel('Email address', { exact: true }).fill('unknown@example.test');
   await auth.getByLabel('Password', { exact: true }).fill('incorrect-test-password');

@@ -2,7 +2,7 @@ import { test, expect, finishAdminMfa, adminOtp, fillTwoFactor, navigateWorkspac
 import type { Page } from '@playwright/test';
 
 async function passwordLogin(page: Page) {
-  await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
   await auth.getByLabel('Email address', { exact: true }).fill('admin@example.test');
   await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
@@ -126,5 +126,5 @@ test('closing MFA while its response is delayed does not leave an authenticated 
   await expect(auth).toHaveCount(0);
   const me = await page.request.get('/api/auth/me', { headers: { Accept: 'application/json' } });
   expect(me.status()).toBe(401);
-  await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+  await expect(page.locator('.header-account')).toContainText('Community guest');
 });

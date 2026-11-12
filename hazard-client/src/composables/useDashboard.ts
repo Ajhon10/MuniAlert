@@ -1,6 +1,6 @@
 
 import { computed, onMounted, onBeforeUnmount, ref, watch, nextTick } from 'vue';
-import { ShieldCheck, LayoutDashboard, Map, ClipboardList, Bell, TriangleAlert, Clock3, Radio, CheckCircle2, Newspaper, Settings, UserRound, ChartColumn } from '@lucide/vue';
+import { ShieldCheck, LayoutDashboard, Map, ClipboardList, Bell, TriangleAlert, Clock3, Radio, CheckCircle2, Newspaper, Settings, ChartColumn } from '@lucide/vue';
 import { pendingMfa, mfaIntent, recoveryLink, clearAccountSecurity } from '../services/accountSecurity';
 import { notify, useFeedback } from '../services/feedback';
 import { bindReadingAccount } from '../services/readingAccount';
@@ -28,8 +28,8 @@ if (recoveryLink.value) modal.value = 'auth';
 watch(pendingMfa, value => { if (value) { modal.value = 'auth'; pendingReport.value = mfaIntent.value === 'report'; } });
 const socialIntent = computed(() => pendingReport.value ? 'report' : pendingView.value || view.value);
 const municipality = import.meta.env.VITE_MUNICIPALITY || municipalityConfig.office; let refreshTimer: ReturnType<typeof setInterval>; let filterTimer: ReturnType<typeof setTimeout>; let generation = 0;
-const citizenNavigation = [{ id: 'overview', label: 'Dashboard', icon: LayoutDashboard }, { id: 'map', label: 'Hazard map', icon: Map }, { id: 'news', label: 'Verified news', icon: Newspaper }, { id: 'mine', label: 'My reports', icon: ShieldCheck }, { id: 'profile', label: 'My profile', icon: UserRound }, { id: 'settings', label: 'Settings', icon: Settings }] as const;
-const adminNavigation = [{ id: 'overview', label: 'Dashboard', icon: LayoutDashboard }, { id: 'map', label: 'Operations map', icon: Map }, { id: 'reports', label: 'Review reports', icon: ClipboardList }, { id: 'news', label: 'Community news', icon: Newspaper }, { id: 'analytics', label: 'Incident summary', icon: ChartColumn }, { id: 'cms', label: 'Content management', icon: Settings }, { id: 'profile', label: 'My profile', icon: UserRound }, { id: 'settings', label: 'Settings', icon: Settings }] as const;
+const citizenNavigation = [{ id: 'overview', label: 'Dashboard', icon: LayoutDashboard }, { id: 'map', label: 'Hazard map', icon: Map }, { id: 'news', label: 'Verified news', icon: Newspaper }, { id: 'mine', label: 'My reports', icon: ShieldCheck }] as const;
+const adminNavigation = [{ id: 'overview', label: 'Dashboard', icon: LayoutDashboard }, { id: 'map', label: 'Operations map', icon: Map }, { id: 'reports', label: 'Review reports', icon: ClipboardList }, { id: 'news', label: 'Community news', icon: Newspaper }, { id: 'analytics', label: 'Incident summary', icon: ChartColumn }, { id: 'cms', label: 'Content management', icon: Settings }] as const;
 const navigation = computed(() => user.value?.role === 'admin' ? adminNavigation : citizenNavigation);
 const heading = computed(() => ({ overview: user.value?.role === 'admin' ? 'Municipal dashboard' : 'Community dashboard', map: user.value?.role === 'admin' ? 'Operations hazard map' : 'Community hazard map', reports: user.value?.role === 'admin' ? 'Report review' : 'Verified community hazards', mine: 'My reports', activity: 'Notifications', news: 'Verified community news', cms: 'Content management', profile: 'My profile & badges', analytics: 'Incident summary', settings: 'Settings', guide: 'Guide & user manual' }[view.value]));
 const filtered = computed(() => reports.value.filter(r => (!category.value || r.category.id === category.value) && (!status.value || r.status === status.value) && (!search.value || `${r.title} ${r.reference_number} ${r.barangay} ${r.address}`.toLowerCase().includes(search.value.toLowerCase()))));
@@ -113,7 +113,7 @@ function restoreView(refreshData: unknown = true) {
   if (requested === 'activity') { const url = new URL(location.href); url.searchParams.delete('view'); history.replaceState(null, '', url); view.value = 'overview'; openNotifications(); if (refreshData !== false) void refresh(); return; }
   const next = requested === 'reports' && user.value?.role !== 'admin' ? 'map' : requested;
   if (next !== requested) { const url = new URL(location.href); url.searchParams.set('view', next); history.replaceState(null, '', url); }
-  const allowed = next === 'guide' || navigation.value.some(item => item.id === next);
+  const allowed = ['guide', 'settings', 'profile'].includes(next) || navigation.value.some(item => item.id === next);
   const requiresLogin = ['mine', 'activity', 'profile'].includes(next);
   view.value = allowed && (!requiresLogin || user.value || demo.value) ? next as View : 'overview';
   mobileNav.value = false; page.value = 1;

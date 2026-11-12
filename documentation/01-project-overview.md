@@ -116,3 +116,7 @@ Notifications use the bell/mobile Updates dialog with owned single-item read and
 ## FR-30 — Private local image screening and administrator confirmation
 
 Photos remain on BANTAY; an optional loopback-only local classifier produces advisory estimates through bounded ID-only jobs. Unavailable/unconfigured checks never claim authenticity. New incident images need explicit recorded human review and independent corroboration before factual acceptance; stale results cannot overwrite manual decisions. Public/reporting-user responses exclude internal assessment metadata. A maintained configured classifier, measured accuracy and hosting capability remain pending. See [implementation/readiness](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
+
+## FR-31 — Administrative statistical charts and office exports
+
+Administrators compare counts by hazard type on Dashboard and Incident summary using daily, weekly, monthly or yearly charts, exact tables, date/category filters and an explicit submission/incident date basis in Philippine time. Downloadable PDF, Word DOCX and Excel XLSX reports include the selected aggregate chart and counts without private report details. The shared header account menu contains Profile, Settings and Log out, with guest Sign in in the header and reading settings available to guests. Notification previews remain bounded to the notification header height. See [details](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).

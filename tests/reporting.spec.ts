@@ -1,4 +1,4 @@
-import { test, expect, finishAdminMfa, adminApiToken, continueReport, reviewIncidentImagesApi } from './fixtures';
+import { test, expect, finishAdminMfa, adminApiToken, continueReport, reviewIncidentImagesApi, accountOption } from './fixtures';
 test('demo dashboard filters, details, export, and mobile layout', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('/?demo=1');
@@ -54,15 +54,15 @@ test('citizen registers, reports a compressed photo and confirmed manual locatio
   await expect(page.locator('.location-evidence')).toContainText('Not provided — manually pinned');
   await expect.poll(() => page.locator('.detail-photos img').evaluate((img: HTMLImageElement) => img.naturalWidth > 0)).toBe(true);
   await page.getByRole('button', { name: 'Close dialog' }).click();
-  await page.reload(); await expect(page.locator('.sidebar-user')).toContainText('Browser Test Citizen');
+  await page.reload(); await expect(page.locator('.header-account')).toContainText('Browser Test Citizen');
   await page.getByRole('button', { name: 'My reports', exact: true }).click(); await expect(page.locator('tbody')).toContainText('Fallen tree near the school gate');
-  await page.getByRole('button', { name: 'My profile', exact: true }).click();
+  await accountOption(page, 'My profile');
   await expect(page.getByRole('heading', { name: 'Achievements' })).toBeVisible();
   await expect(page.locator('.achievement-row')).toHaveCount(4);
-  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await accountOption(page, 'Log out');
   await expect(page.getByRole('dialog', { name: 'Sign out?' })).toBeVisible();
   await page.getByRole('button', { name: 'Sign out', exact: true }).last().click();
-  await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+  await expect(page.locator('.header-account')).toContainText('Community guest');
 });
 
 test('GPS location remains unconfirmed until the citizen accepts it and edits reset confirmation', async ({ page, context }) => {
@@ -96,7 +96,7 @@ test('administrator sees operations controls and publishes municipal CMS changes
   await expect(page.getByText('Map and hotlines saved.')).toBeVisible();
   await page.getByRole('button', { name: 'Dashboard', exact: true }).click();
   await expect(page.getByRole('link', { name: 'Test municipal rescue' })).toHaveCount(0);
-  await page.getByRole('button', { name: 'My profile' }).click();
+  await accountOption(page, 'My profile');
   await expect(page.getByRole('heading', { name: 'Achievements' })).toBeVisible();
 });
 

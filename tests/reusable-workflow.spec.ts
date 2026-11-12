@@ -1,10 +1,10 @@
-import { test, expect, finishAdminMfa } from './fixtures';
+import { test, expect, finishAdminMfa, accountOption } from './fixtures';
 import type { Page } from '@playwright/test';
 import { demoReports } from '../hazard-client/src/data/demo';
 
 async function login(page: Page, admin = false) {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
   await auth.getByLabel('Email address', { exact: true }).fill(admin ? 'admin@example.test' : 'citizen.two@example.test');
   await auth.getByLabel('Password', { exact: true }).fill(admin ? process.env.E2E_ADMIN_PASSWORD! : process.env.HAZARD_DEMO_CITIZEN_TWO_PASSWORD!);
@@ -28,6 +28,7 @@ test('shared notification rows clamp long previews and open the full authorized 
     const zoom = await page.addStyleTag({ content: `html { font-size: ${size}% !important; }` });
     await page.setViewportSize({ width: size === 200 ? 375 : 1280, height: 900 });
     expect((await rows.nth(0).boundingBox())!.height).toBeCloseTo((await rows.nth(1).boundingBox())!.height, 0);
+    await expect.poll(async () => Math.abs((await rows.first().boundingBox())!.height - (await inbox.locator('.modal-header').boundingBox())!.height)).toBeLessThan(1);
     expect(await rows.first().locator('p').evaluate(el => el.scrollHeight > el.clientHeight)).toBe(true);
     expect(await inbox.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
     await zoom.evaluate(el => el.remove());
@@ -42,7 +43,7 @@ test('shared notification rows clamp long previews and open the full authorized 
 
 test('expanding one achievement card leaves its neighboring cards at their original height', async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 1000 }); await login(page);
-  await page.getByRole('button', { name: 'My profile', exact: true }).click();
+  await accountOption(page, 'My profile');
   const cards = page.locator('.hazard-achievement-track'); await expect(cards).toHaveCount(10);
   const neighbor = (await cards.nth(1).boundingBox())!;
   const closed = (await cards.first().boundingBox())!;
@@ -89,7 +90,7 @@ test('sharing prepares reviewed report content while keeping private evidence ou
 });
 
 test('forgot-password exposes both methods and submits saved-code errors as backend JSON', async ({ page }) => {
-  await page.goto('/'); await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.goto('/'); await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
   await auth.getByRole('button', { name: 'Forgot your password?', exact: true }).click();
   await expect(auth.locator('.modal-footer')).toHaveCount(0);

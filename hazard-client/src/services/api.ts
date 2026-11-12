@@ -28,6 +28,17 @@ export async function apiBlob(path: string): Promise<Blob> {
   if (!response.headers.get('Content-Type')?.startsWith('image/')) throw new Error('The evidence server returned an invalid image.');
   return response.blob();
 }
+export async function statisticsExport(path: string): Promise<Blob> {
+  if (!/^\/api\/admin\/analytics\/export\/(pdf|docx|xlsx)\?/.test(path)) throw new Error('Invalid statistics export.');
+  const response = await request(path);
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(data?.errors ? Object.values(data.errors).flat().join(' ') : data?.message || 'The export could not be prepared. Please try again.');
+  }
+  const type = response.headers.get('Content-Type') || '';
+  if (!/application\/(pdf|vnd\.openxmlformats-officedocument\.(wordprocessingml\.document|spreadsheetml\.sheet))/.test(type)) throw new Error('The server returned an invalid export file.');
+  return response.blob();
+}
 export async function api<T>(path: string, options: RequestInit = {}, steppedUp = false): Promise<T> {
   const response = await request(path, options);
   if (response.status === 204 && response.ok) return undefined as T;

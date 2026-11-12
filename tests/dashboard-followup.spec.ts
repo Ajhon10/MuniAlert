@@ -1,13 +1,13 @@
-import { test, expect, finishAdminMfa, openReading, navigateWorkspace } from './fixtures';
+import { test, expect, finishAdminMfa, openReading, navigateWorkspace, accountOption } from './fixtures';
 import type { Page } from '@playwright/test';
 
 async function adminLogin(page: Page) {
-  await page.goto('/'); await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.goto('/'); await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
   await auth.getByLabel('Email address', { exact: true }).fill('admin@example.test');
   await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click(); await finishAdminMfa(page);
-  await expect(page.locator('.sidebar-user')).toContainText('Municipal administrator');
+  await expect(page.locator('.header-account')).toContainText('Municipal administrator');
 }
 
 test('administrator reopens with only its persistent device cookie and logout prevents replay', async ({ page, context, browser, baseURL }) => {
@@ -18,18 +18,18 @@ test('administrator reopens with only its persistent device cookie and logout pr
   const reopened = await browser.newContext({ baseURL, storageState: { cookies: device, origins: [] } });
   try {
     const returned = await reopened.newPage(); await returned.goto('/');
-    await expect(returned.locator('.sidebar-user')).toContainText('Municipal administrator');
+    await expect(returned.locator('.header-account')).toContainText('Municipal administrator');
     expect(await returned.evaluate(async () => (await fetch('/api/admin/reports', { headers: { Accept: 'application/json' } })).status)).toBe(200);
     expect(await returned.evaluate(async () => {
       const csrf = document.cookie.split('; ').find(item => item.startsWith('XSRF-TOKEN='))!.slice(11);
       return (await fetch('/api/admin/dashboard-background', { method: 'POST', headers: { Accept: 'application/json', 'X-XSRF-TOKEN': decodeURIComponent(csrf) } })).status;
     })).toBe(428);
-    await returned.getByRole('button', { name: 'Sign out', exact: true }).click();
+    await accountOption(returned, 'Log out');
     await returned.getByRole('dialog', { name: 'Sign out?' }).getByRole('button', { name: 'Sign out', exact: true }).click();
-    await expect(returned.locator('.sidebar-user')).toContainText('Community guest');
+    await expect(returned.locator('.header-account')).toContainText('Community guest');
     await reopened.clearCookies(); await reopened.addCookies(device);
     await returned.reload();
-    await expect(returned.locator('.sidebar-user')).toContainText('Community guest');
+    await expect(returned.locator('.header-account')).toContainText('Community guest');
     expect(await returned.evaluate(async () => (await fetch('/api/admin/reports', { headers: { Accept: 'application/json' } })).status)).toBe(401);
   } finally { await reopened.close(); }
 });

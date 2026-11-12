@@ -1,8 +1,8 @@
-import { test, expect, navigateWorkspace, openReading, fillTwoFactor, adminOtp } from './fixtures';
+import { test, expect, navigateWorkspace, openReading, fillTwoFactor, adminOtp, accountOption } from './fixtures';
 import type { Page } from '@playwright/test';
 const password = 'synthetic-account-settings-password';
 async function login(page: Page, email: string, secret = password) {
-  await page.goto('/'); await page.getByRole('button', { name: 'Account', exact: true }).click();
+  await page.goto('/'); await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
   await auth.getByLabel('Email address', { exact: true }).fill(email);
   await auth.getByLabel('Password', { exact: true }).fill(secret);
@@ -19,7 +19,7 @@ test('Settings owns reading and guide controls and restores each account separat
   }
   const [alpha, beta] = accounts;
   await login(page, alpha!.email);
-  await expect(page.locator('.sidebar-user')).toContainText(alpha!.name);
+  await expect(page.locator('.header-account')).toContainText(alpha!.name);
   await expect(page.locator('.community-card')).toHaveCount(0);
   await expect(page.locator('.topbar').getByRole('button', { name: 'Reading and accessibility settings', exact: true })).toHaveCount(0);
   await expect(page.locator('.topbar').getByRole('button', { name: 'Open guide and user manual', exact: true })).toHaveCount(0);
@@ -34,11 +34,11 @@ test('Settings owns reading and guide controls and restores each account separat
   await page.getByRole('button', { name: 'Open guide and user manual', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Guide & user manual', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Back to settings', exact: true }).click();
-  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await accountOption(page, 'Log out');
   await page.getByRole('dialog', { name: 'Sign out?', exact: true }).getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(page.locator('html')).toHaveAttribute('data-text-size', '100');
   await login(page, beta!.email);
-  await expect(page.locator('.sidebar-user')).toContainText(beta!.name);
+  await expect(page.locator('.header-account')).toContainText(beta!.name);
   await expect(page.locator('html')).toHaveAttribute('data-text-size', '100');
   await expect(page.locator('html')).not.toHaveClass(/boldText/);
   await openReading(page); await page.getByRole('slider', { name: 'Text size', exact: true }).fill('115');
@@ -47,7 +47,7 @@ test('Settings owns reading and guide controls and restores each account separat
   const fresh = await browser.newContext({ baseURL });
   try {
     const device = await fresh.newPage(); await login(device, alpha!.email);
-    await expect(device.locator('.sidebar-user')).toContainText(alpha!.name);
+    await expect(device.locator('.header-account')).toContainText(alpha!.name);
     await expect(device.locator('html')).toHaveAttribute('data-text-size', '165');
     await expect(device.locator('html')).toHaveClass(/boldText/);
     await navigateWorkspace(device, 'Settings');

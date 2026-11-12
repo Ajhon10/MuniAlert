@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect, accountOption } from './fixtures';
 import type { BrowserContext, Page } from '@playwright/test';
 
 // Exercise the real Capacitor JS wrapper/client with a simulated OS bridge.
@@ -48,29 +48,29 @@ test('native session restores across WebView restarts, survives an outage and cl
   await page.goto('/');
   await expect(page.locator('.connection')).toHaveText('Connected');
   await login(page);
-  await expect(page.locator('.sidebar-user')).toContainText('Device Session Test');
+  await expect(page.locator('.header-account')).toContainText('Device Session Test');
   expect(vault.size).toBe(1);
   expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain('synthetic-device-credential');
   await page.reload();
-  await expect(page.locator('.sidebar-user')).toContainText('Device Session Test');
+  await expect(page.locator('.header-account')).toContainText('Device Session Test');
   state.unavailable = true;
   await page.reload();
   await expect(page.locator('.connection')).toHaveText('Connected');
   expect(vault.size).toBe(1);
   state.unavailable = false;
   await page.reload();
-  await expect(page.locator('.sidebar-user')).toContainText('Device Session Test');
+  await expect(page.locator('.header-account')).toContainText('Device Session Test');
   state.unauthorized = true;
   await page.reload();
   await expect(page.locator('.connection')).toHaveText('Connected');
   expect(vault.size).toBe(0);
-  await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+  await expect(page.locator('.header-account')).toContainText('Community guest');
   state.unauthorized = false;
   await login(page);
-  await expect(page.locator('.sidebar-user')).toContainText('Device Session Test');
-  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await expect(page.locator('.header-account')).toContainText('Device Session Test');
+  await accountOption(page, 'Log out');
   await page.getByRole('dialog', { name: 'Sign out?' }).getByRole('button', { name: 'Sign out', exact: true }).click();
-  await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+  await expect(page.locator('.header-account')).toContainText('Community guest');
   expect(vault.size).toBe(0);
   expect(state.logoutCalls).toBe(1);
 });
@@ -84,7 +84,7 @@ test('native login fails clearly and revokes its new token if secure storage fai
   await expect(page.locator('.toast-message.error')).toContainText('Unable to securely save your session');
   expect(vault.size).toBe(0);
   expect(state.logoutCalls).toBe(1);
-  await expect(page.locator('.sidebar-user')).toContainText('Community guest');
+  await expect(page.locator('.header-account')).toContainText('Community guest');
 });
 
 test('a late unauthorized response from startup cannot erase a newly signed-in session', async ({ page, context }) => {
@@ -97,11 +97,11 @@ test('a late unauthorized response from startup cannot erase a newly signed-in s
   });
   await page.goto('/');
   await login(page);
-  await expect(page.locator('.sidebar-user')).toContainText('Device Session Test');
+  await expect(page.locator('.header-account')).toContainText('Device Session Test');
   const oldResponse = page.waitForResponse('**/api/auth/me');
   release();
   await oldResponse;
   await expect(page.locator('.connection')).toHaveText('Connected');
-  await expect(page.locator('.sidebar-user')).toContainText('Device Session Test');
+  await expect(page.locator('.header-account')).toContainText('Device Session Test');
   expect(vault.size).toBe(1);
 });

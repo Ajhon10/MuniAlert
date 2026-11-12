@@ -1,5 +1,15 @@
 # Phased task tracker
 
+## Admin statistical charts, exports and account menu — 12 November 2026
+
+- [x] Share category trend/totals charts across admin Dashboard and Incident summary with Philippine day/month/year grouping, explicit date basis and zero-filled periods.
+- [x] Export the selected statistics/chart as genuine PDF, Word DOCX and Excel XLSX files using administrator-authorized server generation.
+- [x] Move profile/settings/logout to an accessible header account dropdown; move guest sign-in to the header and remove sidebar account controls/settings navigation.
+- [x] Match compact notification rows to the notification-dialog header height while retaining truncation, full-content navigation and enlarged-text access.
+- [x] Add count/export/authorization/menu/phone regression coverage and refresh implementation records and manuals. Focused browser/feature checks pass; publication remains guarded by the mandatory exact-state nineteen-check hook.
+
+See [implementation and limits](documentation/ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md). Real hosting, physical Android downloads and manual Microsoft Office acceptance remain separate.
+
 ## Reusable interface, routing, seed data and recovery — 12 November 2026
 
 - [x] Centralize modal padding/optional action footers, shared native form controls/table and server validation; keep feedback floating inside the active dialog's accessible layer.
