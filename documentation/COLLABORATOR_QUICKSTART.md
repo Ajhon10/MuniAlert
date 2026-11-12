@@ -66,9 +66,58 @@ composer --working-dir=hazard-server check-platform-reqs
 
 For this local browser/USB route, leave `VITE_API_BASE_URL=` **blank** in `hazard-client/.env`; Vite forwards API and private-photo requests. Retain the server example's localhost frontend/session origins. No Firebase, R2, Google or Facebook credentials are needed for the basic email-login/reporting test.
 
-## 4. Create a new development database
+## 4. Connect MySQL and create a new development database
 
-In MySQL Workbench or another MySQL administrator connection, create an empty schema:
+### 4A. Know which password to use
+
+**MySQL Workbench asks for a MySQL Server account password on your own PC.** MuniAlert does not supply that password.
+
+| Where you are signing in | Which password belongs there |
+| --- | --- |
+| Workbench as `root` | The MySQL root password chosen when configuring MySQL Server on this PC |
+| Workbench as the application database user | The password chosen when creating that MySQL user in step 4C |
+| `DB_PASSWORD` in `hazard-server/.env` | The password for the MySQL user named in `DB_USERNAME` |
+| MuniAlert website administrator/citizen | The separate application password created in step 5 or registration |
+
+The demo-seeder passwords, Windows PIN, GitHub password, Gmail app password and `APP_KEY` do not authenticate a MySQL connection. The blank `DB_PASSWORD` in `.env.example` is a placeholder; it does not mean your local root password is blank. Editing `.env` or clicking **Store in Vault** does not create a database user or change its server-side password.
+
+### 4B. Get Workbench Test Connection working first
+
+1. Make sure **MySQL Server** is installed. Workbench is the management application; installing Workbench alone does not provide a running database server. On Windows, open **Win + R → `services.msc`** and find your MySQL service, often `MySQL80` or `MySQL84`. Start the intended installed service if stopped; service names can differ. If no server is installed, install/configure [MySQL Community Server](https://dev.mysql.com/downloads/mysql/8.4.html) and privately save the root password you choose.
+2. Open Workbench. Click **+** beside MySQL Connections, or right-click an existing local connection and choose **Edit Connection**. Use these settings for the local server you installed:
+
+| Workbench field | Value |
+| --- | --- |
+| Connection Name | `MuniAlert local setup` (a display label) |
+| Connection Method | `Standard (TCP/IP)` |
+| Hostname | `127.0.0.1` |
+| Port | `3306`, or the actual port chosen for this MySQL Server |
+| Username | `root`, or your existing local MySQL administrator account |
+| Default Schema | Leave blank until the schema exists |
+
+3. Click **Store in Vault…** to open the password entry dialog, enter that account's local MySQL password, and click **OK**. The main connection window uses a button rather than an editable password box. Alternatively, click **Test Connection** and enter the password when prompted. Password characters are masked.
+4. Click **Test Connection**. Continue only when it succeeds. If it says **Access denied**, follow the next checklist before running Laravel commands.
+
+**Access denied after entering a password:**
+
+1. Check **Hostname**, **Port** and **Username** against the actual local server/account. A second MySQL installation or XAMPP/MariaDB can use a different port and different credentials. Use the same explicit `127.0.0.1` endpoint throughout these steps.
+2. Edit this connection, click **Clear** beside its saved password, then **Store in Vault…** and re-enter the correct local MySQL password. Check keyboard layout, Caps Lock and accidental spaces. Clearing the saved password does not reset the MySQL account.
+3. Test again. `using password: YES` only means a password was supplied; it does not confirm that password is correct. `using password: NO` means no password was supplied.
+4. If the password is unknown, ask the person who configured **that PC's MySQL Server**. An authorized local database administrator can reset the affected account; for a forgotten root password, follow [MySQL's Windows root-password recovery procedure](https://dev.mysql.com/doc/refman/8.4/en/resetting-permissions.html). Confirm the installed server/version and preserve existing data first. Another person's BANTAY `.env` cannot recover this login.
+5. If an administrator can connect but the new app user cannot, check that the app account exists, its password change was applied, and its allowed host matches the connection in step 4C. Retrying migrations, reseeding MuniAlert accounts or regenerating `APP_KEY` will not fix a rejected Workbench login.
+
+If the exact message instead says **Cannot connect / 2003 / 10061**, check the running service and listening port; changing a password does not start a stopped server. If it says an authentication plugin is unsupported, record that exact error and check client/server compatibility rather than switching the server to legacy authentication.
+
+After a successful connection, this read-only query identifies the server/account you actually reached:
+
+```sql
+SELECT VERSION() AS server_version, @@port AS server_port,
+       CURRENT_USER() AS authenticated_account;
+```
+
+### 4C. Create the schema and a local application database user
+
+Open the working administrator connection. In its SQL editor, create an empty schema:
 
 ```sql
 CREATE DATABASE municipal_hazards
@@ -77,19 +126,39 @@ CREATE DATABASE municipal_hazards
 
 If you already have a populated schema with that name, choose a different empty development schema and set its name below. Do not drop/reset an existing application database.
 
-Edit the copied `hazard-server/.env` using **your own local MySQL account**, not the owner's credentials:
+Create a dedicated development MySQL account through Workbench so the app can migrate/use this schema without using the root account:
+
+1. Open **Server → Users and Privileges → Add Account**.
+2. Set **Login Name** to `munialert_local`, **Limit to Hosts Matching** to `127.0.0.1`, and use the server's modern `caching_sha2_password` authentication. Choose/confirm a new private database password and click **Apply**. If this account already exists, use its known credentials or choose a different new account name.
+3. In **Schema Privileges → Add Entry**, choose **Selected schema → `municipal_hazards`** (or your alternative empty development schema). Grant `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `CREATE`, `ALTER`, `INDEX`, `DROP` and `REFERENCES`, then **Apply**. These permissions support this local installation's tables/migrations. Limit the entry to this schema; the app does not need a global DBA role or permission to grant other users access.
+4. Add a second Workbench connection named `MuniAlert app database`, using the same **Standard (TCP/IP)** host/port, username `munialert_local`, and the password you just chose. Set **Default Schema** to your new schema and click **Test Connection**. This connection must succeed too.
+
+These are development migration permissions. Production account provisioning is a separate hosting task. See [Workbench's account/schema-privilege reference](https://dev.mysql.com/doc/workbench/en/wb-mysql-connections-navigator-management-users-and-privileges.html).
+
+### 4D. Give Laravel the same working database connection
+
+Edit your copied **`hazard-server/.env`**, not `.env.example` or `hazard-client/.env`. Match the successful **app database** connection from step 4C:
 
 ```dotenv
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=municipal_hazards
-DB_USERNAME=your_local_mysql_username
-DB_PASSWORD=your_local_mysql_password
+DB_USERNAME=munialert_local
+DB_PASSWORD='your_local_mysql_password'
 HAZARD_EVIDENCE_DISK=evidence
 ```
 
-Replace the username/password placeholders. The account needs access to this schema; the schema name is not a database password. Use the same MySQL host/port that works in your database client. Keep this `.env` private.
+Replace `your_local_mysql_password` with the password chosen for `munialert_local`; do not copy that placeholder literally. If you chose another port, schema or username, change those values too. The surrounding single quotes are `.env` syntax, not part of the password entered in Workbench; they preserve spaces, `#` and `$` in a value without an apostrophe. Values containing an apostrophe need appropriate dotenv quoting. Keep this file private. Do not leave a conflicting `DB_URL` from another setup; it can override the individual connection values.
+
+From the repository root, clear Laravel's cached configuration and check database access **before migrations**:
+
+```powershell
+node scripts/php.mjs hazard-server/artisan config:clear
+node scripts/php.mjs hazard-server/artisan db:show --database=mysql
+```
+
+Expected result: database information for your intended local schema. Zero tables is normal before migrations. If Workbench succeeds but this command fails, compare the exact host/port/user/schema, password quoting and `DB_URL`, clear configuration again and retry. Stop here until this check works.
 
 For a **new installation only**, generate its own key and database tables/reference data:
 
@@ -110,7 +179,7 @@ Create an administrator on **your own development database**:
 node scripts/php.mjs hazard-server/artisan hazard:admin admin@example.test
 ```
 
-Answer the name prompt and choose a password of at least 12 characters. The password prompt is hidden. Record your test login privately; the application has no self-service password-reset flow. The owner's login will not automatically exist in your database.
+Answer the name prompt and choose a password of at least 12 characters. The terminal password prompt is hidden; type it and press Enter even if no characters appear. This is a **new MuniAlert website password**, separate from MySQL. Record your test login privately; email recovery requires configured real delivery and sample `.test` accounts cannot receive mail. The owner's login will not automatically exist in your database. At first administrator sign-in, complete authenticator enrollment within the 15-minute provisioning window; see [test-account and 2FA instructions](TEST_ACCOUNTS.md).
 
 For a citizen test, register another account through the application's sign-in dialog. Use separate citizen/admin accounts to test permissions. The optional `DemoAccountSeeder` is not required, and the repository does not distribute a shared administrator password.
 
@@ -162,15 +231,25 @@ Linux CPU-only authoring installs can use `ONNXRUNTIME_NODE_INSTALL_CUDA=skip np
 
 | Symptom | Fix |
 | --- | --- |
-| Private GitHub URL returns 404 | Sign into the invited GitHub account and accept the collaborator invitation |
+| GitHub clone/download returns 404 | Use the public `https://github.com/Ajhon10/MuniAlert` URL; an invitation is needed only for write access |
 | `npm.ps1` blocked | Use `npm.cmd` in PowerShell |
 | Required PHP path missing / wrong PHP version | Install PHP 8.5 at `C:\php85`; confirm PATH and `php --ini`; do not substitute XAMPP PHP |
 | Composer reports missing extension | Enable it in that CLI's `php.ini`, reopen the terminal and rerun `check-platform-reqs` |
 | `vendor/autoload.php` or Vite missing | Finish Composer install / root `npm ci` |
 | No encryption key | Run `key:generate` once for this new environment |
-| Access denied / unknown database | Correct your own `.env` credentials and create/grant access to the empty schema, then `config:clear` |
+| Workbench `1045 Access denied` / `using password: YES` | Follow step 4B: verify the actual MySQL account/host/port, clear the saved password and re-enter its local password; YES does not mean correct |
+| Workbench `using password: NO` | Supply the local MySQL account's password via Store in Vault or the connection prompt |
+| Workbench `2003` / `10061` / Cannot connect | Check that MySQL Server is installed/running on the specified port; Workbench alone is not the server |
+| `1044 Access denied to database` | The user needs privileges on the selected schema; check step 4C |
+| `1049 Unknown database` / schema not listed | Create the intended empty schema or correct `DB_DATABASE`; refresh Workbench's Schemas list |
+| Workbench succeeds, Laravel fails | Match the app database connection in `hazard-server/.env`, check quoting/DB_URL, run `config:clear`, then repeat `db:show` |
+| Password appears not to type | Workbench: use Store in Vault to open its password dialog. Terminal hidden prompts: type the password and press Enter; no visible characters can be normal |
 | Missing tables | Run migrations and normal seeding against the intended development schema |
 | 419 / session problems | Use one localhost hostname, keep the example origins, clear stale browser cookies after a fresh setup and inspect `/api/health` |
 | Phone cannot open localhost | Keep PC services running; approve USB debugging and enable the exact 5173 forwarding rule |
 | Phone connected but map tiles fail | Check the phone's internet connection; the local API and external basemap are different connections |
 | Google/Facebook/push unavailable | These are optional unconfigured integrations; email login and in-app report updates remain testable |
+
+When requesting setup help, send the **exact error text/code**, the failing step, MySQL Server/Workbench versions and the configured host/port. Omit passwords, connection URLs containing credentials, `.env` contents and account recovery codes.
+
+Connection behavior and saved-password handling follow [Workbench's TCP/IP reference](https://dev.mysql.com/doc/workbench/en/wb-mysql-connections-methods-standard.html) and [password-vault reference](https://dev.mysql.com/doc/workbench/en/wb-mysql-connections-vault.html). The error branches follow [MySQL's connection troubleshooting guide](https://dev.mysql.com/doc/refman/8.4/en/problems-connecting.html).

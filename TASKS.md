@@ -1,5 +1,12 @@
 # Phased task tracker
 
+## Collaborator MySQL setup clarification — 12 November 2026
+
+- [x] Explain the reported Workbench Access denied branch, local MySQL versus application passwords, saved-password behavior and authorized recovery.
+- [x] Document server/host/port checks, a schema-scoped local database user, matching private Laravel configuration and a read-only connection checkpoint before migrations.
+- [x] Link the canonical checklist from both READMEs/team setup and identify example password placeholders without distributing credentials.
+- [ ] Collaborator confirms successful Workbench Test Connection and Laravel database access on their own PC; no remote credentials or local database resets are part of this documentation change.
+
 ## GitHub enlarged-text layout repair — 12 November 2026
 
 - [x] Reproduce both Ubuntu CI failures locally with the Arial/sans-serif fallback: the guide heading causes horizontal overflow and the Updates label exceeds its equal-width dock button at 200% text size.

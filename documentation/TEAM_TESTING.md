@@ -1,4 +1,4 @@
-# Private GitHub workspace and team testing
+# GitHub workspace and team testing
 
 The public source repository is [Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert). Reading and cloning need no invitation; the owner configures collaborator write access separately. Public visibility was explicitly confirmed on 12 November 2026. One clone contains `hazard-client`, `hazard-server`, shared tests/documentation and the separate Remotion authoring project. No submodule permissions or additional repositories are needed.
 
@@ -24,6 +24,8 @@ composer --working-dir=hazard-server check-platform-reqs
 ```
 
 Create an **empty development** MySQL database named `municipal_hazards` and a database user that can access it. Edit only the ignored `hazard-server/.env` with that member's credentials. Retain the example's localhost frontend/session configuration. Do not copy someone else's application key, passwords, database export, incident evidence, Firebase service account or signing key into Git. Never overwrite an existing environment file during an update.
+
+**Blocked at Workbench's password prompt/Test Connection?** Use [the Workbench setup and Access denied checklist](COLLABORATOR_QUICKSTART.md#4b-get-workbench-test-connection-working-first) first. Workbench needs the member's local MySQL Server account password. Website/seeder passwords are separate. The quickstart covers server startup, saved passwords, a dedicated schema user and a read-only Laravel database check before migrations.
 
 For the first setup of this new development database:
 

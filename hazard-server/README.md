@@ -1,6 +1,6 @@
 # hazard-server
 
-Laravel 12, Sanctum, and MySQL API for MuniAlert. It lives in the `hazard-server` folder of the private Ajhon10/MuniAlert workspace; the Vue client is in the sibling `hazard-client` folder. Start with [team setup](../documentation/TEAM_TESTING.md).
+Laravel 12, Sanctum, and MySQL API for MuniAlert. It lives in the `hazard-server` folder of the public Ajhon10/MuniAlert workspace; the Vue client is in the sibling `hazard-client` folder. Start with [team setup](../documentation/TEAM_TESTING.md).
 
 ## Local development
 
@@ -18,6 +18,8 @@ php artisan key:generate
 ```
 
 GitHub does not contain a real `.env`. Copy `.env.example` and generate your own app key for a fresh installation; keep your existing `.env`/key when updating. On PowerShell, copy only if `.env` does not exist. Set `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` using your own local MySQL connection. The password belongs to the MySQL user. An owner's SQL dump, `.env` or app key is unnecessary for a new development database. Follow [the root collaborator quickstart](../documentation/COLLABORATOR_QUICKSTART.md) for the complete first-install sequence.
+
+If **Workbench → Test Connection** says **Access denied**, resolve the local MySQL account/password/allowed-host issue first. Neither the MuniAlert admin password nor `HAZARD_DEMO_*_PASSWORD` authenticates MySQL, and changing `DB_PASSWORD` does not reset a MySQL account. Follow [the Workbench checklist](../documentation/COLLABORATOR_QUICKSTART.md#4b-get-workbench-test-connection-working-first). When Workbench connects, match that connection in `.env`, run `php artisan config:clear` and `php artisan db:show --database=mysql` from this server folder, and continue only after it shows the intended schema.
 
 Run these one at a time, stopping if a command fails:
 

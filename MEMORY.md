@@ -1,5 +1,11 @@
 # Persistent project memory
 
+## Collaborator MySQL connection instructions — 12 November 2026
+
+The user reported a collaborator receiving Access denied after entering a password in Workbench's Test Connection. The exact MySQL error code/account/host is unconfirmed; do not claim a specific password was wrong or reset. The canonical collaborator quickstart now distinguishes local MySQL, website and demo-seeder passwords; checks the server/connection first; explains saved-password clearing and authorized recovery; provisions a schema-scoped local app user; and checks Laravel access with config:clear/db:show before migrations. Root/server READMEs and team setup link to that procedure; .env.example comments identify password placeholders. Documentation-only guidance does not change existing database credentials or establish success on the collaborator's PC.
+
+Local documentation consistency/publication checks passed, all 45 local setup links/heading anchors resolved, installed Laravel confirms the documented db:show option, and an isolated dotenv parse preserved spaces/hash/dollar characters without printing values. All seven edited files retain Lenovo ownership. The user explicitly requested pushing this completed setup-guide update on 12 November 2026. Publication must pass the full nineteen-check gate on the exact committed state and confirm remote main; the earlier documentation-only checks do not replace that gate. Collaborator-side database login still requires confirmation on their PC.
+
 ## Cross-platform enlarged-text layout — 12 November 2026
 
 The first public-source Ubuntu verification failed two of 77 browser tests although Windows passed. Explicit Arial/sans-serif reproduced both: at 200%, the manual heading extended the 375-pixel document to 379 pixels and Updates measured 71 pixels inside a 67-pixel dock button. Guide content now wraps long words; dock buttons share space according to label width with a 44-pixel minimum and wrapping when necessary. Both existing tests now cover platform/fallback fonts at 320/375 pixels without relaxing their assertions. Preserve this font coverage when changing mobile navigation or manual typography. Workflow verification is separate from Hostinger deployment.

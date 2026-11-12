@@ -4,7 +4,7 @@
 
 [Settings, saved reading preferences, authenticator 2FA and Gmail readiness](documentation/SETTINGS_2FA_EMAIL_2026-11-11.md) records the current refinement; real delivery needs BANTAY's separate app password.
 
-Private team repository: **[Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert)**. One clone contains both apps, shared tests, documentation and Remotion source.
+Public source repository: **[Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert)**. One clone contains both apps, shared tests, documentation and Remotion source.
 
 **New collaborator? Start with [the complete download/setup guide](documentation/COLLABORATOR_QUICKSTART.md).** For a new local website and Android-Chrome test, you do not need the owner's private `.env`, app key, database dump or installed dependency folders. Use the included examples and create your own development database/accounts. [Included/missing-file checklist and what the owner should send](documentation/COLLABORATOR_FILE_CHECKLIST.md).
 
@@ -41,7 +41,7 @@ composer --working-dir=hazard-server install
 composer --working-dir=hazard-server check-platform-reqs
 ```
 
-Create an **empty development** MySQL schema named `municipal_hazards`. Set its host, port, username and password in your copied `hazard-server/.env`. Leave `VITE_API_BASE_URL` blank for local website/USB browser testing. [Database setup and required PHP extensions](documentation/COLLABORATOR_QUICKSTART.md).
+Get **MySQL Workbench → Test Connection** working first with your own PC's MySQL account/password. This is separate from a MuniAlert website/admin password; `.env.example` does not supply a MySQL password. Follow [the Workbench connection, Access denied and database setup steps](documentation/COLLABORATOR_QUICKSTART.md#4-connect-mysql-and-create-a-new-development-database) to create an empty `municipal_hazards` schema and local application database user. Match that working connection in your copied `hazard-server/.env`, run the guide's read-only database check, then migrate. Leave `VITE_API_BASE_URL` blank for local website/USB browser testing.
 
 For this **new installation only**:
 
