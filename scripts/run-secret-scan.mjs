@@ -6,6 +6,9 @@ import { resolve, dirname } from 'node:path';
 const root = resolve(import.meta.dirname, '..'); const cache = resolve(root, '.cache');
 const version = '8.30.1';
 const windows = process.platform === 'win32';
+// Git hooks prepend Git Bash's GNU tar, which treats C: paths as remote
+// archives and cannot extract the Windows ZIP. Use the platform archive tool.
+const archiveTool = windows ? resolve(process.env.SystemRoot || 'C:\\Windows', 'System32', 'tar.exe') : 'tar';
 if (!windows && (process.platform !== 'linux' || process.arch !== 'x64')) throw Error('Configure a reviewed Gitleaks build for this platform.');
 const name = `gitleaks_${version}_${windows ? 'windows_x64.zip' : 'linux_x64.tar.gz'}`;
 const expected = windows ? 'd29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e' : '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb';
@@ -18,9 +21,9 @@ if (!existsSync(archive)) {
 }
 if (createHash('sha256').update(readFileSync(archive)).digest('hex') !== expected) throw Error('Secret scanner archive checksum differs from the reviewed release.');
 // Verify all archive paths before extracting into the task-owned tool cache.
-const entries = execFileSync('tar', ['-tf', archive], { encoding: 'utf8', windowsHide: true }).trim().split(/\r?\n/);
+const entries = execFileSync(archiveTool, ['-tf', archive], { encoding: 'utf8', windowsHide: true }).trim().split(/\r?\n/);
 if (entries.some(entry => entry.includes('..') || /^[\\/]|^[A-Za-z]:/.test(entry))) throw Error('Unsafe scanner archive path.');
-execFileSync('tar', ['-xf', archive, '-C', folder], { windowsHide: true });
+execFileSync(archiveTool, ['-xf', archive, '-C', folder], { windowsHide: true });
 
 // Scan intended source, including untracked work, without reading private ignored
 // .env files, uploads, databases, traces or dependency caches.

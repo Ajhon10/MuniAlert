@@ -2,6 +2,8 @@
 
 ## Public source repository confirmed — 12 November 2026
 
+Windows pushes run the full gate through Git Bash. The pinned secret scanner explicitly selects Windows' System32/tar.exe for ZIP listing/extraction; Git Bash's GNU tar misreads drive-letter paths as remote archives. Temporary scanner/negative-fixture cleanup uses bounded retries for transient Windows file locks, without suppressing a persistent failure or exempting real secrets.
+
 The user requested pushing the current BANTAY changes and explicitly selected keeping Ajhon10/MuniAlert public after live GitHub metadata showed public visibility. This replaces the earlier private-source preference; do not ask the same visibility question again unless the user changes it. Source publication does not deploy the app or configure external services. Keep environment files, credentials, incident records, database/runtime files and dependencies out of Git. The existing clean-state pre-push hook must verify the exact committed state before every push.
 
 ## Emergency-first workflow, actionable alerts and local image review — 11 November 2026
