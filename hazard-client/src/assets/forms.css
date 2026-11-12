@@ -1,0 +1,5 @@
+/* Shared control dimensions; specialized checkbox/range/file controls keep their native behavior. */
+:root { --control-height: 52px; --control-radius: 12px; --control-padding-block: 12px; --control-padding-inline: 14px; }
+:is(.form-control-input:not(.password-input):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), .form-control-select, .form-control-textarea) { min-width: 0; max-width: 100%; min-height: var(--control-height); border-radius: var(--control-radius); padding: var(--control-padding-block) var(--control-padding-inline); font: inherit; }
+.form-control-textarea { resize: vertical; }
+.form-control-select, .form-control-textarea { border: 1px solid #b8cdbf; background: #fff; color: var(--text-main, #263e35); }

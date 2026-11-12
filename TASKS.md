@@ -1,5 +1,17 @@
 # Phased task tracker
 
+## Reusable interface, routing, seed data and recovery — 12 November 2026
+
+- [x] Centralize modal padding/optional action footers, shared native form controls/table and server validation; keep feedback floating inside the active dialog's accessible layer.
+- [x] Bound notification previews and preserve destination navigation; isolate achievement-card expansion; hide inactive social sign-in; keep report coordinates behind map controls.
+- [x] Add administrator-managed departments/category routing using the established management-page pattern; apply only the local additive flag migration with existing rows preserved.
+- [x] Move reference/sample seeding data to validated CSV files and provide one configured seed command without publishing credentials or overwriting existing accounts/customizations.
+- [x] Provide reviewed share text and public link previews, respecting each platform's supported composer behavior and localhost limits.
+- [x] Add saved-code password recovery alongside the existing email-link flow with one-time redemption, throttling and session revocation.
+- [x] Add reusable lessons to canonical PROJECTS skills; update project rules, documentation and manuals; focused backend/browser/security/data checks pass.
+
+Publication must pass the full nineteen-check gate on the exact committed state. See [implementation and limits](documentation/REUSABLE_WORKFLOWS_2026-11-12.md). Real email/social delivery, physical Safari/Android and hosting acceptance remain separate configuration/verification work.
+
 ## Collaborator MySQL setup clarification — 12 November 2026
 
 - [x] Explain the reported Workbench Access denied branch, local MySQL versus application passwords, saved-password behavior and authorized recovery.

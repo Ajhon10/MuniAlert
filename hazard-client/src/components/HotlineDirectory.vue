@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FormInput from './FormInput.vue';
 import { computed, ref } from 'vue';
 import { Phone, MapPin, LocateFixed } from '@lucide/vue';
 import { currentLocation } from '../services/mediaService';
@@ -18,7 +19,7 @@ const matches = computed(() => props.hotlines.filter(line => `${line.name} ${lin
 </script>
 <template>
   <section class="hotline-directory" aria-label="Emergency agency directory">
-    <label class="hotline-search">Search hotlines<input v-model="search" aria-label="Search hotlines" type="search" placeholder="Name or number" maxlength="120"></label>
+    <label class="hotline-search">Search hotlines<FormInput v-model="search" aria-label="Search hotlines" type="search" placeholder="Name or number" maxlength="120" name="search" /></label>
     <button v-if="hotlines.some(line => line.latitude != null && line.longitude != null)" type="button" class="button secondary" :disabled="locating" @click="locate"><LocateFixed :size="18" aria-hidden="true" />{{ locating ? 'Finding your location…' : 'Show closest agencies' }}</button>
     <ul v-if="matches.length" class="hotline-results"><li v-for="(line, index) in matches" :key="`${line.name}-${index}`"><div><strong>{{ line.name }}</strong><small v-if="line.service || line.area"><MapPin :size="15" aria-hidden="true" />{{ [line.service, line.area].filter(Boolean).join(' · ') }}</small><small v-if="line.address">{{ line.address }}</small><small v-if="line.distance != null">About {{ line.distance < 1 ? `${Math.round(line.distance * 1000)} m` : `${line.distance.toFixed(1)} km` }} away</small></div><a class="button secondary hotline-call" :href="`tel:${line.number.replace(/[^+0-9]/g, '')}`" :aria-label="`Call ${line.name} at ${line.number}`"><Phone :size="18" aria-hidden="true" />{{ line.number }}</a></li></ul>
     <p v-else class="notice neutral" role="status">{{ hotlines.length ? 'No matching hotline. Try another agency, service or area.' : 'Local agency numbers have not been published yet. You can continue with an online report.' }}</p>

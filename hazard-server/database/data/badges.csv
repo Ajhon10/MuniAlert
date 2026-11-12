@@ -1,0 +1,5 @@
+threshold,name,color,description,reward_type
+50,Bronze,bronze,Earned after 50 verified hazard reports.,none
+100,Silver,silver,Earned after 100 verified hazard reports.,none
+1000,Gold,gold,Earned after 1000 verified hazard reports.,none
+10000,Platinum,platinum,Earned after 10000 verified hazard reports.,none

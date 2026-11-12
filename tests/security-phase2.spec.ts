@@ -77,7 +77,7 @@ test('recovery fragments are removed before requests and recovery does not revea
   await page.getByRole('button', { name: 'Back to sign in', exact: true }).click();
   await page.getByRole('button', { name: 'Forgot your password?', exact: true }).click();
   await page.getByLabel('Email address', { exact: true }).fill('unknown@example.test');
-  await page.getByRole('button', { name: 'Request recovery link', exact: true }).click();
+  await page.getByRole('button', { name: 'Send email reset link', exact: true }).click();
   await expect(page.locator('.security-form [role=status]')).toContainText('If this account is eligible');
 });
 

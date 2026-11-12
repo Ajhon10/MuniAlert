@@ -9,6 +9,7 @@ import './assets/guide.css';
 import './assets/maps.css';
 import './assets/header.css';
 import './assets/modals.css';
+import './assets/forms.css';
 import './services/accessibility';
 import './assets/accessibility.css';
 import './assets/dashboard-personalization.css';

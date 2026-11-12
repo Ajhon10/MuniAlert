@@ -67,10 +67,13 @@ body { font-size: 1rem; line-height: 1.6; }
 .toast-message strong { font-size: .875rem; }
 .toast-message p { font-size: .9375rem; line-height: 1.55; margin-top: 4px; }
 .toast-message .icon-button { color: inherit; margin: -8px -8px -8px 0; }
-.modal > .toast-stack { position: relative; inset: auto; order: 1; flex: 0 0 auto; width: 100%; max-height: 25dvh; padding: 8px 16px; }
+.modal > .toast-stack { position: fixed; inset: auto max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) auto; width: min(440px, calc(100vw - 32px)); max-height: min(50dvh, 600px); padding: 4px; margin: 0; z-index: 300; }
 .modal > .modal-body { order: 2; }
 .modal > .modal-footer { order: 3; }
 .modal > .toast-stack:empty { display: none; }
+.toast-stack[popover] { margin: 0; border: 0; background: transparent; color: inherit; }
+.toast-stack[popover]:not(:popover-open) { display: none; }
+.toast-stack .toast-field-link { color: inherit; }
 .modal .toast-message { box-shadow: none; }
 .toast-enter-active, .toast-leave-active { transition: opacity .18s, transform .18s; }
 .toast-enter-from, .toast-leave-to { opacity: 0; transform: translateY(8px); }

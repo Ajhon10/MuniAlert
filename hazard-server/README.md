@@ -36,7 +36,7 @@ Migration `2026_10_02_000002` adds admin-managed map/hotline settings, milestone
 
 ## Local demo accounts
 
-`DemoAccountSeeder` creates one administrator (`admin@example.test`) and two regular citizens (`citizen.one@example.test` and `citizen.two@example.test`). It only runs when called explicitly in a local or testing environment. The normal `migrate --seed` command still seeds only categories and departments.
+`DemoAccountSeeder` creates one administrator (`admin@example.test`) and two regular citizens (`citizen.one@example.test` and `citizen.two@example.test`). Rows are defined in `database/data/sample_accounts.csv`; passwords are private configuration references. The normal `db:seed` command loads reference data and invokes the sample seeder when its three passwords are configured, only in local/testing. With all passwords absent it seeds reference data alone.
 
 Set **three different** passwords of at least 12 characters and at most 72 UTF-8 bytes in your local `.env`. The default administrator email is configurable:
 
@@ -47,9 +47,9 @@ HAZARD_DEMO_CITIZEN_ONE_PASSWORD=
 HAZARD_DEMO_CITIZEN_TWO_PASSWORD=
 ```
 
-Fill all three password values with your own different passwords, then run `php artisan config:clear` and `php artisan db:seed --class=DemoAccountSeeder`. The seeder hashes passwords and skips any account whose email already exists; it never resets existing credentials. Keep these settings out of Git and remove or rotate them before a real deployment.
+Fill all three password values with your own different passwords, then run `php artisan config:clear` and `php artisan db:seed`. The seeder hashes passwords and skips any account whose email already exists; it never resets existing credentials. Keep these settings out of Git and remove or rotate them before a real deployment.
 
-From the workspace root, use `npm.cmd run db:seed:accounts`. See [the full test-account guide](../documentation/TEST_ACCOUNTS.md) and [security phases](../documentation/SECURITY_IMPLEMENTATION_PLAN.md). `hazard:security-check` is a read-only Phase 1 production configuration check; a pass is not complete production security acceptance.
+From the workspace root, use `npm.cmd run db:seed` for all configured data. `db:seed:accounts` remains an accounts-only option. See [the full test-account guide](../documentation/TEST_ACCOUNTS.md) and [security phases](../documentation/SECURITY_IMPLEMENTATION_PLAN.md). `hazard:security-check` is a read-only Phase 1 production configuration check; a pass is not complete production security acceptance.
 
 ## Persistent sessions
 

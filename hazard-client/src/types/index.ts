@@ -6,7 +6,7 @@ export type GPS = Point & { accuracy: number };
 export type ReadingPreferences = { textSize: number; boldText: boolean; highContrast: boolean; readingSpace: boolean; reduceMotion: boolean; keepMessages: boolean };
 export type User = { id: number; name: string; email: string; role: 'citizen' | 'admin'; has_password?: boolean; mfa_enabled?: boolean; reading_preferences?: ReadingPreferences | null; email_report_updates?: boolean };
 export type Category = { id: string; name: string; department_id: string };
-export type Department = { id: string; name: string };
+export type Department = { id: string; name: string; is_active?: boolean };
 export type Hazard = {
   id: string; reference_number: string; title: string; description: string; address: string; barangay: string;
   selected_latitude: number; selected_longitude: number; verified_latitude: number | null; verified_longitude: number | null;

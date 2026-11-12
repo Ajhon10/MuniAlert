@@ -34,7 +34,7 @@ test('citizen registers, reports a compressed photo and confirmed manual locatio
   await page.getByLabel('Add hazard photos').setInputFiles({ name: 'hazard.jpg', mimeType: 'image/jpeg', buffer: Buffer.from(image, 'base64') });
   await expect(page.locator('.photo-preview')).toHaveCount(1);
   await page.getByRole('button', { name: 'Choose location on map' }).click();
-  await page.getByLabel('Selected latitude', { exact: true }).fill('14.5995'); await page.getByLabel('Selected longitude', { exact: true }).fill('120.9842');
+  await page.getByRole('button', { name: 'Place pin at map center', exact: true }).click();
   await page.getByRole('button', { name: 'Confirm location', exact: true }).click(); await expect(page.getByRole('button', { name: 'Location confirmed', exact: true })).toBeVisible();
   await page.getByLabel('Barangay', { exact: true }).selectOption('Anambongan'); await page.getByLabel('Street or landmark').fill('Riverside Road');
   await page.getByLabel('Report title').fill('Fallen tree near the school gate'); await page.getByLabel('Description', { exact: true }).fill('A large fallen tree is blocking the road next to the school gate.');
@@ -71,7 +71,7 @@ test('GPS location remains unconfirmed until the citizen accepts it and edits re
   await page.getByRole('button', { name: 'Use current location' }).click();
   await expect(page.getByRole('button', { name: 'Confirm location', exact: true })).toBeVisible();
   await expect(page.locator('.source-tag')).toHaveText('gps'); await page.getByRole('button', { name: 'Confirm location', exact: true }).click();
-  await page.getByRole('button', { name: 'Adjust pin', exact: true }).click(); await page.getByLabel('Selected latitude', { exact: true }).fill('14.61');
+  await page.getByRole('button', { name: 'Adjust pin', exact: true }).click(); await page.locator('.picker-map canvas').click({ position: { x: 100, y: 120 } });
   await expect(page.locator('.source-tag')).toHaveText('gps adjusted'); await expect(page.getByRole('button', { name: 'Confirm location', exact: true })).toBeVisible();
 });
 
@@ -133,6 +133,11 @@ test('verified news supports citizen reactions, comments and sharing', async ({ 
   await article.getByRole('button', { name: 'Post comment', exact: true }).click();
   await page.getByRole('dialog', { name: 'Post your comment?' }).getByRole('button', { name: 'Post comment' }).click();
   await expect(article.locator('.comment')).toContainText('Thank you for confirming this hazard.');
-  await expect(article.getByRole('link', { name: 'Facebook' })).toHaveAttribute('href', /%2Fnews%2F/);
-  await expect(article.getByRole('link', { name: 'X', exact: true })).toHaveAttribute('href', /%2Fnews%2F/);
+  for (const platform of ['Facebook', 'X']) {
+    await article.getByRole('button', { name: platform, exact: true }).click();
+    const share = page.getByRole('dialog', { name: 'Share verified news', exact: true });
+    await expect(share.getByRole('link', { name: 'Open ' + platform, exact: true })).toHaveAttribute('href', /%2Fnews%2F/);
+    await expect(share.getByLabel('Prepared share post')).toHaveValue(/Verified news test hazard/);
+    await share.getByRole('button', { name: 'Close dialog', exact: true }).click();
+  }
 });

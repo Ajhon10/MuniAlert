@@ -19,6 +19,9 @@
     </source>
     <php>
         <env name="IMAGE_DETECTOR_ENABLED" value="false" force="true"/>
+        <env name="HAZARD_DEMO_ADMIN_PASSWORD" value="" force="true"/>
+        <env name="HAZARD_DEMO_CITIZEN_ONE_PASSWORD" value="" force="true"/>
+        <env name="HAZARD_DEMO_CITIZEN_TWO_PASSWORD" value="" force="true"/>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>

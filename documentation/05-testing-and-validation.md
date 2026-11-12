@@ -1,5 +1,9 @@
 # 05 — Testing and validation
 
+## Shared workflow verification — 12 November 2026
+
+The [shared-interface update](REUSABLE_WORKFLOWS_2026-11-12.md) adds backend and browser checks for administrator routing, repeat CSV seeding, saved-code password reset/replay/lockout/revocation, floating server validation, bounded notifications/destination opening, independent achievement expansion, prepared public sharing and recovery choices. The focused backend run passed 127 tests / 1176 assertions. Initial browser failures exposed old removed-control selectors and a real overlay interaction with persistent messages; all original privacy, location confirmation, field-focus and MFA assertions remain active. The exact-state full gate is required before publication; these intermediate results do not claim deployment or real social/email/device acceptance.
+
 ## Cross-platform enlarged-text CI repair — 12 November 2026
 
 GitHub's Ubuntu workspace verification completed migrations and seeders, then failed two of 77 Chromium cases at 200% text size. Windows' default Segoe UI had concealed the fallback-font differences. Forcing Arial/sans-serif locally reproduced a 379-pixel document in a 375-pixel viewport (the manual heading) and a 71-pixel Updates label inside a 67-pixel dock button. The guide now wraps long words, and dock buttons distribute space according to their labels with a 44-pixel minimum and wrapping on narrower screens.

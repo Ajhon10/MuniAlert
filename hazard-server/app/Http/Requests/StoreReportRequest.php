@@ -59,6 +59,10 @@ class StoreReportRequest extends FormRequest
 
     public function messages(): array
     {
-        return ['barangay.in' => 'Choose one of the 13 barangays served by Basista Municipal Hall.'];
+        return ['barangay.in' => 'Choose one of the 13 barangays served by Basista Municipal Hall.',
+            'category_id.required' => 'Choose the type of hazard.', 'photos.required' => 'Add at least one safe incident photo.',
+            'selected_latitude.required' => 'Choose the hazard pin on the map or use your current location.',
+            'selected_longitude.required' => 'Choose the hazard pin on the map or use your current location.',
+            'location_confirmed.accepted' => 'Check the hazard pin and confirm its location before sending.'];
     }
 }

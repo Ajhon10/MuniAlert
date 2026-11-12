@@ -27,31 +27,29 @@ export function dismissToast(id: number) {
   items.value = items.value.filter(item => item.id !== id);
 }
 
-let invalidBatch = false;
 let nextFieldId = 0;
-export function reportInvalid(event: Event) {
-  event.preventDefault();
-  if (invalidBatch) return;
-  invalidBatch = true; setTimeout(() => { invalidBatch = false; }, 0);
-  const input = event.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-  const label = input.getAttribute('aria-label') || input.labels?.[0]?.textContent?.trim() || 'the highlighted field';
-  input.id ||= `validation-field-${++nextFieldId}`;
-  const id = notify(`Check ${label}. ${input.validationMessage}`, 'error', input.id);
-  if (id != null) {
-    input.setAttribute('aria-invalid', 'true'); input.dataset.toastInvalid = String(id);
-    const descriptions = new Set((input.getAttribute('aria-describedby') || '').split(' ').filter(Boolean));
-    descriptions.add(`toast-message-${id}`); input.setAttribute('aria-describedby', [...descriptions].join(' '));
-    const corrected = () => { if (input.validity.valid) { dismissToast(id); input.removeEventListener('input', corrected); input.removeEventListener('change', corrected); } };
-    input.addEventListener('input', corrected); input.addEventListener('change', corrected);
-  }
-  queueMicrotask(() => input.focus());
+let serverValidation: { message: string; field: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null } | null = null;
+export function prepareServerValidation(message: string, errors: Record<string, string[]>) {
+  const root = [...document.querySelectorAll('dialog[open]')].at(-1) || document;
+  const names = Object.keys(errors);
+  const field = [...root.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input, textarea, select')].find(input => names.includes(input.name));
+  serverValidation = { message, field: field || null };
 }
-
+function serverError(message: string) {
+  const validation = serverValidation?.message === message ? serverValidation : null; serverValidation = null;
+  const field = validation?.field;
+  if (!field) return notify(message, 'error');
+  field.id ||= `validation-field-${++nextFieldId}`;
+  const id = notify(message, 'error', field.id);
+  if (id != null) { field.setAttribute('aria-invalid', 'true'); field.dataset.toastInvalid = String(id); field.setAttribute('aria-describedby', `${field.getAttribute('aria-describedby') || ''} toast-message-${id}`.trim()); field.addEventListener('input', () => dismissToast(id), { once: true }); }
+  queueMicrotask(() => field.focus());
+  return id;
+}
 /** One persistent error toast per source; no duplicate inline validation. */
 export function useFeedback(errors: Ref<string>[], successes: Ref<string>[] = []) {
   for (const source of errors) {
     let id: number | undefined;
-    watch(source, message => { if (id != null) dismissToast(id); id = message ? notify(message, 'error') : undefined; }, { flush: 'sync' });
+    watch(source, message => { if (id != null) dismissToast(id); id = message ? serverError(message) : undefined; }, { flush: 'sync' });
     onScopeDispose(() => { if (id != null) dismissToast(id); });
   }
   for (const source of successes) watch(source, message => { if (message) notify(message); }, { flush: 'sync' });

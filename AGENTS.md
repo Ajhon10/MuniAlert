@@ -21,6 +21,8 @@ On 12 November 2026, the user explicitly confirmed **keep the repository public 
 
 ## Development conventions
 
+- Reuse `Modal`, shared native-dialog lifecycle, `AppForm`, common input/select/textarea/password components and `DataTable` for common UI behavior. Change shared sizing tokens instead of copying width/padding rules into callers. Modal bodies own their padding; render footers only for meaningful actions and keep dismissal in the header. Toasts overlay the active dialog without shrinking its body. Bound notification previews and keep independent expansion cards aligned at the start.
+- Keep validation rules/messages authoritative in backend JSON field errors. Preserve device/file safety checks, accessible error focus and privacy. Seed data is reviewed CSV with environment-key references for credentials; one `db:seed` entry point preserves existing accounts, routing and administrator edits. See `documentation/REUSABLE_WORKFLOWS_2026-11-12.md` for sharing/recovery limits and verification requirements.
 - API controllers: `hazard-server/app/Http/Controllers/Api`. Validation: `Http/Requests`; serialization/privacy: `Http/Resources`; integrations: `Services`; asynchronous FCM: `Jobs`; business rules: `Support`.
 - Frontend: `views`, `components`, `composables`, `services`, `config`, `types`, `data`, and `assets`. Keep network access and device APIs out of templates.
 - Migrations are the schema source of truth. Tests must use isolated test databases; never run destructive test migrations on an existing application database.

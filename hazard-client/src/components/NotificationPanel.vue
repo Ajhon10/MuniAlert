@@ -16,4 +16,12 @@ defineEmits<{ close: []; open: [notice: Notice]; readAll: []; push: []; signIn: 
     </template>
   </div></Modal>
 </template>
-<style scoped>.notification-inbox .notification-row { width: 100%; text-align: left; min-width: 0; } .notification-row > span { min-width: 0; overflow-wrap: anywhere; } .notification-row p { line-height: 1.6; } .notification-row.unread { border-inline-start: 4px solid var(--primary, #17664f); } .notification-row strong { margin-inline-end: 8px; }</style>
+<style scoped>
+.notification-inbox .notification-row { width: 100%; height: calc(100px + 5rem); text-align: left; min-width: 0; align-items: center; }
+.notification-row > span { flex: 1; min-width: 0; overflow: hidden; }
+.notification-row p { line-height: 1.5; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
+:global(.readingSpace) .notification-row p { line-height: 1.9; }
+.notification-row strong { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.notification-row small { display: block; white-space: nowrap; }
+.notification-row.unread { border-inline-start: 4px solid var(--primary, #17664f); }
+</style>

@@ -1,5 +1,15 @@
 # 06 — Citizen and administrator user manual
 
+## Updated controls and recovery — 12 November 2026
+
+Dismiss dialogs using the X in their header. Footers contain actions only. Errors float above the page without reducing form space; dismiss a message or use Go to field to correct the server-reported field. Notifications preview at most two lines: select one to open its full authorized report. Opening an achievement card grows that card only.
+
+Report location uses GPS or a map pin. Pan/tap/drag the map, or choose Place pin at map center, then confirm the location. Raw latitude/longitude inputs are hidden. Content management lets administrators add/edit offices and set each hazard's responsible office; reassign categories before archiving an office. New routing does not rewrite existing report history.
+
+Forgot your password offers Send email reset link or Use recovery code. Email needs a verified deliverable account address and configured municipal mail. Save one-time recovery codes from Settings before losing access. A password reset signs out old sessions and keeps administrator authenticator 2FA required. Google/Facebook sign-in buttons are temporarily hidden.
+
+A news post's Facebook/X/WhatsApp action opens prepared reviewed text. For Facebook, use Copy post & open Facebook, then paste the copied text into the composer. A live preview requires the deployed public HTTPS news URL; localhost cannot be reached by Facebook or other users. Private evidence and exact locations are excluded. See [workflow notes](REUSABLE_WORKFLOWS_2026-11-12.md).
+
 **MuniAlert — Emergency & Public Hazard Reporting** is the shortened application name for **Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking**.
 
 ## Before starting

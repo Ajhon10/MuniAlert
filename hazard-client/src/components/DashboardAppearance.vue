@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FormInput from './FormInput.vue';
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { ImagePlus, Trash2 } from '@lucide/vue';
 import { api } from '../services/api';
@@ -37,7 +38,7 @@ async function save() {
       <img v-if="preview || published" :src="preview || published" alt="Dashboard background preview">
       <div class="background-preview-content"><span>MuniAlert</span><strong>Community dashboard</strong><div><span>Active hazards</span><b>04</b></div></div>
     </div>
-    <label class="background-picker">Choose background image<input ref="input" type="file" accept="image/jpeg,image/png,image/webp" :disabled="busy" @change="choose"></label>
+    <label class="background-picker">Choose background image<FormInput ref="input" type="file" accept="image/jpeg,image/png,image/webp" :disabled="busy" @change="choose" /></label>
     <p class="field-help">JPG, PNG or WebP · up to 1 MB · maximum 1920 pixels per side. A landscape image works best.</p>
     <div class="button-row background-actions">
       <button v-if="file" class="button primary" :disabled="busy" @click="pending = 'publish'">Publish dashboard background</button>

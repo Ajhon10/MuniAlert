@@ -3,10 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Support\CsvData;
 use App\Support\PasswordInput;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use RuntimeException;
 
 class DemoAccountSeeder extends Seeder
@@ -34,25 +36,36 @@ class DemoAccountSeeder extends Seeder
             throw new RuntimeException('The demo administrator and citizens must have different email addresses.');
         }
 
-        DB::transaction(function () use ($adminEmail, $adminPassword, $citizenOnePassword, $citizenTwoPassword) {
-            foreach ([
-                ['Sample Administrator', $adminEmail, 'admin', $adminPassword],
-                ['Sample Citizen One', 'citizen.one@example.test', 'citizen', $citizenOnePassword],
-                ['Sample Citizen Two', 'citizen.two@example.test', 'citizen', $citizenTwoPassword],
-            ] as [$name, $email, $role, $password]) {
+        $accounts = CsvData::read('sample_accounts.csv');
+        if (count($accounts) !== 3 || count(array_unique(array_column($accounts, 'password_config'))) !== 3 || count(array_filter($accounts, fn ($row) => ($row['role'] ?? '') === 'admin')) !== 1) {
+            throw new RuntimeException('The sample account CSV must contain one administrator and two citizens with distinct password configuration keys.');
+        }
+        $allowedKeys = ['demo_admin_password', 'demo_citizen_one_password', 'demo_citizen_two_password'];
+        $emails = [];
+        foreach ($accounts as &$account) {
+            Validator::make($account, ['name' => 'required|string|min:2|max:80', 'email' => 'required|email|max:255', 'role' => 'required|in:admin,citizen', 'password_config' => ['required', Rule::in($allowedKeys)]])->validate();
+            $account['email'] = $account['role'] === 'admin' ? $adminEmail : strtolower(trim($account['email']));
+            if (! str_ends_with($account['email'], '.test') || in_array($account['email'], $emails, true)) {
+                throw new RuntimeException('Sample CSV accounts must have distinct reserved .test addresses.');
+            }
+            $emails[] = $account['email'];
+        }
+        unset($account);
+        DB::transaction(function () use ($accounts) {
+            foreach ($accounts as $account) {
+                $email = $account['email'];
                 if (User::where('email', $email)->exists()) {
                     $this->command?->warn("Account already exists; kept unchanged: {$email}");
 
                     continue;
                 }
-
-                $user = new User(['name' => $name, 'email' => $email, 'password' => $password]);
-                $user->role = $role;
-                if ($role === 'admin') {
+                $user = new User(['name' => $account['name'], 'email' => $email, 'password' => config('hazards.'.$account['password_config'])]);
+                $user->role = $account['role'];
+                if ($user->role === 'admin') {
                     $user->mfa_enrollment_until = now()->addMinutes(15);
                 }
                 $user->save();
-                $this->command?->info("Created {$role}: {$email}");
+                $this->command?->info("Created {$user->role}: {$email}");
             }
         });
     }

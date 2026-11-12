@@ -17,16 +17,16 @@ test('a delayed anonymous startup response preserves an opened signup form and i
   await expect(auth.getByLabel('Full name')).toHaveValue('Pending Signup Citizen');
 });
 
-test('signup and login show accessible provider buttons and unavailable providers preserve email signup', async ({ page }) => {
+test('signup and login hide inactive provider actions and preserve email signup', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Account', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
-  await expect(auth.getByRole('button', { name: 'Continue with Google' })).toBeDisabled();
-  await expect(auth.getByRole('button', { name: 'Continue with Facebook' })).toBeDisabled();
+  await expect(auth.getByRole('button', { name: 'Continue with Google' })).toHaveCount(0);
+  await expect(auth.getByRole('button', { name: 'Continue with Facebook' })).toHaveCount(0);
   await auth.getByRole('button', { name: 'Create an account', exact: true }).click();
   await expect(auth.getByLabel('Full name')).toBeVisible();
-  await expect(auth.getByRole('button', { name: 'Continue with Google' })).toBeVisible();
+  await expect(auth.getByRole('button', { name: 'Continue with Google' })).toHaveCount(0);
   await expect(auth.getByRole('button', { name: 'Create your account', exact: true })).toBeEnabled();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: 'test-results/social-signup-mobile.png', fullPage: true });
@@ -45,7 +45,8 @@ for (const provider of ['google', 'facebook']) {
     await page.goto('/');
     await page.getByRole('button', { name: 'Report a hazard', exact: true }).first().click(); await continueReport(page);
     const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
-    await auth.getByRole('button', { name: `Continue with ${provider === 'google' ? 'Google' : 'Facebook'}` }).click();
+    // Integration remains available, while entry buttons are intentionally hidden.
+    await page.evaluate(async provider => { const integration = await import('/src/services/socialAuth.ts'); await integration.startSocialAuth(provider as 'google' | 'facebook', { intent: 'report' }); }, provider);
     await expect(auth.locator('.toast-message.error')).toContainText('Sign-in was cancelled');
     expect(submitted).toMatchObject({ platform: 'web', mode: 'login', intent: 'report', return_origin: new URL(page.url()).origin });
     expect(submitted).not.toHaveProperty('current_password');

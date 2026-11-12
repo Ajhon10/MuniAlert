@@ -34,8 +34,6 @@ try {
   if (!env.PLAYWRIGHT_BROWSERS_PATH && existsSync(resolve(root, '.cache/playwright'))) env.PLAYWRIGHT_BROWSERS_PATH = resolve(root, '.cache/playwright');
   const migration = spawnSync(php, ['artisan', 'migrate:fresh', '--seed', '--force', '--no-ansi'], { cwd: resolve(root, 'hazard-server'), env, stdio: 'inherit' });
   if (migration.status !== 0) throw Error('Isolated test database setup failed.');
-  const accounts = spawnSync(php, ['artisan', 'db:seed', '--class=DemoAccountSeeder', '--force', '--no-ansi'], { cwd: resolve(root, 'hazard-server'), env, stdio: 'inherit' });
-  if (accounts.status !== 0) throw Error('Isolated browser test accounts could not be created.');
   if (!existsSync(resolve(root, 'hazard-server/public/storage'))) spawnSync(php, ['artisan', 'storage:link'], { cwd: resolve(root, 'hazard-server'), env, stdio: 'inherit' });
   for (const [name, executable, args, cwd] of [
     ['api', php, ['-S', `127.0.0.1:${apiPort}`, resolve(root, 'hazard-server/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php')], resolve(root, 'hazard-server/public')],

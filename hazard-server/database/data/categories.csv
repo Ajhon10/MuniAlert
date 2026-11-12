@@ -1,0 +1,11 @@
+id,name,department_id
+accident,Road accident,mdrrmo
+tree,Fallen tree,engineering
+flood,Flooding,mdrrmo
+fire,Fire,fire
+road,Road damage,engineering
+vegetation,Overgrown vegetation,general
+streetlight,Broken streetlight,engineering
+electrical,Electrical hazard,engineering
+waste,Waste / obstruction,environment
+other,Other hazard,general

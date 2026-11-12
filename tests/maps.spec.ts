@@ -95,12 +95,11 @@ test('changing the location map style preserves the selected and confirmed incid
   await page.getByRole('button', { name: 'Create hazard report', exact: true }).click(); await continueReport(page);
   const form = page.getByRole('dialog', { name: 'Report a hazard', exact: true });
   await form.getByRole('button', { name: 'Choose location on map' }).click();
-  await form.getByLabel('Selected latitude', { exact: true }).fill('15.86');
-  await form.getByLabel('Selected longitude', { exact: true }).fill('120.4');
+  await form.getByRole('button', { name: 'Place pin at map center', exact: true }).click();
   await form.getByRole('button', { name: 'Confirm location', exact: true }).click();
   await form.getByRole('combobox', { name: 'Location map style', exact: true }).selectOption('dark');
-  await expect(form.getByLabel('Selected latitude', { exact: true })).toHaveValue('15.86');
-  await expect(form.getByLabel('Selected longitude', { exact: true })).toHaveValue('120.4');
+  await expect(form.getByLabel('Selected latitude', { exact: true })).toHaveCount(0);
+  await expect(form.getByLabel('Selected longitude', { exact: true })).toHaveCount(0);
   await expect(form.getByRole('button', { name: 'Location confirmed', exact: true })).toBeVisible();
   await expect(form.getByRole('combobox', { name: 'Barangay', exact: true }).locator('option')).toHaveCount(14);
 });

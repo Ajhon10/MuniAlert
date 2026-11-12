@@ -169,7 +169,7 @@ npm.cmd run db:migrate
 npm.cmd run db:seed
 ```
 
-The included migrations create the tables; normal seeding creates hazard categories/departments. A SQL dump from the owner is unnecessary. A fresh installation has no existing reports or user accounts. Private evidence storage is created as needed; a public `storage:link` is not required for report photos.
+The included migrations create the tables; normal seeding reads CSV reference data and creates configured local sample accounts when their three private passwords are set. A SQL dump from the owner is unnecessary. A fresh installation has no existing reports or user accounts. Private evidence storage is created as needed; a public `storage:link` is not required for report photos.
 
 ## 5. Create your test accounts
 
@@ -183,7 +183,7 @@ Answer the name prompt and choose a password of at least 12 characters. The term
 
 For a citizen test, register another account through the application's sign-in dialog. Use separate citizen/admin accounts to test permissions. The optional `DemoAccountSeeder` is not required, and the repository does not distribute a shared administrator password.
 
-Alternatively, [seed local administrator and citizen test accounts](TEST_ACCOUNTS.md) using three different passwords from your private server `.env` and `npm.cmd run db:seed:accounts`. The default admin email is `admin@example.test`, configurable with `HAZARD_DEMO_ADMIN_EMAIL`; the seeder preserves existing accounts and refuses production. New passwords must be at least 12 characters and no more than 72 UTF-8 bytes.
+Alternatively, [seed local administrator and citizen test accounts](TEST_ACCOUNTS.md) using three different passwords from your private server `.env` and `npm.cmd run db:seed`. The default admin email is `admin@example.test`, configurable with `HAZARD_DEMO_ADMIN_EMAIL`; the seeder preserves existing accounts and refuses production. New passwords must be at least 12 characters and no more than 72 UTF-8 bytes.
 
 ## 6. Test the website on the PC
 

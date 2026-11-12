@@ -61,3 +61,7 @@
 .highContrast :is(.review-step, .post-preview, .hazard-achievement-track) { background: white; border-color: #204a34; }
 .highContrast .hazard-levels :is(strong, small, .level-state) { color: #102b20; }
 @media (max-width: 480px) { .review-step, .hazard-achievement-track { padding: 16px; } .review-step .button-row > button { width: 100%; justify-content: center; } }
+
+/* Expanded milestones grow only their own card. */
+.hazard-achievement-grid { align-items: start; }
+.hazard-achievement-track { align-self: start; }

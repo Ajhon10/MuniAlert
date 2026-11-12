@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AnalyticsController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommunityController;
 use App\Http\Controllers\Api\DashboardBackgroundController;
+use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\EvidenceController;
 use App\Http\Controllers\Api\ImageReviewController;
 use App\Http\Controllers\Api\NotificationController;
@@ -41,6 +42,7 @@ Route::middleware('throttle:120,1,api-global')->group(function () {
     Route::get('auth/security-options', [AccountRecoveryController::class, 'options']);
     Route::post('auth/recovery', [AccountRecoveryController::class, 'requestReset'])->middleware('throttle:5,1,recovery-request');
     Route::post('auth/recovery/consume', [AccountRecoveryController::class, 'consume'])->middleware('throttle:10,1,recovery-consume');
+    Route::post('auth/recovery/code', [AccountRecoveryController::class, 'codeReset'])->middleware('throttle:5,1,recovery-code');
     Route::post('auth/social/{provider}/attempts', [SocialAuthController::class, 'prepare'])->whereIn('provider', ['google', 'facebook'])->middleware('throttle:10,1,social-prepare');
     Route::post('auth/social/exchange', [SocialAuthController::class, 'exchange'])->middleware('throttle:10,1,social-exchange');
     Route::get('stats', [ReportController::class, 'stats']);
@@ -67,6 +69,10 @@ Route::middleware('throttle:120,1,api-global')->group(function () {
         Route::put('preferences/email', [AccountPreferencesController::class, 'email']);
         Route::patch('profile', [CommunityController::class, 'updateProfile']);
         Route::put('admin/settings', [CommunityController::class, 'saveSettings']);
+        Route::get('admin/departments', [DepartmentController::class, 'index']);
+        Route::post('admin/departments', [DepartmentController::class, 'store']);
+        Route::patch('admin/departments/{department}', [DepartmentController::class, 'update']);
+        Route::patch('admin/categories/{category}/routing', [DepartmentController::class, 'routeCategory']);
         Route::post('admin/dashboard-background', [DashboardBackgroundController::class, 'store'])->middleware('throttle:5,1,branding-upload');
         Route::delete('admin/dashboard-background', [DashboardBackgroundController::class, 'destroy']);
         Route::patch('admin/badges/{badge}', [CommunityController::class, 'saveBadge']);

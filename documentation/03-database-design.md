@@ -1,5 +1,9 @@
 # 03 — Database design and data dictionary
 
+## Department availability and CSV catalogs — 12 November 2026
+
+The additive department-availability migration adds boolean departments.is_active (default true) while retaining office IDs, existing reports and foreign keys. Archiving requires reassigned categories; routing changes affect future reports. The current seed entry point validates CSV reference/sample catalogs, fills missing records, and preserves existing accounts/passwords and administrator settings. Saved-code password recovery uses the existing encrypted MFA recovery-code hashes for both password accounts and enrolled 2FA users; no new plaintext recovery table is introduced. See [the implementation and data inventory](REUSABLE_WORKFLOWS_2026-11-12.md).
+
 ## Database baseline
 
 Production target: MySQL with `utf8mb4`. Schema source: `hazard-server/database/migrations`. SQLite is a portable automated-test substitute; a separate MariaDB database is also used for local MySQL-compatible testing. Do not use test reset commands against a real municipal database.
@@ -49,7 +53,7 @@ Notifications and personal access tokens use Laravel's polymorphic owner fields.
 
 | Table | Fields | Meaning |
 | --- | --- | --- |
-| departments | `id` string PK; `name` string | Routing departments |
+| departments | `id` string PK; `name` string; `is_active` boolean | Administrator-managed offices; archiving requires reassigned categories and preserves existing report references |
 | categories | `id` string PK; `name`; `department_id` FK | Ten hazard categories and default department routing |
 
 Seeded categories: road accident, fallen tree, flooding, fire, road damage, overgrown vegetation, broken streetlight, electrical hazard, waste/obstruction, other hazard. Department names are provisional defaults requiring municipal confirmation.

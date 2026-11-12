@@ -50,8 +50,7 @@ test.describe('Android phone interview alignment', () => {
     await expect(form.locator('.form-error')).toHaveCount(0);
     await expect(form.locator('.toast-message.error')).toContainText('Location access failed');
     await form.getByRole('button', { name: 'Choose location on map' }).click();
-    await form.getByLabel('Selected latitude', { exact: true }).fill('14.5995');
-    await form.getByLabel('Selected longitude', { exact: true }).fill('120.9842');
+    await form.getByRole('button', { name: 'Place pin at map center', exact: true }).click();
     await form.getByRole('button', { name: 'Confirm location', exact: true }).click();
     await expect(form.getByRole('button', { name: 'Location confirmed', exact: true })).toBeVisible();
     const buttonBounds = await form.getByRole('button', { name: 'Location confirmed', exact: true }).boundingBox();

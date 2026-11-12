@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppForm from './AppForm.vue';
+import FormInput from './FormInput.vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import QRCode from 'qrcode';
 import TwoFactorInput from './TwoFactorInput.vue';
@@ -31,17 +33,17 @@ async function verify() {
 }
 </script>
 <template>
-  <form class="form-body security-form" @submit.prevent="verify">
+  <AppForm class="form-body security-form" @submit.prevent="verify">
     <h3>{{ pendingMfa?.enrollment_required ? 'Set up two-factor authentication (2FA)' : 'Verify your sign-in with 2FA' }}</h3>
     <template v-if="pendingMfa?.enrollment_required">
       <p>Add MuniAlert to an authenticator app, such as your existing phone authenticator. Scan this QR code or enter the setup key manually.</p>
       <img v-if="qr" class="mfa-qr" :src="qr" alt="Scan this private setup QR code with your authenticator app" width="240" height="240">
-      <label>Private setup key<input :value="pendingMfa.secret" readonly autocomplete="off" spellcheck="false"></label>
+      <label>Private setup key<FormInput :value="pendingMfa.secret" readonly autocomplete="off" spellcheck="false" /></label>
       <p class="field-help">Keep this key private. Setup expires after five minutes. Your account becomes accessible only after a correct code.</p>
     </template>
     <p v-else>Enter a fresh code from your authenticator app, or one of your saved recovery codes. Each code can be used once.</p>
     <TwoFactorInput v-model="code" :allow-recovery="!pendingMfa?.enrollment_required" />
     <button class="button green full" :disabled="busy">{{ busy ? 'Verifying…' : 'Verify and sign in' }}</button>
     <button type="button" class="text-button" :disabled="busy" @click="pendingMfa = null; $emit('restart')">Start sign-in again</button>
-  </form>
+  </AppForm>
 </template>

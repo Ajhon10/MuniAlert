@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import AppForm from './AppForm.vue';
+import FormInput from './FormInput.vue';
+import FormTextarea from './FormTextarea.vue';
 import { computed, ref } from 'vue';
 import { Newspaper, ShieldCheck } from '@lucide/vue';
 import { api } from '../services/api';
@@ -30,17 +33,17 @@ async function save() {
   <section class="news-post-composer review-step">
     <h3><Newspaper :size="22" aria-hidden="true" />{{ report.published_at ? 'Manage community news post' : 'Create community news post' }}</h3>
     <p v-if="!eligible" class="notice neutral">Fact-check and accept this incident before creating a news post. Its original submission remains private.</p>
-    <form v-else class="form-body" @submit.prevent="pending = 'publish'">
+    <AppForm v-else class="form-body" @submit.prevent="pending = 'publish'">
       <p class="field-help">Describe what happened, the current response and any safety advice. Check the incident details and submitter credit below. Keep contact details, injury details and exact addresses private. Original descriptions and evidence photos are never added automatically.</p>
-      <label>Public title<input v-model="title" minlength="5" maxlength="120" required></label>
-      <label>Public summary<textarea v-model="summary" rows="4" minlength="15" maxlength="1000" required></textarea></label>
-      <label class="checkbox-label"><input v-model="includeName" type="checkbox">Include the submitter's display name in the public post.</label>
+      <label>Public title<FormInput v-model="title" minlength="5" maxlength="120" required name="title" /></label>
+      <label>Public summary<FormTextarea v-model="summary" rows="4" minlength="15" maxlength="1000" required name="summary"></FormTextarea></label>
+      <label class="checkbox-label"><FormInput v-model="includeName" type="checkbox" name="include_name" />Include the submitter's display name in the public post.</label>
       <p class="field-help">Uncheck to withhold the name when attribution could put the person at risk. Email, account ID and contact information are never included.</p>
       <article class="post-preview" aria-label="Public post preview"><span class="post-preview-label"><ShieldCheck :size="17" aria-hidden="true" />Public preview · verified incident</span><h4>{{ title || 'Your community headline' }}</h4><p>{{ summary || 'Your reviewed community update will appear here.' }}</p><NewsIncidentDetails :report="preview" /></article>
-      <label class="checkbox-label"><input v-model="reviewed" type="checkbox" required>Reviewed for public sharing, including incident details and submitter credit.</label>
+      <label class="checkbox-label"><FormInput v-model="reviewed" type="checkbox" required name="reviewed" />Reviewed for public sharing, including incident details and submitter credit.</label>
       <div class="button-row"><button type="submit" class="button primary" :disabled="busy">{{ report.published_at ? 'Save news post changes' : 'Publish news post' }}</button><button v-if="report.published_at" type="button" class="button secondary" :disabled="busy" @click="pending = 'remove'">Unpublish news post</button></div>
       <p v-if="report.published_at" class="field-help">Published {{ new Date(report.published_at).toLocaleString('en-PH', { timeZone: 'Asia/Manila' }) }} PHT. Members can share the public post.</p>
-    </form>
+    </AppForm>
 
     <ConfirmDialog v-if="pending" :title="pending === 'remove' ? 'Unpublish this news post?' : 'Publish this news post?'" :message="pending === 'remove' ? 'The newsfeed and share page will stop showing this post. Copies already shared on other platforms may remain.' : 'This reviewed text will appear in the community newsfeed and on a public share page.'" :confirm-label="pending === 'remove' ? 'Unpublish post' : 'Publish post'" :danger="pending === 'remove'" :busy="busy" :error="error" @close="pending = null" @confirm="save" />
   </section>

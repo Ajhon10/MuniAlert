@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FormSelect from './FormSelect.vue';
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import * as maplibregl from 'maplibre-gl';
 import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
@@ -60,6 +61,7 @@ function changeStyle() {
   styleTimer = setTimeout(() => { mapError.value = true; }, 15000);
   try { map.setStyle(mapStyle(mapPreferences.value.mode)); } catch { mapError.value = true; clearTimeout(styleTimer); }
 }
+function pickCenter() { if (props.editable && map) { const point = map.getCenter(); emit('pick', { latitude: Number(point.lat.toFixed(6)), longitude: Number(point.lng.toFixed(6)) }); } }
 defineExpose({ zoomTo, fitReports, fitServiceArea });
 onMounted(() => {
   try {
@@ -87,4 +89,6 @@ watch(() => [props.pin, props.gps, props.editable], () => { renderLocation(); if
 watch(() => props.selected, id => { renderReports(); const report = props.reports.find(item => item.id === id); if (report) map?.easeTo({ center: [report.verified_longitude ?? report.selected_longitude, report.verified_latitude ?? report.selected_latitude], zoom: 15, duration: motion() }); });
 onBeforeUnmount(() => { clearTimeout(styleTimer); observer?.disconnect(); markers.forEach(marker => marker.remove()); pinMarker?.remove(); gpsMarker?.remove(); map?.remove(); map = undefined; });
 </script>
-<template><div class="map-shell"><div ref="container" class="hazard-map" aria-label="Interactive hazard location map"></div><div v-if="styleSelector && !failed" class="map-inline-style"><label>Map style<select v-model="mapPreferences.mode" aria-label="Location map style"><option v-for="mode in mapModes" :key="mode.id" :value="mode.id">{{ mode.label }}</option></select></label></div><div v-if="failed" class="map-unavailable">The interactive map needs WebGL. Try a supported browser; report lists and manual coordinate entry remain available.</div><div v-else-if="mapError" class="map-load-error" role="status"><p>Some map content could not load. Check your connection or try another map style.</p><button type="button" @click="changeStyle">Retry map</button><button v-if="mapPreferences.mode !== 'streets'" type="button" @click="mapPreferences.mode = 'streets'">Use Streets</button></div></div></template>
+<template><div class="map-shell"><button v-if="editable && !failed" type="button" class="map-center-picker button secondary" @click="pickCenter">Place pin at map center</button><div ref="container" class="hazard-map" aria-label="Interactive hazard location map"></div><div v-if="styleSelector && !failed" class="map-inline-style"><label>Map style<FormSelect v-model="mapPreferences.mode" aria-label="Location map style" name="map_preferences.mode"><option v-for="mode in mapModes" :key="mode.id" :value="mode.id">{{ mode.label }}</option></FormSelect></label></div><div v-if="failed" class="map-unavailable">The interactive map needs WebGL. Try a supported browser; use a supported browser to choose a report pin. Report lists remain available.</div><div v-else-if="mapError" class="map-load-error" role="status"><p>Some map content could not load. Check your connection or try another map style.</p><button type="button" @click="changeStyle">Retry map</button><button v-if="mapPreferences.mode !== 'streets'" type="button" @click="mapPreferences.mode = 'streets'">Use Streets</button></div></div></template>
+
+<style scoped>.map-center-picker { position: absolute; left: 12px; bottom: 32px; z-index: 3; max-width: calc(100% - 24px); white-space: normal; }</style>

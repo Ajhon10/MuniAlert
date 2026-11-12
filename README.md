@@ -55,7 +55,7 @@ node scripts/php.mjs hazard-server/artisan hazard:admin admin@example.test
 
 Choose the administrator name/password when prompted. Create a separate citizen account through the app. Fresh installations have no owner accounts or incident records. Do not regenerate an existing app key or reset an existing database when updating.
 
-For optional local **administrator + citizen test accounts**, follow [Test accounts and the explicit seeder](documentation/TEST_ACCOUNTS.md). Choose three private passwords in your own server `.env`, then run `npm.cmd run db:seed:accounts`. Normal seeding never creates shared logins. See [the phased security work](documentation/SECURITY_IMPLEMENTATION_PLAN.md) for implemented protections and remaining release requirements.
+For optional local **administrator + citizen test accounts**, follow [Test accounts and the explicit seeder](documentation/TEST_ACCOUNTS.md). Choose three private passwords in your own server `.env`, then run `npm.cmd run db:seed` to seed all reference and configured sample accounts together. Without all three passwords, no shared/default login is supplied. Seed rows are visible in [the CSV catalog](hazard-server/database/data/). See [the phased security work](documentation/SECURITY_IMPLEMENTATION_PLAN.md) for implemented protections and remaining release requirements.
 
 From the repository root, start both services and keep the terminal running:
 

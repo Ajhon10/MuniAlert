@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import AppForm from './AppForm.vue';
+import FormSelect from './FormSelect.vue';
+import FormTextarea from './FormTextarea.vue';
+import FormInput from './FormInput.vue';
 import { computed, ref, useId } from 'vue';
 import { BadgeCheck, ClipboardCheck } from '@lucide/vue';
 import { api } from '../services/api';
@@ -31,12 +35,12 @@ async function verify() {
     <template v-else-if="report.status !== 'rejected'">
       <h3><ClipboardCheck :size="22" aria-hidden="true" />Fact-check incident</h3>
       <p class="field-help">Check the original evidence and location details. Record how you established that the incident actually happened. The system records your review; a photo or location alone does not establish a fact.</p>
-      <form class="form-body" @submit.prevent="pending = true">
-        <label>Verification method<select v-model="method" aria-label="Verification method" required><option value="" disabled>Choose how the incident was checked</option><option v-for="(label, value) in methods" :key="value" :value="value">{{ label }}</option></select></label>
-        <label>Internal verification notes<textarea v-model="note" aria-label="Internal verification notes" :aria-describedby="noteHelpId" rows="3" minlength="15" maxlength="1000" required placeholder="Summarize the checks and supporting information."></textarea><span :id="noteHelpId" class="field-help">Visible to authorized administrators. Keep personal information to the minimum needed.</span></label>
-        <label class="checkbox-label"><input v-model="confirmed" type="checkbox" required>I verified that this incident actually happened.</label>
+      <AppForm class="form-body" @submit.prevent="pending = true">
+        <label>Verification method<FormSelect v-model="method" aria-label="Verification method" required name="method"><option value="" disabled>Choose how the incident was checked</option><option v-for="(label, value) in methods" :key="value" :value="value">{{ label }}</option></FormSelect></label>
+        <label>Internal verification notes<FormTextarea v-model="note" aria-label="Internal verification notes" :aria-describedby="noteHelpId" rows="3" minlength="15" maxlength="1000" required placeholder="Summarize the checks and supporting information." name="note"></FormTextarea><span :id="noteHelpId" class="field-help">Visible to authorized administrators. Keep personal information to the minimum needed.</span></label>
+        <label class="checkbox-label"><FormInput v-model="confirmed" type="checkbox" required name="confirmed" />I verified that this incident actually happened.</label>
         <p v-if="pendingImages" class="field-help">Review and accept each incident photo above before factual verification. You can contact responders at any time.</p><button class="button primary" type="submit" :disabled="busy || pendingImages">Verify and accept incident</button>
-      </form>
+      </AppForm>
     </template>
     <p v-else class="field-help">Rejected reports cannot be accepted or published through this workflow.</p>
 

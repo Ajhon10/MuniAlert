@@ -47,7 +47,7 @@ test('emergency-first hotlines search and distance sorting remain usable at 200 
   const bytes = await page.evaluate(() => { const canvas = document.createElement('canvas'); canvas.width = canvas.height = 20; return canvas.toDataURL('image/png').split(',')[1]!; });
   await form.getByLabel('Add hazard photos').setInputFiles({ name: 'synthetic-accident.png', mimeType: 'image/png', buffer: Buffer.from(bytes, 'base64') });
   await form.getByRole('button', { name: 'Choose location on map Place the pin yourself', exact: true }).click();
-  await form.getByLabel('Selected latitude', { exact: true }).fill('15.864'); await form.getByLabel('Selected longitude', { exact: true }).fill('120.399');
+  await form.getByRole('button', { name: 'Place pin at map center', exact: true }).click();
   await form.getByRole('button', { name: 'Confirm location', exact: true }).click();
   await form.getByLabel('Barangay', { exact: true }).selectOption('Anambongan'); await form.getByLabel('Street or landmark', { exact: true }).fill('Synthetic Road');
   await form.getByLabel('Report title', { exact: true }).fill('Synthetic accident needing assistance'); await form.getByLabel('Description', { exact: true }).fill('Synthetic incident submitted to check the emergency assistance flag.');

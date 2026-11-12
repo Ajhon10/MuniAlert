@@ -3,6 +3,7 @@ import { requestStepUp, type MfaChallenge } from './accountSecurity';
 import type { User } from '../types';
 import { API_SERVER_URL as base } from '../config/api';
 import { readSessionToken, saveSessionToken, clearSessionToken } from './sessionStore';
+import { prepareServerValidation } from './feedback';
 export const native = Capacitor.isNativePlatform();
 let sessionGeneration = 0;
 export async function clearToken() { sessionGeneration++; await clearSessionToken(); }
@@ -39,7 +40,9 @@ export async function api<T>(path: string, options: RequestInit = {}, steppedUp 
   }
   if (!response.ok) {
     const details = data?.errors ? Object.values(data.errors).flat().join(' ') : data?.message;
-    throw new Error(response.status === 419 ? 'Your session expired. Reload the page and sign in again.' : details || `Request failed (${response.status}).`);
+    const message = response.status === 419 ? 'Your session expired. Reload the page and sign in again.' : details || `Request failed (${response.status}).`;
+    if (data?.errors) prepareServerValidation(message, data.errors);
+    throw new Error(message);
   }
   return data as T;
 }

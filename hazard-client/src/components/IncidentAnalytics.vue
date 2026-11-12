@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import AppForm from './AppForm.vue';
+import FormInput from './FormInput.vue';
+import FormSelect from './FormSelect.vue';
 import { notify, useFeedback } from '../services/feedback';
 import { computed, onMounted, ref } from 'vue';
 import { Download, RefreshCw } from '@lucide/vue';
@@ -30,7 +33,7 @@ onMounted(load);
 </script>
 <template><section class="cms-card incident-analytics" :aria-busy="busy"><h2>Incident records by period</h2>
   <p class="field-help" lang="fil">Pagsama-samahin ang mga ulat bawat linggo o buwan.</p>
-  <form class="form-body analytics-filters" @submit.prevent="updateSummary"><div class="form-grid"><label>From date<input v-model="from" type="date" required></label><label>To date<input v-model="to" type="date" :min="from" required></label><label>Group records<select v-model="group"><option value="month">Monthly</option><option value="week">Weekly · Monday start</option></select></label><label>Incident category<select v-model="category"><option value="">All categories</option><option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</option></select></label></div><button class="button primary" :disabled="busy"><RefreshCw :size="18" aria-hidden="true" />{{ busy ? 'Loading records…' : 'Update summary' }}</button></form>
+  <AppForm class="form-body analytics-filters" @submit.prevent="updateSummary"><div class="form-grid"><label>From date<FormInput v-model="from" type="date" required name="from" /></label><label>To date<FormInput v-model="to" type="date" :min="from" required name="to" /></label><label>Group records<FormSelect v-model="group" name="group"><option value="month">Monthly</option><option value="week">Weekly · Monday start</option></FormSelect></label><label>Incident category<FormSelect v-model="category" name="category"><option value="">All categories</option><option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</option></FormSelect></label></div><button class="button primary" :disabled="busy"><RefreshCw :size="18" aria-hidden="true" />{{ busy ? 'Loading records…' : 'Update summary' }}</button></AppForm>
 
   <template v-if="data"><div class="analytics-heading"><div><strong class="analytics-total"><AnimatedNumber :value="data.total" /></strong><span> reports · {{ data.from }} to {{ data.to }} PHT</span></div><button class="button secondary" :disabled="busy" @click="exportCsv"><Download :size="18" aria-hidden="true" />Export summary</button></div>
   <p class="notice neutral">{{ data.date_basis }} {{ data.total - data.known_time }} report(s) use submission time because incident time was not supplied. Counts describe reports, not confirmed casualties or unique incidents.</p>

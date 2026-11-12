@@ -1,0 +1,4 @@
+name,email,role,password_config
+Sample Administrator,admin@example.test,admin,demo_admin_password
+Sample Citizen One,citizen.one@example.test,citizen,demo_citizen_one_password
+Sample Citizen Two,citizen.two@example.test,citizen,demo_citizen_two_password

@@ -69,17 +69,23 @@ test('private submissions become accepted alerts and only an explicit admin post
     await expect(article.locator('.news-facts')).toContainText('Anambongan');
     await expect(article.locator('.news-facts')).toContainText('Incident time');
     await expect(article).not.toContainText(owner.email);
-    const facebook = new URL((await article.getByRole('link', { name: 'Facebook', exact: true }).getAttribute('href'))!);
+    await article.getByRole('button', { name: 'Facebook', exact: true }).click();
+    const shareDialog = community.getByRole('dialog', { name: 'Share verified news', exact: true });
+    const facebook = new URL((await shareDialog.getByRole('link', { name: 'Open Facebook', exact: true }).getAttribute('href'))!);
     const publicUrl = facebook.searchParams.get('u')!;
     expect(publicUrl).toContain(`/news/${id}`);
-    await expect(article.getByRole('link', { name: 'WhatsApp', exact: true })).toHaveAttribute('href', /^https:\/\/wa\.me\//);
+    await expect(shareDialog.getByLabel('Prepared share post')).toHaveValue(new RegExp(headline));
+    await shareDialog.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    await article.getByRole('button', { name: 'WhatsApp', exact: true }).click();
+    await expect(community.getByRole('dialog', { name: 'Share verified news', exact: true }).getByRole('link', { name: 'Open WhatsApp', exact: true })).toHaveAttribute('href', /^https:\/\/wa\.me\//);
+    await community.getByRole('dialog', { name: 'Share verified news', exact: true }).getByRole('button', { name: 'Close dialog', exact: true }).click();
     const shared = await request.get(publicUrl); expect(shared.status()).toBe(200);
     const html = await shared.text(); expect(html).toContain('og:title'); expect(html).toContain(headline); expect(html).toContain('ReviewOwner'); expect(html).toContain('Incident details'); expect(html).not.toContain('PRIVATE'); expect(html).not.toContain(owner.email);
     for (const close of await community.getByRole('button', { name: 'Dismiss notification', exact: true }).all()) await close.click();
     await article.screenshot({ path: 'test-results/verified-news-details.png', animations: 'disabled' });
     await openReading(community);
     await community.getByRole('slider', { name: 'Text size', exact: true }).fill('200');
-    await community.getByRole('button', { name: 'Done', exact: true }).click();
+    await community.getByRole('button', { name: 'Close dialog', exact: true }).click();
     await navigateWorkspace(community, 'Verified news');
     await community.setViewportSize({ width: 375, height: 900 });
     await expect.poll(() => community.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -154,7 +160,7 @@ test('category milestones unlock separately and stay readable with large phone t
   await collection.screenshot({ path: 'test-results/hazard-achievement-collection.png', animations: 'disabled' });
   await openReading(page);
   await page.getByRole('slider', { name: 'Text size', exact: true }).fill('200');
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await navigateWorkspace(page, 'My profile');
   for (const width of [320, 375, 844]) {
     await page.setViewportSize({ width, height: 900 });

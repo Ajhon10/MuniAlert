@@ -27,7 +27,9 @@ class ReportController extends Controller
 {
     public function catalog()
     {
-        return ['categories' => Category::all(), 'departments' => Department::all()];
+        $departments = Department::where('is_active', true)->get();
+
+        return ['categories' => Category::whereIn('department_id', $departments->pluck('id'))->get(), 'departments' => $departments];
     }
 
     public function index(Request $request)

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppForm from './AppForm.vue';
 import PasswordInput from './PasswordInput.vue';
 import TwoFactorInput from './TwoFactorInput.vue';
 import { onBeforeUnmount, ref } from 'vue';
@@ -20,4 +21,4 @@ async function submit() {
   } catch (e) { error.value = (e as Error).message; } finally { busy.value = false; }
 }
 </script>
-<template><Modal title="Verify your identity" @close="cancelStepUp"><form class="form-body security-form" @submit.prevent="submit"><p>For your security, confirm your identity before this change. Verification lasts five minutes on this device.</p><PasswordInput v-if="stepUp?.password_required" label="Current password" v-model="password" autocomplete="current-password" required /><TwoFactorInput v-if="stepUp?.mfa_required" v-model="code" /><button class="button green full" :disabled="busy">{{ busy ? 'Verifying…' : 'Verify identity' }}</button></form></Modal></template>
+<template><Modal title="Verify your identity" @close="cancelStepUp"><AppForm class="form-body security-form" @submit.prevent="submit"><p>For your security, confirm your identity before this change. Verification lasts five minutes on this device.</p><PasswordInput v-if="stepUp?.password_required" label="Current password" v-model="password" autocomplete="current-password" required /><TwoFactorInput v-if="stepUp?.mfa_required" v-model="code" /><button class="button green full" :disabled="busy">{{ busy ? 'Verifying…' : 'Verify identity' }}</button></AppForm></Modal></template>

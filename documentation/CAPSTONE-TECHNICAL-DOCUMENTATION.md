@@ -6,7 +6,7 @@ Application name: **MuniAlert**. Baseline: 2026-10-02. Institution, proponents a
 
 This appendix documents the implementation and testing evidence. It does not invent field research, cloud deployment or evaluation findings.
 
-<!-- Source SHA256: 08999c9d0e553163a56f40d7a016ca9d9a1c75ac445ad4e23dc33371ab0907d9 -->
+<!-- Source SHA256: 32893478fd9f0a781f2c78392d37f641516bde232cce5395625eb0fcaf708cab -->
 
 # 01 — Project overview and requirements
 
@@ -133,6 +133,8 @@ Photos remain on BANTAY; an optional loopback-only local classifier produces adv
 # 02 — System architecture and source structure
 
 ## Accepted technology baseline
+
+The [12 November shared-interface and workflow update](REUSABLE_WORKFLOWS_2026-11-12.md) centralizes modal/form/table controls, adds administrator-managed departments/category routing, provides visible CSV seed catalogs with one configured seed entry point, and adds one-time saved-code password recovery. Community coordinate editing is replaced by confirmed map-pin actions. Server JSON remains authoritative for validation; floating feedback does not consume modal layout space. Social sharing exports only reviewed public fields, with copied Facebook captions and a deployed public link needed for crawler previews.
 
 On 12 November 2026, the user confirmed that Ajhon10/MuniAlert should remain a **public source repository** and authorized pushing the current changes. This supersedes the earlier private-source preference described below. Public source access does not publish environment files, incident records, private evidence or credentials and does not deploy the application.
 
@@ -371,6 +373,10 @@ LocalImageDetector accepts numeric-loopback endpoints only, bounded sanitized pr
 
 # 03 — Database design and data dictionary
 
+## Department availability and CSV catalogs — 12 November 2026
+
+The additive department-availability migration adds boolean departments.is_active (default true) while retaining office IDs, existing reports and foreign keys. Archiving requires reassigned categories; routing changes affect future reports. The current seed entry point validates CSV reference/sample catalogs, fills missing records, and preserves existing accounts/passwords and administrator settings. Saved-code password recovery uses the existing encrypted MFA recovery-code hashes for both password accounts and enrolled 2FA users; no new plaintext recovery table is introduced. See [the implementation and data inventory](REUSABLE_WORKFLOWS_2026-11-12.md).
+
 ## Database baseline
 
 Production target: MySQL with `utf8mb4`. Schema source: `hazard-server/database/migrations`. SQLite is a portable automated-test substitute; a separate MariaDB database is also used for local MySQL-compatible testing. Do not use test reset commands against a real municipal database.
@@ -420,7 +426,7 @@ Notifications and personal access tokens use Laravel's polymorphic owner fields.
 
 | Table | Fields | Meaning |
 | --- | --- | --- |
-| departments | `id` string PK; `name` string | Routing departments |
+| departments | `id` string PK; `name` string; `is_active` boolean | Administrator-managed offices; archiving requires reassigned categories and preserves existing report references |
 | categories | `id` string PK; `name`; `department_id` FK | Ten hazard categories and default department routing |
 
 Seeded categories: road accident, fallen tree, flooding, fire, road damage, overgrown vegetation, broken streetlight, electrical hazard, waste/obstruction, other hazard. Department names are provisional defaults requiring municipal confirmation.
@@ -565,6 +571,20 @@ Migration 2026_11_11_000003 adds hazard_photos.authenticity_review_required defa
 
 ## Conventions and authentication
 
+### Shared workflow additions — 12 November 2026
+
+Validation failures return HTTP 422 with `message`, `code: validation_error` and field-keyed `errors`, available in browser Network responses. No password, token or evidence is echoed for debugging. See [shared workflow behavior](REUSABLE_WORKFLOWS_2026-11-12.md).
+
+| Method / path | Access and behavior |
+| --- | --- |
+| GET `/api/admin/departments` | Administrator; all offices and category routing |
+| POST `/api/admin/departments` | Administrator; unique lowercase/hyphen office `id` and `name`; creates active office |
+| PATCH `/api/admin/departments/{department}` | Administrator; `name`, boolean `is_active`; archive requires reassigned categories and preserves report history |
+| PATCH `/api/admin/categories/{category}/routing` | Administrator; existing active `department_id`; applies to future reports |
+| POST `/api/auth/recovery/code` | Public, rate limited; `email`, saved `code`, `password`, `password_confirmation`; consumes one saved code under the user lock, revokes credentials, retains admin 2FA, generic invalid/inactive/unknown failure |
+
+POST `/api/security/recovery-codes` also supports password-bearing citizen accounts after recent verification. It returns ten new codes once, revokes previous codes/other credentials, and preserves the current verified session. Enrolled users share this set with existing 2FA backup codes. Email-link recovery remains separately configured. No sign-in session is issued by password recovery.
+
 Development API origin: `http://localhost:8000`. Vite proxies `/api`, `/auth`, `/sanctum`, `/storage`, and `/news`. Production should use one HTTPS origin for the frontend and Laravel routes. Set `VITE_API_BASE_URL` to the HTTPS server origin for Android; it must not include a trailing `/api`.
 
 Send `Accept: application/json`. JSON mutations use `Content-Type: application/json`; uploads use multipart form data with repeated `photos[]` parts. Single-report responses use `{ "data": { ... } }`. Lists use Laravel's `data`, `links`, and `meta` pagination envelope, with 100 reports per page.
@@ -623,7 +643,7 @@ Profile password changes require `current_password`, a new password of at least 
 
 ## Comment pagination
 
-`GET /api/news/{report}/comments?after=123` returns `{ "data": [...], "meta": { "has_more": true, "next_cursor": 148 } }`. Omit `after` for the first page; supply `next_cursor` to continue. Ordering is ascending by comment ID, limited to 25. IDs from another report never expose its comments. Negative/noninteger cursors return 422. The client offers Load more comments; posting/deleting reloads the first page and retains the draft on failure.
+GET `/api/news/{report}/comments?after=123` returns `{ "data": [...], "meta": { "has_more": true, "next_cursor": 148 } }`. Omit `after` for the first page; supply `next_cursor` to continue. Ordering is ascending by comment ID, limited to 25. IDs from another report never expose its comments. Negative/noninteger cursors return 422. The client offers Load more comments; posting/deleting reloads the first page and retains the draft on failure.
 
 ## Account payloads
 
@@ -802,6 +822,10 @@ Hotline settings additionally accept optional service police/fire/medical/rescue
 ---
 
 # 05 — Testing and validation
+
+## Shared workflow verification — 12 November 2026
+
+The [shared-interface update](REUSABLE_WORKFLOWS_2026-11-12.md) adds backend and browser checks for administrator routing, repeat CSV seeding, saved-code password reset/replay/lockout/revocation, floating server validation, bounded notifications/destination opening, independent achievement expansion, prepared public sharing and recovery choices. The focused backend run passed 127 tests / 1176 assertions. Initial browser failures exposed old removed-control selectors and a real overlay interaction with persistent messages; all original privacy, location confirmation, field-focus and MFA assertions remain active. The exact-state full gate is required before publication; these intermediate results do not claim deployment or real social/email/device acceptance.
 
 ## Cross-platform enlarged-text CI repair — 12 November 2026
 
@@ -1071,6 +1095,16 @@ See [feature evidence](evidence/emergency-workflow-2026-11-11.json) and [gate re
 ---
 
 # 06 — Citizen and administrator user manual
+
+## Updated controls and recovery — 12 November 2026
+
+Dismiss dialogs using the X in their header. Footers contain actions only. Errors float above the page without reducing form space; dismiss a message or use Go to field to correct the server-reported field. Notifications preview at most two lines: select one to open its full authorized report. Opening an achievement card grows that card only.
+
+Report location uses GPS or a map pin. Pan/tap/drag the map, or choose Place pin at map center, then confirm the location. Raw latitude/longitude inputs are hidden. Content management lets administrators add/edit offices and set each hazard's responsible office; reassign categories before archiving an office. New routing does not rewrite existing report history.
+
+Forgot your password offers Send email reset link or Use recovery code. Email needs a verified deliverable account address and configured municipal mail. Save one-time recovery codes from Settings before losing access. A password reset signs out old sessions and keeps administrator authenticator 2FA required. Google/Facebook sign-in buttons are temporarily hidden.
+
+A news post's Facebook/X/WhatsApp action opens prepared reviewed text. For Facebook, use Copy post & open Facebook, then paste the copied text into the composer. A live preview requires the deployed public HTTPS news URL; localhost cannot be reached by Facebook or other users. Private evidence and exact locations are excluded. See [workflow notes](REUSABLE_WORKFLOWS_2026-11-12.md).
 
 **MuniAlert — Emergency & Public Hazard Reporting** is the shortened application name for **Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking**.
 

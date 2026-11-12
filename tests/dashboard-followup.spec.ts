@@ -80,7 +80,7 @@ test('navigation plays entry motion and obeys system and app reduced motion', as
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await openReading(page);
   await page.getByRole('switch', { name: 'Reduce motion', exact: true }).check();
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Close dialog', exact: true }).click();
   // Entering Settings played motion before the preference was enabled.
   const appReduced = await page.evaluate(() => (window as any).__entryMotion);
   await page.getByRole('button', { name: 'Verified news', exact: true }).click();

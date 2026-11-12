@@ -2,6 +2,20 @@
 
 ## Conventions and authentication
 
+### Shared workflow additions — 12 November 2026
+
+Validation failures return HTTP 422 with `message`, `code: validation_error` and field-keyed `errors`, available in browser Network responses. No password, token or evidence is echoed for debugging. See [shared workflow behavior](REUSABLE_WORKFLOWS_2026-11-12.md).
+
+| Method / path | Access and behavior |
+| --- | --- |
+| GET `/api/admin/departments` | Administrator; all offices and category routing |
+| POST `/api/admin/departments` | Administrator; unique lowercase/hyphen office `id` and `name`; creates active office |
+| PATCH `/api/admin/departments/{department}` | Administrator; `name`, boolean `is_active`; archive requires reassigned categories and preserves report history |
+| PATCH `/api/admin/categories/{category}/routing` | Administrator; existing active `department_id`; applies to future reports |
+| POST `/api/auth/recovery/code` | Public, rate limited; `email`, saved `code`, `password`, `password_confirmation`; consumes one saved code under the user lock, revokes credentials, retains admin 2FA, generic invalid/inactive/unknown failure |
+
+POST `/api/security/recovery-codes` also supports password-bearing citizen accounts after recent verification. It returns ten new codes once, revokes previous codes/other credentials, and preserves the current verified session. Enrolled users share this set with existing 2FA backup codes. Email-link recovery remains separately configured. No sign-in session is issued by password recovery.
+
 Development API origin: `http://localhost:8000`. Vite proxies `/api`, `/auth`, `/sanctum`, `/storage`, and `/news`. Production should use one HTTPS origin for the frontend and Laravel routes. Set `VITE_API_BASE_URL` to the HTTPS server origin for Android; it must not include a trailing `/api`.
 
 Send `Accept: application/json`. JSON mutations use `Content-Type: application/json`; uploads use multipart form data with repeated `photos[]` parts. Single-report responses use `{ "data": { ... } }`. Lists use Laravel's `data`, `links`, and `meta` pagination envelope, with 100 reports per page.
@@ -60,7 +74,7 @@ Profile password changes require `current_password`, a new password of at least 
 
 ## Comment pagination
 
-`GET /api/news/{report}/comments?after=123` returns `{ "data": [...], "meta": { "has_more": true, "next_cursor": 148 } }`. Omit `after` for the first page; supply `next_cursor` to continue. Ordering is ascending by comment ID, limited to 25. IDs from another report never expose its comments. Negative/noninteger cursors return 422. The client offers Load more comments; posting/deleting reloads the first page and retains the draft on failure.
+GET `/api/news/{report}/comments?after=123` returns `{ "data": [...], "meta": { "has_more": true, "next_cursor": 148 } }`. Omit `after` for the first page; supply `next_cursor` to continue. Ordering is ascending by comment ID, limited to 25. IDs from another report never expose its comments. Negative/noninteger cursors return 422. The client offers Load more comments; posting/deleting reloads the first page and retains the draft on failure.
 
 ## Account payloads
 

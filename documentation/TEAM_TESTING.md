@@ -43,7 +43,7 @@ Open `http://localhost:5173`. Create a citizen account through the application. 
 node scripts/php.mjs hazard-server/artisan hazard:admin admin@example.test
 ```
 
-The normal seed provides categories and routing; it does not publish shared administrator passwords. The optional demo-account seeder requires three distinct local environment passwords and is unnecessary for ordinary team setup. `?demo=1` is a read-only fictional preview; leave it before testing a real submission to your development database.
+The normal seed provides categories and routing; it does not publish shared administrator passwords. The normal `db:seed` command also creates missing CSV sample accounts when their three distinct local environment passwords are configured. Without those passwords, it seeds reference data only. Existing accounts and administrator edits are preserved. `?demo=1` is a read-only fictional preview; leave it before testing a real submission to your development database.
 
 Leave the client API origin blank for this website/USB route. Keep the PC services open at `http://localhost:5173`; `/api/health` on that same origin should return `status: ok`. An empty dashboard and an absent owner login are expected with a new database. For the full new-database and account steps, use the quickstart above.
 

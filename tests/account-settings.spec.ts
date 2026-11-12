@@ -27,7 +27,7 @@ test('Settings owns reading and guide controls and restores each account separat
   await openReading(page);
   await page.getByRole('slider', { name: 'Text size', exact: true }).fill('165');
   await page.getByRole('switch', { name: 'Bold text', exact: true }).check();
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await expect.poll(async () => (await (await request.get(`${origin}/api/auth/me`, { headers: { Authorization: `Bearer ${alpha!.token}` } })).json()).reading_preferences?.textSize).toBe(165);
   await page.reload(); await expect(page.locator('html')).toHaveAttribute('data-text-size', '165');
   await navigateWorkspace(page, 'Settings');
@@ -42,7 +42,7 @@ test('Settings owns reading and guide controls and restores each account separat
   await expect(page.locator('html')).toHaveAttribute('data-text-size', '100');
   await expect(page.locator('html')).not.toHaveClass(/boldText/);
   await openReading(page); await page.getByRole('slider', { name: 'Text size', exact: true }).fill('115');
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await expect.poll(async () => (await (await request.get(`${origin}/api/auth/me`, { headers: { Authorization: `Bearer ${beta!.token}` } })).json()).reading_preferences?.textSize).toBe(115);
   const fresh = await browser.newContext({ baseURL });
   try {

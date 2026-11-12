@@ -13,4 +13,9 @@ class Department extends Model
     protected $keyType = 'string';
 
     protected $guarded = [];
+
+    protected function casts(): array
+    {
+        return ['is_active' => 'boolean'];
+    }
 }

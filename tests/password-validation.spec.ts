@@ -1,36 +1,25 @@
 import { test, expect, openReading, navigateWorkspace } from './fixtures';
 
-test('native validation uses one persistent linked toast, suppresses browser bubbles and focuses the field', async ({ page }) => {
-  await page.addInitScript(() => {
-    (window as any).__invalidDefaults = [];
-    // Native events can run a microtask checkpoint between capture listeners.
-    // Inspect cancellation after dispatch has reached the dialog's handler.
-    document.addEventListener('invalid', event => setTimeout(() => (window as any).__invalidDefaults.push(event.defaultPrevented), 0), true);
-  });
+test('backend validation returns field errors and one floating linked toast without moving modal content', async ({ page }) => {
   await page.goto('/');
-  let submissions = 0;
-  await page.route('**/auth/login', route => { submissions++; return route.fulfill({ status: 422, json: { message: 'Synthetic login denied.' } }); });
   await page.getByRole('button', { name: 'Account', exact: true }).click();
   const form = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
+  const before = await form.locator('.modal-body').boundingBox();
+  const response = page.waitForResponse(r => new URL(r.url()).pathname === '/auth/login' && r.request().method() === 'POST');
   await form.getByRole('button', { name: 'Sign in', exact: true }).click();
+  const result = await response; expect(result.status()).toBe(422);
+  const data = await result.json(); expect(data.code).toBe('validation_error'); expect(data.errors.email).toBeTruthy();
   const toast = form.locator('.toast-message.error'); const email = form.getByLabel('Email address', { exact: true });
-  await expect(toast).toHaveCount(1);
-  await expect(toast).toContainText('Check Email address.');
-  await expect(email).toBeFocused();
-  await expect(email).toHaveAttribute('aria-invalid', 'true');
+  await expect(toast).toHaveCount(1); await expect(toast).toContainText('email');
+  await expect(email).toBeFocused(); await expect(email).toHaveAttribute('aria-invalid', 'true');
   await expect(email).toHaveAttribute('aria-describedby', /toast-message-/);
-  await expect.poll(() => page.evaluate(() => (window as any).__invalidDefaults.length)).toBeGreaterThan(0);
-  expect(await page.evaluate(() => (window as any).__invalidDefaults.every(Boolean))).toBe(true);
-  expect(submissions).toBe(0);
-  await form.getByRole('button', { name: 'Show password', exact: true }).focus();
-  await toast.getByRole('button', { name: 'Go to field', exact: true }).click();
-  await expect(email).toBeFocused();
-  await email.fill('visibility-fixture@example.test');
-  await expect(toast).toHaveCount(0);
+  expect(await form.locator('.modal-body').boundingBox()).toEqual(before);
+  expect(await form.locator('.toast-stack').evaluate(el => getComputedStyle(el).position)).toBe('fixed');
+  await toast.getByRole('button', { name: 'Go to field', exact: true }).click(); await expect(email).toBeFocused();
+  await email.fill('visibility-fixture@example.test'); await expect(toast).toHaveCount(0);
   await expect(email).not.toHaveAttribute('aria-invalid');
   await form.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(toast).toHaveCount(1);
-  await expect(toast).toContainText('Check Password.');
+  await expect(toast).toHaveCount(1); await expect(toast).toContainText('password');
   await expect(form.getByLabel('Password', { exact: true })).toBeFocused();
   await expect(form.locator('.form-error')).toHaveCount(0);
   await form.getByRole('button', { name: 'Close dialog', exact: true }).click();
@@ -41,7 +30,7 @@ test('password visibility preserves values and autocomplete, never submits, rese
   await page.goto('/');
   await openReading(page);
   await page.getByRole('slider', { name: 'Text size', exact: true }).fill('200');
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await page.setViewportSize({ width: 375, height: 900 });
   await page.getByRole('button', { name: 'Account', exact: true }).click();
   const form = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
@@ -78,7 +67,7 @@ test('profile and password recovery offer independent visibility controls for ev
   await login.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(page.locator('.sidebar-user')).toContainText('Sample Citizen Two');
   await page.getByRole('button', { name: 'My profile', exact: true }).click();
-  for (const label of ['Current password', 'New password', 'Confirm new password', 'MuniAlert password']) {
+  for (const label of ['Current password', 'New password', 'Confirm new password']) {
     const input = page.getByLabel(label, { exact: true });
     await input.fill('Synthetic visibility example');
     await page.getByRole('button', { name: `Show ${label.toLowerCase()}`, exact: true }).click();

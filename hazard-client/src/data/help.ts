@@ -54,6 +54,7 @@ export const manualSections: ManualSection[] = [
     'Sensitive administrative changes may ask for your password and authenticator or recovery code again. Your pending edit is kept; cancelling verification does not save it. Verification lasts five minutes on the current session/device.',
     'Settings → Account security & email shows the unused recovery-code count and allows replacing codes after verification. Replacing codes revokes other credentials.',
     'When municipal email delivery is enabled, verify your local account email from Settings → Account security & email. Enable Report update emails there to receive references and status changes for your own reports. Forgot your password? requests a single-use 30-minute link for an eligible verified account. A provider email assertion is separate; provider-only accounts use their provider recovery process.',
+    'Forgot your password? Choose Send email reset link for a previously verified deliverable email, or Use recovery code with a code saved from Settings. Codes work once and can also replace an authenticator code; save them before losing access.',
     'A password reset revokes prior credentials and still requires administrator MFA. If your phone and recovery codes are lost, use the approved municipal support process. Email/scanner/hosting and physical-device acceptance are separate from source implementation.',
   ], keywords: 'security mfa authenticator two factor password reset recovery email codes login lost phone' },
   { id: 'reading', audience: 'all', title: 'Make text easier to read', summary: 'Text size, contrast, spacing, motion and action messages.', steps: [
@@ -65,7 +66,7 @@ export const manualSections: ManualSection[] = [
     'Signed-in preferences are saved separately to your account and restored on other devices after sign-in. Guest preferences stay on this device. A sync error keeps your local changes and offers Retry saving preferences in Settings. Reset reading settings restores the defaults. Browser zoom and phone text settings remain available.',
   ], keywords: 'accessibility read text size large font bold contrast spacing animation motion toast messages android older elderly' },
   { id: 'getting-started', audience: 'all', title: 'Sign in and find your way around', summary: 'Your account, navigation and the preview workspace.', steps: [
-    'Use Sign in or the account button. Create a citizen account with your name, email and password. Google or Facebook sign-in is available only when enabled by the municipality.',
+    'Use Sign in or the account button. Create a citizen account with your name, email and password. Google and Facebook sign-in buttons are currently hidden; use your email and password.',
     'On a phone, use Home, Map, Report, Updates and More. More opens the complete navigation, including this guide. Administrator navigation shows Review and Manage instead of citizen reporting.',
     'In a popup, scroll the middle to read all fields or details. The title, close button and bottom actions stay visible. Use Go back to cancel a confirmation without losing the form underneath.',
     'A Demo workspace banner means the records are fictional. Exit preview before sending a real report. A report is accepted only when the system returns a reference number.',
@@ -89,7 +90,7 @@ export const manualSections: ManualSection[] = [
   { id: 'location', audience: 'citizen', title: 'Confirm the incident location', summary: 'Use phone GPS, adjust the pin or enter a location manually.', steps: [
     'Choose Use current location and allow location access if you want to use your phone GPS. Check the accuracy shown; your current position may be different from the incident location.',
     'Choose Adjust pin when the incident is elsewhere. Tap the map or move the pin, then check the barangay and nearby landmarks.',
-    'If GPS is denied or unavailable, choose Choose location on map. Place the incident pin, or enter the selected latitude and longitude if you know them.',
+    'If GPS is denied or unavailable, choose Choose location on map. Tap or drag the incident pin, or pan the map and use Place pin at map center. Raw coordinates are hidden in the community report form.',
     'Tap Confirm location. Changing the pin clears that confirmation, so confirm again before submitting. Original phone GPS, the selected incident pin and later verified location are kept separately.',
   ], note: 'A public map marker is an approximate area. Use the private report details for a precise incident location.', keywords: 'gps permission denied coordinates latitude longitude mapa lokasyon accuracy manual pin' },
   { id: 'duplicates', audience: 'citizen', title: 'Check a similar nearby report', summary: 'Help the municipality avoid duplicate incident records.', steps: [

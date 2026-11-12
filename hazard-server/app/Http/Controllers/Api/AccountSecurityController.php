@@ -72,7 +72,7 @@ class AccountSecurityController extends Controller
 
         return DB::transaction(function () use ($request, $mfa, $sessions) {
             $user = User::whereKey($request->user()->id)->lockForUpdate()->firstOrFail();
-            abort_unless($sessions->valid($request, $user) && $user->mfa_enabled, 403);
+            abort_unless($sessions->valid($request, $user) && ($user->has_password || $user->mfa_enabled), 403);
             $codes = $mfa->recoveryCodes($user);
             $sessions->invalidate($user, $request);
             app(SecurityEvents::class)->record('mfa_recovery_regenerated', $user, $request);

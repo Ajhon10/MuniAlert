@@ -3,8 +3,10 @@
 .modal-header, .modal-footer { flex: 0 0 auto; position: relative; }
 .modal-header > div { min-width: 0; }
 .modal-header h2 { overflow-wrap: anywhere; }
-.modal-body { min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; scrollbar-gutter: stable; scroll-padding-block: 20px; }
-.modal-body > .form-body { margin: 0; }
+.modal-body { --modal-body-padding: 24px; min-height: 0; padding: var(--modal-body-padding); overflow-y: auto; overscroll-behavior-y: contain; scrollbar-gutter: stable; scroll-padding-block: 20px; }
+.modal-body .form-body { margin: 0; padding: 0; }
+.modal-body .reading-settings { padding: 0; }
+.modal-footer:has(.modal-actions:empty) { display: none; }
 .modal-body:focus-visible { outline: 2px solid #26765d; outline-offset: -3px; }
 .modal-body :is(input, textarea, select, button) { scroll-margin-block: 20px; }
 .modal-footer { display: flex; flex-direction: column; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--border); background: #f7fbf9; }
@@ -24,6 +26,7 @@
 .tour-footer { flex: 0 0 auto; padding: 12px 24px 16px; border-top: 1px solid var(--border); background: #f7fbf9; }
 .tour-footer .tour-progress { margin-top: 0; }
 @media (max-width: 639px) {
+  .modal-body { --modal-body-padding: 18px; }
   .modal[open] { max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
   .modal.wide[open] { height: 100dvh; max-height: 100dvh; padding-bottom: 0; }
   .modal-footer { padding: 12px 16px max(12px, env(safe-area-inset-bottom)); }

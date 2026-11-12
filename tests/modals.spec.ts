@@ -40,7 +40,7 @@ test('report forms keep header and submit visible while only the body scrolls, i
   const confirmation = page.getByRole('dialog', { name: 'Discard this report?' });
   await expect(confirmation).toBeVisible();
   await fixedChrome(confirmation);
-  await confirmation.getByRole('button', { name: 'Go back', exact: true }).click();
+  await confirmation.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await expect(dialog).toBeVisible();
   expect(await page.evaluate(() => document.body.style.overflow)).toBe('hidden');
   await dialog.getByRole('button', { name: 'Close dialog' }).click();
@@ -49,7 +49,7 @@ test('report forms keep header and submit visible while only the body scrolls, i
   expect(await page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
 });
 
-test('sign-in and report details use the shared fixed footer and preserve native form validation', async ({ page }) => {
+test('sign-in and report details share body padding and optional action footers with server field validation', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 600 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Account', exact: true }).click();
@@ -66,9 +66,9 @@ test('sign-in and report details use the shared fixed footer and preserve native
   await page.goto('/?demo=1');
   await page.locator('.report-summary').first().click();
   const detail = page.getByRole('dialog', { name: 'Hazard report', exact: true });
-  await fixedChrome(detail);
-  await expect(detail.locator('.modal-footer').getByRole('button', { name: 'Close', exact: true })).toBeVisible();
-  await detail.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(detail.locator('.modal-footer')).toHaveCount(0);
+  await expect(detail.getByRole('button', { name: 'Close dialog', exact: true })).toBeVisible();
+  await detail.getByRole('button', { name: 'Close dialog', exact: true }).click();
   expect(await page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
 });
 

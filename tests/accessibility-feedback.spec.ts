@@ -26,7 +26,7 @@ test('reading controls reflow at 200%, persist across restart, and reset', async
   expect(await panel.locator('.reading-preview p').evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBe(32);
   await expect.poll(() => panel.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
   await page.screenshot({ path: 'test-results/reading-settings-200-phone.png' });
-  await panel.getByRole('button', { name: 'Done', exact: true }).click();
+  await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
   for (const width of [320, 375, 768, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -60,7 +60,7 @@ test('reading controls remain usable with denied local storage and device reduce
   await panel.getByRole('slider', { name: 'Text size', exact: true }).fill('130');
   await expect(page.locator('html')).toHaveAttribute('data-text-size', '130');
   await panel.getByRole('button', { name: 'Reset reading settings', exact: true }).click();
-  await panel.getByRole('button', { name: 'Done', exact: true }).click();
+  await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await expect(page.locator('html')).toHaveClass(/reduceMotion/);
   await navigateWorkspace(page, 'Dashboard');
   await expect(page.locator('.metric-value .animated-number').first().locator('.visually-hidden')).toHaveText('06');
@@ -222,7 +222,7 @@ test('large-text manual, navigation and landscape forms keep controls reachable'
   await openReading(page);
   const panel = page.getByRole('dialog', { name: 'Reading & accessibility', exact: true });
   await expect(panel).toBeVisible();
-  await panel.getByRole('button', { name: 'Done', exact: true }).click();
+  await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await page.getByRole('button', { name: 'Create hazard report', exact: true }).click(); await continueReport(page);
   await page.setViewportSize({ width: 844, height: 390 });
   const report = page.getByRole('dialog', { name: 'Report a hazard', exact: true });
