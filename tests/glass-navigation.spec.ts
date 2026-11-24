@@ -11,7 +11,7 @@ test('phone dock navigates, opens reporting, and browser back restores the view'
   await expect(page.locator('h1')).toHaveText('Community hazard map');
   await expect(page).toHaveURL(/view=map/);
   await page.goBack();
-  await expect(page.locator('h1')).toHaveText('Community dashboard');
+  await expect(page.locator('h1')).toHaveText(/Magandang (umaga|hapon|gabi),/);
   await dock.getByRole('button', { name: 'Create hazard report' }).click(); await continueReport(page);
   await expect(page.getByRole('dialog', { name: 'Report a hazard', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close dialog' }).click();
@@ -31,17 +31,17 @@ test('packaged web client signs in through the same Laravel origin', async ({ pa
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(origin);
-  await expect(page.locator('h1')).toHaveText('Community dashboard');
+  await expect(page.locator('h1')).toHaveText(/Magandang (umaga|hapon|gabi),/);
   const script = await page.locator('script[type=module]').getAttribute('src');
   expect(script).toMatch(/^\/app\/assets\//);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
-  await auth.getByLabel('Email address').fill('admin@example.test');
+  await auth.getByLabel('Email address').fill('admin@munialert.test');
   await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
   await finishAdminMfa(page);
   await expect(auth).toHaveCount(0);
-  await expect(page.locator('h1')).toHaveText('Municipal dashboard');
+  await expect(page.locator('h1')).toHaveText(/Magandang (umaga|hapon|gabi),/);
   await page.reload();
   await expect(page.locator('.header-account')).toContainText('Municipal administrator');
   const cookie = (await page.context().cookies()).find(item => item.name.includes('session'));
@@ -54,12 +54,12 @@ test('sign-in resumes the protected destination selected by a guest', async ({ p
   await page.getByRole('button', { name: 'Open notifications', exact: true }).click();
   await page.getByRole('dialog', { name: 'Notifications', exact: true }).getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
-  await auth.getByLabel('Email address').fill('citizen.one@example.test');
+  await auth.getByLabel('Email address').fill('resident1@munialert.test');
   await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_CITIZEN_PASSWORD!);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(auth).toHaveCount(0);
   await expect(page.getByRole('dialog', { name: 'Notifications', exact: true })).toBeVisible();
-  await expect(page.locator('h1')).toHaveText('Community dashboard');
+  await expect(page.locator('h1')).toHaveText(/Magandang (umaga|hapon|gabi),/);
   await expect(page).not.toHaveURL(/view=activity/);
 });
 

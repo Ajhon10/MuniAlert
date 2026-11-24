@@ -3,7 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Services\AccountOnboarding;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -41,5 +43,18 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /** Explicit, already-reviewed synthetic reporter for incident workflow tests. */
+    public function verifiedReporter(): static
+    {
+        return $this->state(fn () => ['local_email_verified_at' => now()])->afterCreating(function (User $user) {
+            app(AccountOnboarding::class)->accept($user);
+            DB::table('identity_verifications')->insert([
+                'id' => (string) Str::uuid(), 'user_id' => $user->id, 'applicant_name' => $user->name,
+                'document_type' => 'philsys', 'status' => 'approved', 'consent_version' => config('onboarding.policy_version'),
+                'consented_at' => now(), 'expires_at' => now()->addDays(7), 'reviewed_at' => now(), 'created_at' => now(), 'updated_at' => now(),
+            ]);
+        });
     }
 }

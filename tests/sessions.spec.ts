@@ -5,10 +5,10 @@ async function login(page: Page) {
   await page.goto('/');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Welcome to your community' });
-  await dialog.getByLabel('Email address').fill('citizen.one@example.test');
+  await dialog.getByLabel('Email address').fill('resident1@munialert.test');
   await dialog.getByLabel('Password', { exact: true }).fill(process.env.E2E_CITIZEN_PASSWORD!);
   await dialog.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.locator('.header-account')).toContainText('Sample Citizen One');
+  await expect(page.locator('.header-account')).toContainText('Synthetic Resident 1');
 }
 
 test('remembered web login returns in a new browser context and logout removes it', async ({ page, context, browser, baseURL }) => {
@@ -22,7 +22,7 @@ test('remembered web login returns in a new browser context and logout removes i
   try {
     const returned = await reopened.newPage();
     await returned.goto('/');
-    await expect(returned.locator('.header-account')).toContainText('Sample Citizen One');
+    await expect(returned.locator('.header-account')).toContainText('Synthetic Resident 1');
     await accountOption(returned, 'Log out');
     await returned.getByRole('dialog', { name: 'Sign out?' }).getByRole('button', { name: 'Sign out', exact: true }).click();
     await expect(returned.locator('.header-account')).toContainText('Community guest');
@@ -41,7 +41,7 @@ test('signing out this browser preserves another registered browser after restar
     await page.getByRole('dialog', { name: 'Sign out?' }).getByRole('button', { name: 'Sign out', exact: true }).click();
     await expect(page.locator('.header-account')).toContainText('Community guest');
     await other.clearCookies(); await other.addCookies(proof); await second.reload();
-    await expect(second.locator('.header-account')).toContainText('Sample Citizen One');
+    await expect(second.locator('.header-account')).toContainText('Synthetic Resident 1');
   } finally { await other.close(); }
 });
 
@@ -59,7 +59,7 @@ test('password change keeps this browser signed in and rejects another browser s
     await page.getByRole('dialog', { name: 'Save profile changes?' }).getByRole('button', { name: 'Save profile', exact: true }).click();
     await expect(page.getByText('Profile updated.', { exact: true })).toBeVisible();
     await page.reload();
-    await expect(page.locator('.header-account')).toContainText('Sample Citizen One');
+    await expect(page.locator('.header-account')).toContainText('Synthetic Resident 1');
     await other.reload();
     await expect(other.locator('.header-account')).toContainText('Community guest');
   } finally { await otherContext.close(); }

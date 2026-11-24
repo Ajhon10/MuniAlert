@@ -4,7 +4,7 @@ import type { Page } from '@playwright/test';
 async function passwordLogin(page: Page) {
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
-  await auth.getByLabel('Email address', { exact: true }).fill('admin@example.test');
+  await auth.getByLabel('Email address', { exact: true }).fill('admin@munialert.test');
   await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(auth.getByLabel('2FA code digit 1', { exact: true })).toBeVisible();
@@ -21,7 +21,7 @@ test('administrator password grants no access until a fresh second factor succee
   await expect(auth.locator('.toast-message.error')).toContainText('Verification failed');
   await expect(auth.locator('.form-error')).toHaveCount(0);
   await finishAdminMfa(page);
-  await expect(page.getByRole('heading', { name: 'Municipal dashboard', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Magandang (umaga|hapon|gabi),/ })).toBeVisible();
   await navigateWorkspace(page, 'Settings');
   await expect(page.locator('.account-security')).toContainText('Two-factor authentication (2FA) is enabled');
 });
@@ -89,7 +89,7 @@ test('packaged web CSP runs the app and blocks injected inline script', async ({
   });
   const response = await page.goto(origin + '/?demo=1');
   expect(response?.headers()['content-security-policy']).toContain("script-src 'self'");
-  await expect(page.getByRole('heading', { name: 'Community dashboard', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Magandang (umaga|hapon|gabi),/ })).toBeVisible();
   await expect(page.locator('.maplibregl-canvas')).toBeVisible();
   expect(await page.evaluate(() => (window as any).policyViolations)).toEqual([]);
   await page.evaluate(() => { const script = document.createElement('script'); script.textContent = 'window.inlineScriptExecuted = true'; document.body.append(script); });
@@ -99,7 +99,7 @@ test('packaged web CSP runs the app and blocks injected inline script', async ({
 
 test('two competing MFA submissions can issue only one credential', async ({ request }) => {
   const origin = `http://127.0.0.1:${process.env.HAZARD_API_PORT || '18000'}`;
-  const pending = await request.post(origin + '/api/auth/login', { headers: { Accept: 'application/json' }, data: { email: 'admin@example.test', password: process.env.E2E_ADMIN_PASSWORD } });
+  const pending = await request.post(origin + '/api/auth/login', { headers: { Accept: 'application/json' }, data: { email: 'admin@munialert.test', password: process.env.E2E_ADMIN_PASSWORD } });
   expect(pending.ok()).toBe(true); const challenge = await pending.json();
   const data = { challenge_token: challenge.challenge_token, code: adminOtp() };
   // MySQL mode starts a second independent PHP process. SQLite's ordinary gate

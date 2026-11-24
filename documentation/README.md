@@ -1,5 +1,9 @@
 # Capstone technical documentation
 
+[Editable Chapters 1?5 capstone (DOCX)](capstone/MUNIALERT-CAPSTONE.docx) ? [PDF](capstone/MUNIALERT-CAPSTONE.pdf) ? [source](capstone/MANUSCRIPT.md). School/proponent/adviser and actual evaluation details remain editable. See [Hostinger's current preparation checklist](HOSTINGER_WEB_CLOUD.md) for account/domain/privacy/administrator prerequisites.
+
+[Reporter verification, government-ID privacy and full feature/mobile readiness audit](REPORTER_VERIFICATION_AUDIT_2026-11-24.md) records the 24 November changes and external prerequisites.
+
 [Admin charts, PDF/Word/Excel exports and the header account menu](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md) describes the shared statistics workflow and updated notification sizing.
 
 [Emergency-first reports, actionable notifications, hazard sounds and private image review](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md) records the current workflow; real contacts and a local classifier need configuration.

@@ -77,7 +77,7 @@ Before collecting results, define target users, authorized sample selection, app
 
 ## FR-02 social sign-in extension
 
-Implementation: `SocialAuthController`, `SocialAccounts`, social-auth migration, `socialAuth.ts`, `SocialLoginButtons`, AuthForm/ProfilePanel, Android App/Browser plugins and manifest callback. Evidence: isolated backend `SocialAuthenticationTest`, browser `social-auth.spec.ts` and full gate. Required external acceptance: real Google/Facebook new/repeat/cancel/link flows on HTTPS and physical Android including a killed-app callback. Provider console credentials/audience/review, publication privacy/deletion requirements and deployment remain pending. See [provider setup](SOCIAL_AUTH_SETUP.md).
+Google and Facebook authentication have been removed: provider/prepare/callback/exchange/link routes, frontend integration, native callback, Socialite and native App/Browser dependencies are retired. Email/password, MFA and email/saved-code recovery remain. Historical social tables/migrations are preserved without reset; they provide no sign-in route. Former provider-only accounts must establish a password using the existing verified-email or saved-code recovery process. Social sharing of reviewed news remains a separate feature. SocialAuthenticationTest and social-auth.spec.ts now verify removal and absence of automatic provider authentication.
 
 ## Identity, guidance and promotion extension
 
@@ -101,7 +101,7 @@ See [the dated review](ACCESSIBILITY_FEEDBACK_2026-11-10.md). Local evidence is 
 
 | Requirement | Implementation | Local evidence / remaining acceptance |
 | --- | --- | --- |
-| FR-26 | Shared MFA/full-credential boundary across password/social/native; approved enrollment; replay/expiry/attempt guards; recent verification; version/status enforcement; verified-local-email recovery; private queued mail; CSP; fail-closed scanner adapter; redacted events; static/secret CI checks | AccountSecurityTest, SocialAuthenticationTest, UploadSecurityTest, security-phase2 browser tests, isolated MySQL dual-process consumption, PHPStan/TypeScript, Gitleaks positive/negative fixtures and full gate. Real enrollment/recovery policy, mail/scanner/Hostinger, staging, backup, alerts, Android and municipal/workload acceptance remain pending. |
+| FR-26 | Shared MFA/full-credential boundary across password/web/native; approved enrollment; replay/expiry/attempt guards; recent verification; version/status enforcement; verified-local-email recovery; private queued mail; CSP; fail-closed scanner adapter; redacted events; static/secret CI checks | AccountSecurityTest, SocialAuthenticationTest, UploadSecurityTest, security-phase2 browser tests, isolated MySQL dual-process consumption, PHPStan/TypeScript, Gitleaks positive/negative fixtures and full gate. Real enrollment/recovery policy, mail/scanner/Hostinger, staging, backup, alerts, Android and municipal/workload acceptance remain pending. |
 
 Detailed states: [implementation](SECURITY_PHASE_2_2026-11-10.md), [operations](SECURITY_OPERATIONS_2026-11-10.md), [evidence](evidence/security-phase-2-2026-11-10.json).
 
@@ -135,3 +135,20 @@ See [dated implementation and limits](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-
 ## FR-31 administrative statistics and header navigation
 
 `IncidentStatistics`, `StatisticsExport`, `IncidentAnalytics`, `StatisticsChart` and `AccountMenu` implement category counts, daily/weekly/monthly/yearly charts, bounded administrator PDF/DOCX/XLSX exports and the requested account navigation. `StatisticsExportTest` verifies counts, dates, empty periods, authorization and document contents. `admin-statistics.spec.ts` exercises charts/downloads and keyboard account access; the notification preview test compares row/header height at normal/enlarged text. Hosting, native downloads, actual office-application rendering and municipal workload acceptance remain separate. See [implementation scope](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).
+
+
+## FR-32 ? Verified reporter onboarding
+
+| Requirement | Implementation | Evidence / limits |
+| --- | --- | --- |
+| FR-32 | AccountOnboarding, RequireVerifiedReporter, transactional signup mail/policy acceptance, private encrypted IdentityVerificationController, versioned policies, Settings panels and bounded identity cleanup; profile-name revocation and commit-time rechecks | ReporterVerificationTest, existing incident/privacy regressions and reporter-verification.spec.ts. Separate Gmail password/public privacy contact, operator policy/retention approval, live delivery and physical-device acceptance remain open. See [audit](REPORTER_VERIFICATION_AUDIT_2026-11-24.md). |
+
+
+## FR-32 administrator extension and delivery artifacts
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. ReporterVerificationTest exercises reporting without an ID and badge approval/withdrawal/privacy; AdminIdentityTest exercises optional admin badges and persistent email/policy gates. The Hostinger template and capstone follow revision 3; older mandatory-ID packages are superseded.
+
+
+## FR-33 — Administrator lifecycle
+
+InitialAccountSeeder, AdminAccountController and AdminAccountsPanel implement private initial provisioning, idempotency, creation, bounded MFA setup and deletion. InitialAccountSeederTest/AdminAccountsTest and admin-accounts.spec.ts cover production seed configuration, no implicit promotion/verification, fresh authentication, self-deletion denial, credential revocation, retained audits and the Settings journey. Host-side seed/login/acceptance remain separate.

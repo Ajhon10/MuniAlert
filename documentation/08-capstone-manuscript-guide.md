@@ -1,5 +1,11 @@
 # 08 — Capstone manuscript preparation guide
 
+## Complete editable draft ? 24 November 2026
+
+The five-chapter manuscript is now available as [editable Word](capstone/MUNIALERT-CAPSTONE.docx), [PDF](capstone/MUNIALERT-CAPSTONE.pdf), [HTML](capstone/MUNIALERT-CAPSTONE.html) and [Markdown](capstone/MANUSCRIPT.md). The seven numbered chapter/front-matter/reference files under `documentation/capstone/` are the editable sources. Run `npm run docs:capstone` after source changes; regeneration replaces generated files, so transfer Word-only edits into source first if they must be retained.
+
+The draft includes Introduction, Related Literature and Systems, Methodology/Design, Implementation/Results, Conclusions/Recommendations, references and proposed evaluation forms. Academic identity fields remain editable as requested. It preserves the actual interview review's finding that no major telephone-reporting problem was identified. Chapter 4 distinguishes engineering evidence from unperformed municipal evaluation; Chapter 5 makes no invented field-effectiveness claims. Follow the institution's approved structure before submission.
+
 This is an adaptable technical manuscript guide, not a fabricated completed study. Follow the institution's required chapter structure, citation style, approval process and formatting.
 
 ## Suggested front matter

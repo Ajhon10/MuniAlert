@@ -23,7 +23,7 @@ class SecurityBaselineTest extends TestCase
 
     public function test_registration_ignores_privileged_fields_and_hides_credentials(): void
     {
-        $response = $this->postJson('/api/auth/register', [
+        $response = $this->postJson('/api/auth/register', ['accepted' => true, 'policy_version' => config('onboarding.policy_version'),
             'name' => 'Synthetic Citizen', 'email' => 'citizen@example.test', 'password' => 'synthetic-password-123',
             'role' => 'admin', 'email_verified_at' => now()->toISOString(), 'password_enabled' => false,
         ])->assertCreated()->assertJsonPath('user.role', 'citizen')->assertJsonMissingPath('user.password')->assertJsonMissingPath('user.remember_token');
@@ -32,10 +32,10 @@ class SecurityBaselineTest extends TestCase
 
     public function test_malformed_email_and_oversized_multibyte_passwords_are_validation_errors(): void
     {
-        $this->postJson('/api/auth/register', ['name' => 'Synthetic Citizen', 'email' => ['unexpected'], 'password' => 'synthetic-password-123'])
+        $this->postJson('/api/auth/register', ['accepted' => true, 'policy_version' => config('onboarding.policy_version'), 'name' => 'Synthetic Citizen', 'email' => ['unexpected'], 'password' => 'synthetic-password-123'])
             ->assertUnprocessable()->assertJsonValidationErrors('email');
         foreach ([str_repeat('a', 73), str_repeat('é', 37), "synthetic-password\0"] as $password) {
-            $this->postJson('/api/auth/register', ['name' => 'Synthetic Citizen', 'email' => 'new@example.test', 'password' => $password])
+            $this->postJson('/api/auth/register', ['accepted' => true, 'policy_version' => config('onboarding.policy_version'), 'name' => 'Synthetic Citizen', 'email' => 'new@example.test', 'password' => $password])
                 ->assertUnprocessable()->assertJsonValidationErrors('password');
             $this->postJson('/api/auth/login', ['email' => 'new@example.test', 'password' => $password])
                 ->assertUnprocessable()->assertJsonValidationErrors('password');
@@ -46,7 +46,7 @@ class SecurityBaselineTest extends TestCase
     public function test_password_boundary_is_accepted_and_profile_changes_cannot_escalate_roles(): void
     {
         $password = str_repeat('é', 36);
-        $response = $this->postJson('/api/auth/register', ['name' => 'Synthetic Citizen', 'email' => 'boundary@example.test', 'password' => $password])->assertCreated();
+        $response = $this->postJson('/api/auth/register', ['accepted' => true, 'policy_version' => config('onboarding.policy_version'), 'name' => 'Synthetic Citizen', 'email' => 'boundary@example.test', 'password' => $password])->assertCreated();
         $user = User::findOrFail($response->json('user.id'));
         $this->assertTrue(Hash::check($password, $user->password));
         $this->authenticateUser($user);

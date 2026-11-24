@@ -169,21 +169,19 @@ npm.cmd run db:migrate
 npm.cmd run db:seed
 ```
 
-The included migrations create the tables; normal seeding reads CSV reference data and creates configured local sample accounts when their three private passwords are set. A SQL dump from the owner is unnecessary. A fresh installation has no existing reports or user accounts. Private evidence storage is created as needed; a public `storage:link` is not required for report photos.
+The included migrations create the tables; normal local seeding reads CSV reference data and automatically creates the three ready-to-login sample accounts. A SQL dump from the owner is unnecessary. A fresh seeded installation has the three sample accounts and no incident reports. Private evidence storage is created as needed; a public `storage:link` is not required for report photos.
 
-## 5. Create your test accounts
+## 5. Sign in with the seeded sample accounts
 
-Create an administrator on **your own development database**:
+The seed command above already creates the sample accounts on **your own development database**. No account/password terminal setup is needed:
 
-```powershell
-node scripts/php.mjs hazard-server/artisan hazard:admin admin@example.test
-```
+InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
 
-Answer the name prompt and choose a password of at least 12 characters. The terminal password prompt is hidden; type it and press Enter even if no characters appear. This is a **new MuniAlert website password**, separate from MySQL. Record your test login privately; email recovery requires configured real delivery and sample `.test` accounts cannot receive mail. The owner's login will not automatically exist in your database. At first administrator sign-in, complete authenticator enrollment within the 15-minute provisioning window; see [test-account and 2FA instructions](TEST_ACCOUNTS.md).
+These website logins are separate from MySQL. At first administrator sign-in, complete authenticator enrollment in the app within the existing 15-minute provisioning window; see [test-account and 2FA instructions](TEST_ACCOUNTS.md). Reserved `.test` accounts cannot receive real email. Individually provisioned accounts continue to use the authorized operator process.
 
-For a citizen test, register another account through the application's sign-in dialog. Use separate citizen/admin accounts to test permissions. The optional `DemoAccountSeeder` is not required, and the repository does not distribute a shared administrator password.
+For a citizen test, sign in with a sample resident below or register another account through the application's sign-in dialog. Use separate citizen/admin accounts to test permissions.
 
-Alternatively, [seed local administrator and citizen test accounts](TEST_ACCOUNTS.md) using three different passwords from your private server `.env` and `npm.cmd run db:seed`. The default admin email is `admin@example.test`, configurable with `HAZARD_DEMO_ADMIN_EMAIL`; the seeder preserves existing accounts and refuses production. New passwords must be at least 12 characters and no more than 72 UTF-8 bytes.
+InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
 
 ## 6. Test the website on the PC
 

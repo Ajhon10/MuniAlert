@@ -81,7 +81,7 @@ test('the bundled manual stays readable when the API is unavailable', async ({ p
   await expect(page.locator('#manual-troubleshooting')).toContainText('Unsent forms are not automatically saved');
 });
 
-test('sign-in from the guide and an authenticated provider return preserve the manual destination', async ({ page }) => {
+test('sign-in from the guide and reloading its saved destination preserve the manual', async ({ page }) => {
   await page.goto('/?view=guide');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
@@ -89,10 +89,11 @@ test('sign-in from the guide and an authenticated provider return preserve the m
   await auth.getByLabel('Full name').fill('Guide Return Citizen');
   await auth.getByLabel('Email address').fill(`guide-${Date.now()}@example.test`);
   await auth.getByLabel('Password', { exact: true }).fill('isolated-guide-return-password');
+  await auth.getByRole('checkbox', { name: 'I agree to the terms and conditions and acknowledge the privacy notice.' }).check();
   await auth.getByRole('button', { name: 'Create your account', exact: true }).click();
   await expect(auth).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Guide & user manual', exact: true })).toBeVisible();
-  await page.goto('/?social_auth=success&social_intent=guide&provider=google');
+  await page.reload();
   await expect(page.getByRole('heading', { name: 'Guide & user manual', exact: true })).toBeVisible();
   await expect(page).toHaveURL(/view=guide/);
   await expect(page).not.toHaveURL(/social_auth=/);

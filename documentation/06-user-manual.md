@@ -1,12 +1,24 @@
 # 06 — Citizen and administrator user manual
 
+## Dashboard greeting and compact help — 16 November 2026
+
+The Dashboard welcomes you with Magandang umaga, Magandang hapon or Magandang gabi using Philippine time, and your first name after sign-in. Basista Municipal Hall and your workspace label now appear beside this welcome, freeing the sidebar for navigation. The live date/time stays in the header on both desktop and phones.
+
+Use the small **info** icons beside page headings, dashboard metrics and map/report headings to read explanations. Hover with a mouse, focus with the keyboard or tap on a phone. You can move the pointer over the explanation to read it; press Escape, tap the icon again or tap elsewhere to close it. These replace repeated explanatory strips, including the public hazard-visibility notice. Validation errors, connection failures and required form instructions still appear when needed. [Ready-to-login sample accounts](TEST_ACCOUNTS.md) are available for local development without terminal password setup; administrator authenticator enrollment remains in the app.
+
+## Connection status
+
+A banner stays at the top while connecting or disconnected. **Not connected to the internet** means your device reports it is offline: enable Wi-Fi or mobile data. **Not connected to the municipal server** means the app cannot confirm server availability: check your connection and try **Retry connection**, or wait for automatic retries. The app cannot always distinguish an internet outage from a server outage when the device still reports being online. Request errors also identify server timeouts and HTTP service failures.
+
+When the server becomes reachable, the banner shows **Connected** for three seconds and disappears with a short animation. Reduced-motion settings disable the animation. Keep an unsent form open and retry its action after recovery; reconnection does not automatically submit it. Demo preview has no live connection banner.
+
 ## Updated controls and recovery — 12 November 2026
 
 Dismiss dialogs using the X in their header. Footers contain actions only. Errors float above the page without reducing form space; dismiss a message or use Go to field to correct the server-reported field. Notifications preview at most two lines: select one to open its full authorized report. Opening an achievement card grows that card only.
 
 Report location uses GPS or a map pin. Pan/tap/drag the map, or choose Place pin at map center, then confirm the location. Raw latitude/longitude inputs are hidden. Content management lets administrators add/edit offices and set each hazard's responsible office; reassign categories before archiving an office. New routing does not rewrite existing report history.
 
-Forgot your password offers Send email reset link or Use recovery code. Email needs a verified deliverable account address and configured municipal mail. Save one-time recovery codes from Settings before losing access. A password reset signs out old sessions and keeps administrator authenticator 2FA required. Google/Facebook sign-in buttons are temporarily hidden.
+Forgot your password offers Send email reset link or Use recovery code. Email needs a verified deliverable account address and configured municipal mail. Save one-time recovery codes from Settings before losing access. A password reset signs out old sessions and keeps administrator authenticator 2FA required. Google/Facebook sign-in has been removed.
 
 A news post's Facebook/X/WhatsApp action opens prepared reviewed text. For Facebook, use Copy post & open Facebook, then paste the copied text into the composer. A live preview requires the deployed public HTTPS news URL; localhost cannot be reached by Facebook or other users. Private evidence and exact locations are excluded. See [workflow notes](REUSABLE_WORKFLOWS_2026-11-12.md).
 
@@ -117,9 +129,7 @@ Sign in once on your personal browser or Android app. Normal closing/reopening r
 
 ## Sign up or sign in with Google or Facebook
 
-Choose **Continue with Google** or **Continue with Facebook** on the sign-in/create-account form. Allow the provider to share your name and email, then return to MuniAlert. Your first successful sign-in creates a citizen account. On Android, complete this in the system browser; MuniAlert resumes when the browser returns to the app. If you were about to report a hazard, the report form opens after sign-in. Cancel sign-in in MuniAlert if you closed the browser.
-
-Unavailable buttons mean the municipality has not enabled that provider; use email. If the provider does not share an email, allow email access or register using email. If your email already belongs to an account, sign in using its existing method. For an email/password account, open My profile and confirm your MuniAlert password under Connected sign-in accounts before connecting a provider. Social-only accounts continue using their original provider; manage that provider's password through its own account settings.
+Google/Facebook authentication has been removed from the application. Use email/password, authenticator MFA for administrators and the existing email/saved-code recovery flows. Historical social tables remain for migration compatibility, with no active provider routes. Sharing reviewed news to Facebook or other platforms remains available.
 
 ## Incident observations, resolution and period records
 
@@ -185,3 +195,16 @@ Urgent assistance requests are private reporter flags. Open the report from the 
 In Content management, add approved agency numbers with service/area/address and optional paired coordinates. Closest means straight-line distance to the saved agency location. No contacts are currently published in the localhost database; publish approved contacts before public use. Do not use fictional test numbers as real hotlines.
 
 The bottom-right **Help tour** button launches the highlighted walkthrough above the phone dock. The searchable manual remains in Settings. Closing/Escape returns keyboard focus to the launcher. See [implementation and service readiness](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
+
+
+## Email setup and optional verified identity
+
+1. Register with your name/email/password and accept the current terms/privacy notice.
+2. Open the SMTP verification link, return to Settings and refresh verification status. Once email/policies are complete you can submit or confirm a report without an ID.
+3. Optionally select one Philippine government ID in Settings to earn the blue profile check badge. Cover ID number, QR/barcode, signature, birth date and address; retain readable name/photo/issuer/type. Supply one redacted JPEG/PNG/WebP, read the separate consent and submit privately. Do not email an ID when collection is unavailable.
+4. A municipal reviewer approves or requests resubmission. The image is deleted after review/withdrawal or seven-day expiry. Withdrawal or name change removes the badge, while reporting remains available. Email changes require fresh email verification.
+5. View the badge beside your name in My profile. It records manual identity review, not incident truth or endorsement. Admins review optional submissions in Settings > Government-ID review, with recent authentication and no self-approval.
+
+## Administrator account verification
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. In Settings, use Administrator accounts to create a replacement with a private initial password, authorize MFA setup if needed and delete another administrator after confirming. Your own account cannot be deleted while you use it. Deletion removes sign-in access and retains municipal action history. InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.

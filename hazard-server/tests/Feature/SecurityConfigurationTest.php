@@ -22,12 +22,9 @@ class SecurityConfigurationTest extends TestCase
             'database.default' => 'mysql', 'database.connections.mysql.username' => 'dedicated_application_user',
             'hazards.photo_disk' => 'evidence', 'cors.allowed_origins' => ['https://hazards.example.test', 'https://localhost', 'capacitor://localhost'], 'cors.allowed_origins_patterns' => [],
             'hashing.driver' => 'bcrypt', 'hashing.bcrypt.rounds' => 12,
-            'hazards.demo_admin_password' => null, 'hazards.demo_citizen_one_password' => null, 'hazards.demo_citizen_two_password' => null,
         ]);
         $this->artisan('hazard:security-check', ['--json' => true])->expectsOutputToContain('"passed": true')->assertSuccessful();
         config(['cors.allowed_origins' => ['*']]);
         $this->artisan('hazard:security-check')->expectsOutputToContain('FAIL Explicit HTTPS web origins')->assertFailed();
-        config(['cors.allowed_origins' => ['https://hazards.example.test'], 'hazards.demo_admin_password' => 'synthetic-demo-password']);
-        $this->artisan('hazard:security-check')->expectsOutputToContain('FAIL Demo passwords absent')->assertFailed();
     }
 }

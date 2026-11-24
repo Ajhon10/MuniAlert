@@ -28,7 +28,7 @@ async function emailUpdates(event: Event) {
 <template>
   <section class="cms-card account-security"><h2>Account security & email</h2>
     <div v-if="state" class="security-form">
-      <p>{{ state.mfa_enabled ? 'Two-factor authentication (2FA) is enabled. Use the six-digit code from your authenticator app.' : state.mfa_required ? 'Administrator sign-in requires authenticator-app 2FA.' : 'Use your password or connected provider to sign in.' }}</p>
+      <p>{{ state.mfa_enabled ? 'Two-factor authentication (2FA) is enabled. Use the six-digit code from your authenticator app.' : state.mfa_required ? 'Administrator sign-in requires authenticator-app 2FA.' : 'Use your email and password to sign in.' }}</p>
       <h3>Saved recovery codes</h3><p>{{ state.recovery_codes_remaining }} unused recovery codes remaining. Save codes before you lose access: each can reset a forgotten password, and also replace an authenticator code when 2FA is enabled.</p>
       <button v-if="user.has_password !== false || state.mfa_enabled" class="button secondary" :disabled="busy" @click="regenerate">{{ state.recovery_codes_remaining ? 'Replace recovery codes' : 'Create recovery codes' }}</button>
       <h3>Email verification & recovery</h3><p>Your account email is {{ state.email_verified ? 'verified' : 'not verified' }}.</p>

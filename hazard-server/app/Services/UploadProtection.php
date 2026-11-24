@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 
 class UploadProtection
 {
-    public function inspect(string $bytes): void
+    public function inspect(string $bytes, bool $retainRejectedSamples = true): void
     {
         if (! config('security.scan_uploads')) {
             return;
@@ -23,7 +23,7 @@ class UploadProtection
             // Best-effort private samples, bounded to 100 files total under a
             // shared lock. No report/media row is created for a rejected upload.
             $lock = SecurityLock::make('security-quarantine', 10);
-            if ($lock->get()) {
+            if ($retainRejectedSamples && $lock->get()) {
                 try {
                     $disk = Storage::disk('quarantine');
                     $prefix = now()->format('Y-m-d');

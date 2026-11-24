@@ -143,14 +143,7 @@ The system does not retain the original full-resolution phone image. The stored 
 
 ## Social authentication migration
 
-`2026_11_04_000001_add_social_authentication` adds `users.password_enabled` (boolean, default true); the user response exposes computed `has_password`, while hiding the underlying flag and hash. Social-only accounts store a random disabled password hash, preserving the established non-null password schema.
-
-| Table | Fields and invariants |
-| --- | --- |
-| social_accounts | id; user_id FK/cascade; provider (16); provider_id (255); timestamps. Unique (provider, provider_id) and (user_id, provider). Stores identity only, no provider tokens. |
-| social_auth_attempts | UUID id; provider/platform/mode; allowlisted return_origin; intent; code_challenge (43); link_user_id/user_id FKs/null-on-delete; auth_fingerprint (64); access_token_id; exchange_code_hash (64); failures; expires_at index; started_at/completed_at/consumed_at; timestamps. Start lifetime 10 minutes; completed Android code lifetime 90 seconds; row-locked one-use consumption. |
-
-Both tables relate to users. Link proof includes a password/remember-token fingerprint and optional mobile credential ID; it is rechecked at callback. No foreign key is attached to access_token_id so expired/revoked tokens may be pruned and detected as absent. Schedule cleanup removes attempts expired for more than a day. Additive migration preserves existing user/report data; do not reset/reseed a normal database. Schema rollback drops social identities and would strand social-only accounts: plan recovery before any production rollback.
+Historical social_accounts/social_auth_attempts schema is retained for migration/history compatibility; sign-in integration and routes are removed. No provider credentials/tokens are used for authentication.
 
 ## Account security extension — 10 November 2026
 
@@ -190,3 +183,17 @@ Existing notifications hold a safe status snapshot used for optional report emai
 Migration 2026_11_11_000002 adds hazard_reports.assistance_needed default false. The flag is private, reporter-declared and cannot certify severity/facts. Existing reports remain unchanged. Admin report_submitted and reporter report_updated notifications share the existing table but are role-scoped on reads; single read is owner-scoped. Submission alert insertion is transactional.
 
 Migration 2026_11_11_000003 adds hazard_photos.authenticity_review_required default false, ai_status, nullable ai_probability/model/time, assessment_version and nullable review_verdict/note/by/at/reviewed_assessment_version. New stored photos require review; legacy photos are not retroactively certified. Only required incident images gate factual acceptance. Results/notes are admin-only and never public/reporter projections. A separate image-screening queue contains opaque photo UUIDs only. Localhost additive migration preserved four accounts/zero reports.
+
+
+## Verified reporter records ? 24 November 2026
+
+Migration 2026_11_24_000001 creates policy_acceptances (user FK, unique user/version, acceptance time) and identity_verifications (UUID, unique user FK, account-name snapshot, supported document type, status, nullable encrypted-file path, consent version/time, expiry, reviewer FK/time, allowlisted rejection reason, timestamps). Both cascade on account deletion; reviewer deletion clears the reviewer FK. Only pending reviews have images. Public/auth user projections do not include these tables or file paths; admin queue projects only UUID/name/type/creation/expiry. No ID number or original filename is stored. Existing local seven users/zero reports/zero photos were preserved by the additive migration. See [retention/access](REPORTER_VERIFICATION_AUDIT_2026-11-24.md).
+
+
+## Independent administrator review provenance
+
+Additive migration 2026_11_24_000002 adds nullable identity_verifications.review_method. New staff decisions record administrator with reviewed_by; the designated server operator's first-admin original-ID attestation records operator_in_person with a separate redacted security event. Existing records are not certified/backfilled. Email verification, consent, expiry and account-name checks are retained. The local migration preserved seven accounts and zero reports; no real ID approval occurred.
+
+## Administrator lifecycle and trust badge
+
+The additive 2026_11_24_000003 migration adds nullable users.deleted_at and admin_account_actions (id, actor_id, target_id, action, created_at). User soft deletion preserves municipal-history foreign keys while excluding deleted accounts from authentication and management lists. Account deletion additionally sets inactive and revokes credentials/devices. Badge state is derived from existing approved identity/name/email/policy state; it is not a writable users flag. Reporting/admin eligibility no longer depends on the optional ID record. InitialAccountSeeder never marks email, ID, consent or MFA as verified.

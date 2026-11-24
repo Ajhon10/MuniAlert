@@ -24,7 +24,7 @@ class InterviewAlignmentTest extends TestCase
 
     private function admin(): User
     {
-        return User::factory()->create(['role' => 'admin']);
+        return User::factory()->verifiedReporter()->create(['role' => 'admin']);
     }
 
     private function record(User $owner, array $extra = []): HazardReport
@@ -58,7 +58,7 @@ class InterviewAlignmentTest extends TestCase
 
     public function test_public_reports_search_and_news_never_expose_original_evidence_or_sensitive_details(): void
     {
-        $owner = User::factory()->create();
+        $owner = User::factory()->verifiedReporter()->create();
         $report = $this->record($owner, ['status' => 'verified', 'public_title' => 'Municipal accident update', 'public_summary' => 'The response team is attending to an accident. Keep access clear.']);
         $this->photo($report);
         $this->getJson('/api/reports')->assertOk()->assertJsonPath('data.0.title', 'Municipal accident update')
@@ -76,12 +76,12 @@ class InterviewAlignmentTest extends TestCase
 
     public function test_private_evidence_is_scoped_to_reporter_admin_and_report_with_no_cache(): void
     {
-        $owner = User::factory()->create();
+        $owner = User::factory()->verifiedReporter()->create();
         $report = $this->record($owner);
         $photo = $this->photo($report);
         $url = '/api/reports/'.$report->id.'/photos/'.$photo->id;
         $this->getJson($url)->assertUnauthorized();
-        $this->authenticateUser(User::factory()->create());
+        $this->authenticateUser(User::factory()->verifiedReporter()->create());
         $this->getJson($url)->assertForbidden();
         $this->authenticateUser($owner);
         $this->get($url)->assertOk()->assertHeader('Content-Type', 'image/webp')->assertHeader('Cache-Control', 'no-store, private');
@@ -95,7 +95,7 @@ class InterviewAlignmentTest extends TestCase
 
     public function test_verification_alone_does_not_publish_news_and_publication_is_admin_reviewed(): void
     {
-        $owner = User::factory()->create();
+        $owner = User::factory()->verifiedReporter()->create();
         $report = $this->record($owner, ['status' => 'verified']);
         $this->getJson('/api/news')->assertJsonCount(0, 'data');
         $this->getJson('/api/news/'.$report->id.'/comments')->assertNotFound();
@@ -110,7 +110,7 @@ class InterviewAlignmentTest extends TestCase
 
     public function test_incident_time_and_observation_fields_are_validated_and_cannot_change_publication(): void
     {
-        $this->authenticateUser(User::factory()->create());
+        $this->authenticateUser(User::factory()->verifiedReporter()->create());
         $payload = ['category_id' => 'accident', 'title' => 'Road accident near the school', 'description' => 'Two vehicles involved near the school entrance.', 'address' => 'School entrance', 'barangay' => 'Poblacion', 'selected_latitude' => 14.6, 'selected_longitude' => 121, 'location_source' => 'manual', 'location_confirmed' => 1, 'severity' => 'high', 'injuries' => 'yes', 'people_affected' => 2,
             'fact_checked_at' => in_array($extra['status'] ?? 'submitted', HazardReport::ACCEPTED_STATUSES, true) ? now() : null,
             'published_at' => ! empty($extra['public_title']) && ! empty($extra['public_summary']) ? now() : null, 'occurred_at' => '2026-01-02T08:00:00+08:00', 'photos' => [UploadedFile::fake()->image('proof.jpg', 20, 20)], 'public_title' => 'Unauthorized publication', 'public_summary' => 'Citizen cannot publish a municipal statement.'];
@@ -124,7 +124,7 @@ class InterviewAlignmentTest extends TestCase
 
     public function test_resolution_upload_is_admin_only_bounded_and_keeps_incident_photos(): void
     {
-        $owner = User::factory()->create();
+        $owner = User::factory()->verifiedReporter()->create();
         $report = $this->record($owner, ['status' => 'responding']);
         $this->photo($report);
         $url = '/api/reports/'.$report->id.'/resolution-photos';
@@ -146,7 +146,7 @@ class InterviewAlignmentTest extends TestCase
 
     public function test_period_totals_cover_all_records_and_use_manila_dates_with_unknown_time_explicit(): void
     {
-        $owner = User::factory()->create();
+        $owner = User::factory()->verifiedReporter()->create();
         // January 31 UTC is already February 1 PHT.
         for ($i = 0; $i < 105; $i++) {
             $this->record($owner, ['occurred_at' => '2026-01-31 16:00:00', 'created_at' => '2026-03-01 00:00:00']);
@@ -170,7 +170,7 @@ class InterviewAlignmentTest extends TestCase
     {
         $url = '/api/admin/analytics?from=2026-01-01&to=2026-12-31&group=month';
         $this->getJson($url)->assertUnauthorized();
-        $this->authenticateUser(User::factory()->create());
+        $this->authenticateUser(User::factory()->verifiedReporter()->create());
         $this->getJson($url)->assertForbidden();
         $this->authenticateUser($this->admin());
         foreach (['from=2026-01-01&to=2027-12-31&group=month', 'from=2026-02-01&to=2026-01-01&group=week', 'from=wrong&to=2026-01-01&group=day'] as $invalid) {
@@ -181,7 +181,7 @@ class InterviewAlignmentTest extends TestCase
     public function test_legacy_public_evidence_repair_preserves_verified_bytes_and_can_be_repeated(): void
     {
         Storage::fake('public');
-        $report = $this->record(User::factory()->create());
+        $report = $this->record(User::factory()->verifiedReporter()->create());
         $photo = $this->photo($report);
         $bytes = Storage::disk('evidence')->get($photo->path);
         Storage::disk('public')->put($photo->path, $bytes);

@@ -12,13 +12,15 @@
     "test": "node scripts/php.mjs --cwd=hazard-server artisan test --no-ansi",
     "db:migrate": "node scripts/php.mjs hazard-server/artisan migrate",
     "db:seed": "node scripts/php.mjs hazard-server/artisan db:seed",
-    "db:seed:accounts": "node scripts/php.mjs hazard-server/artisan db:seed --class=DemoAccountSeeder",
+    "db:seed:accounts": "node scripts/php.mjs hazard-server/artisan db:seed --class=InitialAccountSeeder",
     "test:e2e": "node scripts/run-e2e.mjs",
     "verify": "node scripts/verify.mjs",
     "docs:build": "node scripts/build-docs.mjs",
     "docs:check": "node scripts/check-docs.mjs",
     "docs:pdf": "npm run docs:build && node scripts/export-docs-pdf.mjs",
-    "build:web": "node scripts/package-web.mjs"
+    "build:web": "node scripts/package-web.mjs",
+    "package:hostinger": "npm run build:web && node scripts/package-hostinger.mjs",
+    "docs:capstone": "node scripts/build-capstone.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",

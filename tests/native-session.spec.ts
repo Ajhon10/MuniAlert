@@ -46,7 +46,7 @@ async function login(page: Page) {
 test('native session restores across WebView restarts, survives an outage and clears on revocation/logout', async ({ page, context }) => {
   const { vault, state } = await nativeFixture(context);
   await page.goto('/');
-  await expect(page.locator('.connection')).toHaveText('Connected');
+  await expect(page.locator('.page-footer')).toContainText('Last synced');
   await login(page);
   await expect(page.locator('.header-account')).toContainText('Device Session Test');
   expect(vault.size).toBe(1);
@@ -55,14 +55,14 @@ test('native session restores across WebView restarts, survives an outage and cl
   await expect(page.locator('.header-account')).toContainText('Device Session Test');
   state.unavailable = true;
   await page.reload();
-  await expect(page.locator('.connection')).toHaveText('Connected');
+  await expect(page.locator('.page-footer')).toContainText('Last synced');
   expect(vault.size).toBe(1);
   state.unavailable = false;
   await page.reload();
   await expect(page.locator('.header-account')).toContainText('Device Session Test');
   state.unauthorized = true;
   await page.reload();
-  await expect(page.locator('.connection')).toHaveText('Connected');
+  await expect(page.locator('.page-footer')).toContainText('Last synced');
   expect(vault.size).toBe(0);
   await expect(page.locator('.header-account')).toContainText('Community guest');
   state.unauthorized = false;
@@ -79,7 +79,7 @@ test('native login fails clearly and revokes its new token if secure storage fai
   const { vault, state } = await nativeFixture(context);
   state.writeFails = true;
   await page.goto('/');
-  await expect(page.locator('.connection')).toHaveText('Connected');
+  await expect(page.locator('.page-footer')).toContainText('Last synced');
   await login(page);
   await expect(page.locator('.toast-message.error')).toContainText('Unable to securely save your session');
   expect(vault.size).toBe(0);
@@ -101,7 +101,7 @@ test('a late unauthorized response from startup cannot erase a newly signed-in s
   const oldResponse = page.waitForResponse('**/api/auth/me');
   release();
   await oldResponse;
-  await expect(page.locator('.connection')).toHaveText('Connected');
+  await expect(page.locator('.page-footer')).toContainText('Last synced');
   await expect(page.locator('.header-account')).toContainText('Device Session Test');
   expect(vault.size).toBe(1);
 });

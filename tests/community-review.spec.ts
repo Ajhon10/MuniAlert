@@ -1,10 +1,10 @@
-import { test, expect, finishAdminMfa, adminApiToken, openReading, navigateWorkspace, reviewIncidentImages, reviewIncidentImagesApi, accountOption } from './fixtures';
+import { test, expect, policyAcceptance, verifyReporterFixture, finishAdminMfa, adminApiToken, openReading, navigateWorkspace, reviewIncidentImages, reviewIncidentImagesApi, accountOption } from './fixtures';
 import type { APIRequestContext, Page } from '@playwright/test';
 const password = 'isolated-community-review-password';
 async function register(request: APIRequestContext, origin: string, name: string) {
   const email = `${name}-${Date.now()}@example.test`;
-  const response = await request.post(`${origin}/api/auth/register`, { data: { name, email, password } });
-  expect(response.status()).toBe(201); return { email, token: (await response.json()).token as string };
+  const response = await request.post(`${origin}/api/auth/register`, { data: { ...policyAcceptance, name, email, password } });
+  expect(response.status()).toBe(201); verifyReporterFixture(email); return { email, token: (await response.json()).token as string };
 }
 async function login(page: Page, email: string, secret: string) {
   await page.goto('/'); await page.getByRole('button', { name: 'Sign in', exact: true }).click();
@@ -35,7 +35,7 @@ test('private submissions become accepted alerts and only an explicit admin post
     await expect(community.locator('main')).not.toContainText(privateTitle);
     expect((await request.get(`${origin}/api/reports?search=${encodeURIComponent(privateTitle)}`)).ok()).toBe(true);
     expect((await (await request.get(`${origin}/api/reports?search=${encodeURIComponent(privateTitle)}`)).json()).data).toHaveLength(0);
-    await login(page, 'admin@example.test', process.env.E2E_ADMIN_PASSWORD!); await finishAdminMfa(page);
+    await login(page, 'admin@munialert.test', process.env.E2E_ADMIN_PASSWORD!); await finishAdminMfa(page);
     await page.getByRole('button', { name: /^Review reports/ }).click();
     await page.getByRole('button', { name: new RegExp(privateTitle) }).click();
     const detail = page.getByRole('dialog', { name: 'Hazard report', exact: true });
@@ -176,7 +176,7 @@ test('expired admin access clears cached private reports before public requests 
   await page.goto('/');
   const secret = `PRIVATE cached report ${Date.now()}`;
   await submit(request, origin, owner.token, await image(page), secret);
-  await login(page, 'admin@example.test', process.env.E2E_ADMIN_PASSWORD!); await finishAdminMfa(page);
+  await login(page, 'admin@munialert.test', process.env.E2E_ADMIN_PASSWORD!); await finishAdminMfa(page);
   await page.getByRole('button', { name: /^Review reports/ }).click();
   await expect(page.locator('main')).toContainText(secret);
   let release: () => void = () => {};

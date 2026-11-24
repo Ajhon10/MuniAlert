@@ -1,4 +1,4 @@
-import { test, expect, navigateWorkspace, openReading, fillTwoFactor, adminOtp, accountOption } from './fixtures';
+import { test, expect, policyAcceptance, verifyReporterFixture, navigateWorkspace, openReading, fillTwoFactor, adminOtp, accountOption } from './fixtures';
 import type { Page } from '@playwright/test';
 const password = 'synthetic-account-settings-password';
 async function login(page: Page, email: string, secret = password) {
@@ -14,7 +14,7 @@ test('Settings owns reading and guide controls and restores each account separat
   const accounts = [];
   for (const name of ['SettingsAlpha', 'SettingsBeta']) {
     const email = `${name}-${Date.now()}@example.test`;
-    const response = await request.post(`${origin}/api/auth/register`, { data: { name, email, password } });
+    const response = await request.post(`${origin}/api/auth/register`, { data: { ...policyAcceptance, name, email, password } });
     expect(response.status()).toBe(201); accounts.push({ name, email, token: (await response.json()).token });
   }
   const [alpha, beta] = accounts;
@@ -71,7 +71,7 @@ test('Settings owns reading and guide controls and restores each account separat
 test('PDEA-style 2FA accepts a pasted six-digit code with keyboard access and phone reflow', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('munialert-reading-v1', JSON.stringify({ textSize: 200 })));
   await page.setViewportSize({ width: 375, height: 900 });
-  await login(page, 'admin@example.test', process.env.E2E_ADMIN_PASSWORD!);
+  await login(page, 'admin@munialert.test', process.env.E2E_ADMIN_PASSWORD!);
   const auth = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
   await expect(auth.getByRole('heading', { name: 'Verify your sign-in with 2FA', exact: true })).toBeVisible();
   const fields = auth.locator('.two-factor-digit');
@@ -86,5 +86,5 @@ test('PDEA-style 2FA accepts a pasted six-digit code with keyboard access and ph
   await auth.screenshot({ path: 'test-results/two-factor-phone-200.png', animations: 'disabled' });
   await fillTwoFactor(page, adminOtp());
   await auth.getByRole('button', { name: 'Verify and sign in', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Municipal dashboard', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Magandang (umaga|hapon|gabi),/ })).toBeVisible();
 });

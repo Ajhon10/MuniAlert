@@ -12,6 +12,7 @@ const checks = [
   ['PHP static analysis', 'node scripts/analyze-php.mjs'],
   ['Browser policy checks', 'node --test scripts/tests/security-policy.test.mjs'],
   ['Backup rehearsal safeguards', 'node --test scripts/tests/backup-drill.test.mjs'],
+  ['Hostinger release packaging safeguards', 'node --test scripts/tests/hostinger-package.test.mjs'],
   ['Development launcher checks', 'node --test scripts/tests/launchers.test.mjs'],
   ['Vue type checking', 'npm run typecheck'],
   ['Frontend production build', 'npm run build'],
@@ -22,6 +23,7 @@ const checks = [
   ['Node dependency audit', 'npm audit --audit-level=moderate --cache .npm-cache'],
   ['PHP dependency audit', 'composer --working-dir=hazard-server audit --no-interaction'],
   ['Documentation consistency', 'node scripts/check-docs.mjs'],
+  ['Editable five-chapter capstone artifacts', 'node scripts/build-capstone.mjs --check'],
   ['Promotional source and dependencies', 'node scripts/verify-promo.mjs'],
 ];
 const report = { startedAt: new Date().toISOString(), passed: false, checks: [] };

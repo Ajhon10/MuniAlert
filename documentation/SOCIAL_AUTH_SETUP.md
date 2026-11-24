@@ -1,3 +1,11 @@
+# Provider authentication retired
+
+Google/Facebook authentication was removed on 24 November 2026 at the owner's request. Do not configure provider apps or credentials for the current release. Use email/password, existing email or saved-code recovery, and administrator MFA. Historical tables remain without sign-in routes. News sharing is separate.
+
+The following material is historical and must not be used to enable provider sign-in in the current application.
+
+---
+
 # Google and Facebook account creation and sign-in
 
 Implemented for responsive web and the Capacitor Android app using Laravel Socialite. First sign-in creates a citizen account. Subsequent sign-ins use the provider's stable identifier. The existing Vue/Laravel source split and single-origin Hostinger package are preserved.

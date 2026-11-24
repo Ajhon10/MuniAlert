@@ -1,5 +1,63 @@
 # Hostinger Web/Cloud deployment
 
+## Current deployment handoff ? 24 November 2026
+
+The owner selected a **one-year term**, not an exact hosting tier or domain. The SMTP settings in the ignored local environment pass configuration checks and a real SMTP authentication-only connection from the workstation. No message was sent. Hostinger authentication/delivery and final HTTPS links still need testing. No hosting account has been accessed or deployed. A public privacy contact is still required. Both roles require verified email and current policy acceptance. Government ID is optional and earns a profile badge; no account is auto-approved.
+
+### Things the owner must supply or approve
+
+| Requirement | Needed action |
+| --- | --- |
+| Domain and hosting tier | Select the actual domain/tier; verify PHP, SSH/terminal/Composer, MySQL, private sibling storage and at least one-minute cron capability. A one-year term does not establish those features. |
+| Host runtime | Verify CLI and web PHP separately against composer.lock. The project supports a PHP ^8.2 baseline and local tooling uses PHP 8.5; select a supported patched host runtime. Check GD/FreeType, fileinfo, mbstring, PDO MySQL, OpenSSL, cURL, XML/DOM and ZIP plus actual composer platform requirements. |
+| Database | Create a dedicated MySQL database/user and private credentials; never deploy using root or copy local records by default. |
+| Privacy decisions | Approve a public PRIVACY_CONTACT_EMAIL, policy wording, reviewer authority, assisted alternatives and account/incident/backup retention. SMTP sender/login stays private unless separately approved for publication. |
+| Administrator | Designate a real admin; complete email, current policies and authenticator MFA. ID review is optional, with no self-approval. |
+| Services | Transfer BANTAY's SMTP settings privately and verify real delivery. Use local private evidence by default. Firebase/private R2 are optional and need separate setup/acceptance. |
+| Security/operations | Confirm provider patching, a supported private ClamAV service/signatures for the existing upload-security gate, storage permissions, monitoring and tested encrypted backup restoration. Do not simply enable scanner flags without a working service or bypass a failed gate. |
+| Acceptance | Run host checks and synthetic smoke tests, then obtain municipal permission before real collection/public operation. |
+
+### Prepare and upload
+
+1. Run `npm run verify` from the project root on the exact candidate state. It includes backend/browser/build/security/document and release-package safeguards. Resolve any failed/unavailable check before treating the candidate as accepted.
+2. Run `npm run package:hostinger`. This creates a new ZIP and staging directory under ignored `.cache/releases/`; the command prints their exact paths. Its manifest hashes the prepared files. The public/private layout is already arranged. It contains **no vendor**, so Composer/terminal access or a separately prepared target-compatible production vendor directory is required.
+3. For a new empty site's domain directory, upload `bantay/hazard-server` beside `public_html`, then upload the package's `public_html` contents to the real document root. Preserve `.htaccess`. Never replace an existing live environment/storage/database without an approved backed-up release procedure. Application source, vendor, .env, IDs and uploads must remain outside public_html.
+4. In the private server directory use the verified host PHP/Composer to run:
+
+```sh
+composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+composer check-platform-reqs --no-dev
+```
+
+5. **New installation only:** copy the supplied production `.env.example` to private `.env`, fill credentials/domain and generate one unique key with `php artisan key:generate`. Never regenerate an existing APP_KEY: encrypted IDs and other secrets depend on it. Replace every `your-domain.example` value and configure `APP_URL`, `SECURITY_FRONTEND_URL`, `FRONTEND_URLS` and `SANCTUM_STATEFUL_DOMAINS` consistently. Keep production/debug-off/secure-cookie settings from the template. Do not copy the workstation `.env` into public_html or paste credentials into issue/chat logs.
+6. Confirm database access, back up any existing data, then run:
+
+```sh
+php artisan migrate --force
+php artisan db:seed --force
+php artisan optimize
+```
+
+Normal production seeding creates missing reference catalogs and the configured initial administrator; no demo residents/shared passwords are included. Set INITIAL_ADMIN_NAME, a real INITIAL_ADMIN_EMAIL and private INITIAL_ADMIN_PASSWORD first. Existing/deleted administrator records are preserved rather than recreated. Do not use `migrate:fresh`, testing seeders or database reset commands here. Only private storage and bootstrap/cache need the host's appropriate writable permissions; do not use 777.
+
+### Establish the first administrator
+
+InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements.
+
+### Cron, security checks and smoke tests
+
+Enable one hPanel custom cron calling the **verified PHP binary** and private `artisan schedule:run` every minute; see the existing cron section below. The scheduler handles bounded security-mail batches, hourly ID deletion, token/device cleanup and monitoring. Keep `HAZARD_SCHEDULED_PUSH=false` unless Firebase is configured and scheduled delivery is deliberately enabled. Do not run a second persistent worker for these bounded queues.
+
+Run `php artisan hazard:security-check --phase=2 --json` after setup. It now checks administrator email/current-policy setup as well as MFA, private storage, HTTPS/cookies/CORS, real SMTP configuration, schema and scanner selection. The production template intentionally does not invent a privacy contact or working scanner; those gates remain unsatisfied until the operator supplies them. Check actual service operation in addition to configuration flags. Use `php artisan schedule:run`, inspect the cron heartbeat and verify real email, cleanup and delivery timing. A local configured sender does not establish host deliverability.
+
+Before opening to residents: test signup/email redemption, consent/ID upload and independent review, rejected/expired resubmission, inability to self-approve, citizen/admin role restrictions, private photos, reporting/location confirmation, response history, exports, logout/revocation and no public access to `.env`, vendor, logs or ID/evidence storage. Test backup restoration in isolation with the same protected encryption key. Confirm provider patch status and municipal operational acceptance. Physical Android and a signed APK remain separate.
+
+Regenerate a revision-3 candidate with optional ID and administrator management; earlier mandatory-ID ZIPs are superseded. Use the current candidate with locked Laravel 12.73.0 (manifest minimum ^12.71), which resolves the advisory found during preparation. Earlier ZIPs with Laravel 12.69.3 are superseded and must not be deployed. The ZIP is a prepared candidate, not proof of deployed or municipal acceptance. Keep the release manifest, fresh verification report, protected backup and operator acceptance record together. Do not blindly roll back additive migrations after real records exist.
+
+---
+
 Confirmed target: **Hostinger Web/Cloud hosting, Android app and responsive web**.
 This supersedes the earlier VPS target. Keep the existing source folders and
 deploy the compiled web interface and Laravel API on one HTTPS domain.

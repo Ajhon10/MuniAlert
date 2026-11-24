@@ -48,9 +48,7 @@ class DatabaseSeeder extends Seeder
                     DB::table('municipal_settings')->insert($row + ['created_at' => now(), 'updated_at' => now()]);
                 }
             }
-            if (collect(['demo_admin_password', 'demo_citizen_one_password', 'demo_citizen_two_password'])->contains(fn ($key) => filled(config('hazards.'.$key)))) {
-                $this->call(DemoAccountSeeder::class);
-            }
+            $this->call(InitialAccountSeeder::class);
         });
     }
 }

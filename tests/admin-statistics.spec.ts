@@ -5,14 +5,14 @@ import { readFile } from 'node:fs/promises';
 async function login(page: Page) {
   await page.goto('/'); await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const form = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
-  await form.getByLabel('Email address').fill('admin@example.test');
+  await form.getByLabel('Email address').fill('admin@munialert.test');
   await form.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
   await form.getByRole('button', { name: 'Sign in', exact: true }).click(); await finishAdminMfa(page);
 }
 
 test('admin dashboard and summary display API category counts with day month year filters and genuine document downloads', async ({ page, request }) => {
   const origin = `http://127.0.0.1:${process.env.HAZARD_API_PORT || '18000'}`;
-  const session = await request.post(`${origin}/api/auth/login`, { data: { email: 'citizen.one@example.test', password: process.env.E2E_CITIZEN_PASSWORD } });
+  const session = await request.post(`${origin}/api/auth/login`, { data: { email: 'resident1@munialert.test', password: process.env.E2E_CITIZEN_PASSWORD } });
   expect(session.ok()).toBe(true); const token = (await session.json()).token;
   await page.goto('/');
   const photo = await page.evaluate(() => { const canvas = document.createElement('canvas'); canvas.width = canvas.height = 30; canvas.getContext('2d')!.fillRect(0, 0, 30, 30); return canvas.toDataURL('image/png').split(',')[1]!; });

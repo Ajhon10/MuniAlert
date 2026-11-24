@@ -29,6 +29,13 @@ return [
     */
 
     'disks' => [
+        'identity' => [
+            'driver' => 'local',
+            'root' => storage_path('app/identity-private'),
+            'visibility' => 'private',
+            'serve' => false,
+            'throw' => true,
+        ],
         'branding' => [
             'driver' => 'local',
             'root' => storage_path('app/private/branding'),

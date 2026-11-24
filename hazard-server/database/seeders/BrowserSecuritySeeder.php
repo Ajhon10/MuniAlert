@@ -21,7 +21,10 @@ class BrowserSecuritySeeder extends Seeder
         if (! is_string($secret) || ! preg_match('/^[A-Z2-7]{32}$/D', $secret)) {
             throw new \RuntimeException('Missing synthetic browser MFA configuration.');
         }
-        $user = User::where('email', 'admin@example.test')->firstOrFail();
+        foreach ([1, 2] as $number) {
+            User::firstOrCreate(['email' => 'resident'.$number.'@munialert.test'], ['name' => 'Synthetic Resident '.$number, 'password' => env('E2E_CITIZEN_PASSWORD')]);
+        }
+        $user = User::where('email', 'admin@munialert.test')->firstOrFail();
         $user->forceFill(['mfa_secret' => $secret, 'mfa_confirmed_at' => now(), 'mfa_last_step' => null])->save();
         $code = env('E2E_ADMIN_RECOVERY_CODE');
         if (! is_string($code) || ! preg_match('/^[A-Za-z0-9]{10}-[A-Za-z0-9]{10}$/D', $code)) {

@@ -33,18 +33,3 @@ export async function clearSessionToken(): Promise<void> {
   restored = Promise.resolve();
   if (Capacitor.isNativePlatform()) await SecureStorage.remove(key);
 }
-
-// OAuth verifiers must survive an Android process restart without entering URLs
-// or browser storage. Keep them separate from the signed-in session credential.
-export type PendingSocialAuth = { attempt: string; verifier: string; expiresAt: number };
-const pendingKey = 'bantay.social.pending';
-export async function savePendingSocial(value: PendingSocialAuth) { await SecureStorage.set(pendingKey, JSON.stringify(value)); }
-export async function readPendingSocial(): Promise<PendingSocialAuth | null> {
-  const value = await SecureStorage.get(pendingKey);
-  if (typeof value !== 'string') return null;
-  try {
-    const item = JSON.parse(value);
-    return typeof item.attempt === 'string' && typeof item.verifier === 'string' && typeof item.expiresAt === 'number' ? item : null;
-  } catch { return null; }
-}
-export async function clearPendingSocial() { await SecureStorage.remove(pendingKey); }

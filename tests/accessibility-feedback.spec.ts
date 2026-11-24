@@ -30,7 +30,7 @@ test('reading controls reflow at 200%, persist across restart, and reset', async
   for (const width of [320, 375, 768, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    expect(await page.locator('.page-heading p').evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBe(32);
+    expect(await page.locator('.settings-card p').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBe(32);
   }
   await page.setViewportSize({ width: 375, height: 812 });
   await page.reload();

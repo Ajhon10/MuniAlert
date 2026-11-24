@@ -24,7 +24,7 @@ class AccountSecurityTest extends TestCase
 
     private function admin(bool $enrolled = false): User
     {
-        $user = User::factory()->create(['role' => 'admin', 'password' => self::PASSWORD]);
+        $user = User::factory()->verifiedReporter()->create(['role' => 'admin', 'password' => self::PASSWORD]);
         $user->forceFill(['mfa_enrollment_until' => now()->addMinutes(15)])->save();
         if ($enrolled) {
             $user->forceFill(['mfa_secret' => self::SECRET, 'mfa_confirmed_at' => now()])->save();

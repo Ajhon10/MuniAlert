@@ -18,7 +18,7 @@ for (const failure of ['invalid JSON', 'incomplete statistics'] as const) {
     await expect(page.getByRole('button', { name: 'Report a hazard', exact: true })).toBeVisible();
     broken = false;
     await page.getByRole('button', { name: 'Retry', exact: true }).click();
-    await expect(page.locator('.connection')).toHaveText('Connected');
+    await expect(page.locator('.page-footer')).toContainText('Last synced');
     await expect(page.locator('.server-error')).toHaveCount(0);
     expect(errors).toEqual([]);
   });

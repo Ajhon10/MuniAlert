@@ -18,6 +18,8 @@ Content management includes a searchable office table, add/edit dialog and per-h
 
 `hazard-server/database/data/` contains `departments.csv`, `categories.csv`, `badges.csv`, `settings.csv`, `sample_accounts.csv` and `hazard_achievements.csv`. Reference/sample data is inspectable without opening PHP arrays. Existing migrations retain their historical bootstrap defaults; the current seeder fills missing reference records and preserves admin edits, routing and account credentials. Achievement names/thresholds are read into configuration from their CSV.
 
+**Superseded on 16 November 2026:** the [ready-to-login sample account guide](TEST_ACCOUNTS.md) replaces the private-password setup below. Local seeding now creates the three documented demo identities with one shared password automatically; existing accounts and deployment safeguards remain. The following paragraph records the earlier implementation.
+
 Run `npm.cmd run db:seed` after migrations. This seeds reference data and, when all three distinct `HAZARD_DEMO_*_PASSWORD` values are configured, the sample administrator/two citizens in one transaction. Missing all three passwords means reference-only seeding. Partial/invalid account configuration fails and rolls back the seed transaction. Sample accounts are limited to local/testing and reserved `.test` addresses; existing emails are skipped. Passwords stay in private environment configuration, never CSV. `password_config` is an allowlisted configuration-key reference. The explicit `db:seed:accounts` command remains compatible for accounts-only setup. Browser test setup uses the same one-command seed path on its isolated database.
 
 ## Server validation and recovery

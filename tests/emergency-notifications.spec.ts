@@ -1,4 +1,4 @@
-import { test, expect, finishAdminMfa, navigateWorkspace, accountOption } from './fixtures';
+import { test, expect, policyAcceptance, verifyReporterFixture, finishAdminMfa, navigateWorkspace, accountOption } from './fixtures';
 import type { Page, APIRequestContext } from '@playwright/test';
 async function browserInbox(page: Page) {
   const result = await page.evaluate(async () => { const response = await fetch('/api/notifications', { headers: { Accept: 'application/json' } }); return { status: response.status, data: await response.json() }; });
@@ -7,10 +7,10 @@ async function browserInbox(page: Page) {
 async function adminLogin(page: Page) {
   await page.goto('/'); const initialInbox = page.waitForResponse(response => new URL(response.url()).pathname === '/api/notifications'); await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
-  await auth.getByLabel('Email address', { exact: true }).fill('admin@example.test');
+  await auth.getByLabel('Email address', { exact: true }).fill('admin@munialert.test');
   await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click(); await finishAdminMfa(page); await initialInbox;
-  await expect(page.getByLabel('Connected to municipality', { exact: true })).toBeVisible();
+  await expect(page.locator('.page-footer')).toContainText('Last synced');
 }
 async function postReport(request: APIRequestContext, page: Page, origin: string, token: string, category: string, urgent = true) {
   const bytes = await page.evaluate(() => { const canvas = document.createElement('canvas'); canvas.width = canvas.height = 20; return canvas.toDataURL('image/png').split(',')[1]!; });
@@ -38,9 +38,15 @@ test('emergency-first hotlines search and distance sorting remain usable at 200 
   await directory.getByRole('button', { name: 'Continue to report online', exact: true }).click();
   await page.getByRole('button', { name: 'Create an account', exact: true }).click();
   await page.getByLabel('Full name', { exact: true }).fill('Synthetic Emergency Reporter');
-  await page.getByLabel('Email address', { exact: true }).fill(`emergency-${Date.now()}@example.test`);
+  const email = `emergency-${Date.now()}@example.test`; await page.getByLabel('Email address', { exact: true }).fill(email);
   await page.getByLabel('Password', { exact: true }).fill('synthetic-emergency-reporter-password');
+  await page.getByRole('checkbox', { name: 'I agree to the terms and conditions and acknowledge the privacy notice.' }).check();
   await page.getByRole('button', { name: 'Create your account', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Reporter verification', exact: true })).toBeVisible();
+  verifyReporterFixture(email);
+  await page.getByRole('button', { name: 'Report a hazard', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Before you report', exact: true }).getByRole('button', { name: 'Yes, immediate help is needed', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue to report online', exact: true }).click();
   const form = page.getByRole('dialog', { name: 'Report a hazard', exact: true });
   await expect(form.locator('.assistance-banner')).toContainText('highlighted to municipal staff');
   await form.getByRole('button', { name: 'Road accident', exact: true }).click();
@@ -73,8 +79,8 @@ test('admin gets distinct configured sounds for fresh hazards and a notification
   await sounds.getByRole('button', { name: 'Enable sound alerts', exact: true }).click();
   await sounds.getByLabel('Fire sound', { exact: true }).selectOption('urgent'); await sounds.getByRole('slider', { name: 'Alert volume', exact: true }).fill('70');
   const origin = `http://127.0.0.1:${process.env.HAZARD_API_PORT || '18000'}`;
-  const registration = await request.post(`${origin}/api/auth/register`, { data: { name: 'Synthetic Sound Reporter', email: `sound-${Date.now()}@example.test`, password: 'synthetic-sound-reporter-password' } }); expect(registration.status()).toBe(201);
-  const token = (await registration.json()).token;
+  const registration = await request.post(`${origin}/api/auth/register`, { data: { ...policyAcceptance, name: 'Synthetic Sound Reporter', email: `sound-${Date.now()}@example.test`, password: 'synthetic-sound-reporter-password' } }); expect(registration.status()).toBe(201);
+  const registered = await registration.json(); const token = registered.token; verifyReporterFixture(registered.user.email);
   const fire = await postReport(request, page, origin, token, 'fire'); const tree = await postReport(request, page, origin, token, 'tree', false);
   await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   await expect.poll(() => page.evaluate(() => (window as any).playedAlerts.length)).toBe(7);

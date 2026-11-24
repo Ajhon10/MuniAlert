@@ -24,13 +24,13 @@ class PhotoStorage
         return ['authenticity_review_required' => true, 'ai_status' => app(LocalImageDetector::class)->configured() ? 'queued' : 'not_assessed', 'disk' => $disk, 'path' => $path, 'original_name' => mb_substr(basename($file->getClientOriginalName()), 0, 200), 'sha256' => hash_file('sha256', $file->getRealPath()), 'bytes' => strlen($compressed)];
     }
 
-    public function prepare(UploadedFile $file): string
+    public function prepare(UploadedFile $file, bool $retainRejectedSamples = true): string
     {
         $bytes = file_get_contents($file->getRealPath());
         if (! is_string($bytes) || strlen($bytes) > 1024 * 1024) {
             throw ValidationException::withMessages(['photos' => 'Each photo must be at most 1 MB.']);
         }
-        app(UploadProtection::class)->inspect($bytes);
+        app(UploadProtection::class)->inspect($bytes, $retainRejectedSamples);
         $info = @getimagesizefromstring($bytes);
         if (! $info || $info[0] > 1920 || $info[1] > 1920) {
             throw ValidationException::withMessages(['photos' => 'Images must be at most 1920 pixels per side.']);
@@ -54,7 +54,7 @@ class PhotoStorage
         if (! $compressed || strlen($compressed) > 1024 * 1024) {
             throw ValidationException::withMessages(['photos' => 'The compressed image must be under 1 MB.']);
         }
-        app(UploadProtection::class)->inspect($compressed);
+        app(UploadProtection::class)->inspect($compressed, $retainRejectedSamples);
 
         return $compressed;
     }

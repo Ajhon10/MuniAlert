@@ -8,7 +8,7 @@ test('compact header uses bottom More, preserves reading space and remains legib
     await page.setViewportSize({ width, height: 844 });
     await page.evaluate(() => window.scrollTo(0, 0));
     await expect(page.getByRole('button', { name: 'More navigation', exact: true })).toBeVisible();
-    await expect(header.locator('.ph-clock')).toBeHidden();
+    await expect(header.locator('.ph-clock')).toBeVisible();
     await expect(header.locator('.breadcrumb > span')).toHaveText('MuniAlert');
     const brand = await header.locator('.breadcrumb').boundingBox();
     const actions = await header.locator('.top-actions').boundingBox();

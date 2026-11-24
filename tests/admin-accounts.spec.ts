@@ -1,0 +1,31 @@
+import { test, expect, accountOption, finishAdminMfa } from './fixtures';
+
+test('administrator creates and deletes a replacement account through Settings with confirmation', async ({ page }) => {
+  await page.goto('/'); await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  const auth = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
+  await auth.getByLabel('Email address').fill('admin@munialert.test');
+  await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
+  await auth.getByRole('button', { name: 'Sign in', exact: true }).click(); await finishAdminMfa(page);
+  await accountOption(page, 'Settings');
+  const panel = page.getByRole('region', { name: 'Administrator accounts', exact: true });
+  const name = `Synthetic Replacement ${Date.now()}`;
+  await panel.getByLabel('Administrator name', { exact: true }).fill(name);
+  await panel.getByLabel('Administrator email', { exact: true }).fill(`admin-replacement-${Date.now()}@example.test`);
+  await panel.getByLabel('Initial password', { exact: true }).fill('synthetic-private-admin-password');
+  await panel.getByRole('button', { name: 'Create administrator', exact: true }).click();
+  const row = panel.getByRole('row').filter({ hasText: name });
+  await expect(row).toContainText('MFA setup pending');
+  await expect(panel.getByLabel('Initial password', { exact: true })).toHaveValue('');
+  await expect(row.getByRole('img', { name: 'Identity verified', exact: true })).toHaveCount(0);
+  await page.setViewportSize({ width: 375, height: 900 });
+  const overflow = await page.evaluate(() => [...document.querySelectorAll('main *')].map(node => ({ tag: node.tagName, class: node.className, right: Math.round(node.getBoundingClientRect().right), width: Math.round(node.getBoundingClientRect().width) })).filter(node => node.right > innerWidth + 1).slice(0, 14));
+  if (overflow.length) console.log(JSON.stringify(overflow));
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await panel.screenshot({ path: 'test-results/admin-accounts-phone.png' });
+  await row.getByRole('button', { name: `Delete ${name}`, exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Delete administrator?', exact: true });
+  await expect(dialog).toContainText('Municipal action history will be retained.');
+  await dialog.getByRole('button', { name: 'Delete administrator', exact: true }).click();
+  await expect(dialog).toHaveCount(0); await expect(row).toHaveCount(0);
+  await expect(panel).toContainText('Current account');
+});

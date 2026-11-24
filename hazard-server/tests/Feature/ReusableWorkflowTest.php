@@ -42,20 +42,20 @@ class ReusableWorkflowTest extends TestCase
         $this->patchJson('/api/admin/categories/accident/routing', ['department_id' => 'health'])->assertUnprocessable();
     }
 
-    public function test_one_seed_command_loads_csv_accounts_and_preserves_existing_passwords(): void
+    public function test_one_seed_command_loads_initial_admin_and_preserves_existing_passwords(): void
     {
-        config(['hazards.demo_admin_password' => 'synthetic-admin-password', 'hazards.demo_citizen_one_password' => 'synthetic-citizen-one', 'hazards.demo_citizen_two_password' => 'synthetic-citizen-two']);
+        config(['initial_accounts.password' => 'synthetic-private-password']);
         $this->seed();
-        $this->assertSame(3, User::count());
+        $this->assertSame(1, User::count());
         $this->assertSame(10, Category::count());
         $this->assertSame(5, Department::count());
         $this->assertSame(4, DB::table('badges')->count());
-        $admin = User::where('email', 'admin@example.test')->firstOrFail();
+        $admin = User::where('email', 'admin@munialert.test')->firstOrFail();
         $hash = $admin->password;
-        config(['hazards.demo_admin_password' => 'different-admin-password']);
+        config(['initial_accounts.password' => 'different-private-password']);
         $this->seed();
         $this->assertSame($hash, $admin->fresh()->password);
-        $this->assertSame(3, User::count());
+        $this->assertSame(1, User::count());
     }
 
     public function test_saved_code_resets_once_revokes_sessions_and_preserves_admin_mfa(): void
@@ -73,14 +73,14 @@ class ReusableWorkflowTest extends TestCase
         $this->assertCount(9, $user->fresh()->mfa_recovery_codes);
     }
 
-    public function test_partial_sample_configuration_rolls_back_reference_writes(): void
+    public function test_invalid_initial_admin_configuration_rolls_back_reference_writes(): void
     {
-        config(['hazards.demo_admin_password' => 'synthetic-admin-password', 'hazards.demo_citizen_one_password' => null, 'hazards.demo_citizen_two_password' => null]);
+        config(['initial_accounts.password' => 'short']);
         try {
             $this->seed();
             $this->fail('Partial credential configuration must reject the seed command.');
         } catch (\RuntimeException $error) {
-            $this->assertStringContainsString('three different', $error->getMessage());
+            $this->assertStringContainsString('Initial administrator configuration', $error->getMessage());
         }
         $this->assertSame(0, User::count());
         $this->assertSame(0, Department::count());

@@ -93,3 +93,10 @@ The source repository already includes the Gradle wrapper JAR/scripts; do not re
 GitHub stores the private source; it does not host Laravel/MySQL. Remote members should run their own clone with USB forwarding or use an explicitly deployed HTTPS staging environment. No staging deployment or physical-device result is claimed by these instructions.
 
 Normal web sessions use HttpOnly cookies. Native sessions use a Keystore-backed stored credential with rolling expiry. Clearing cookies/app data, uninstalling, revocation or expiry requires sign-in again. Do not mistake a remembered account for offline submission support.
+
+
+## Reporter verification and release status ? 24 November 2026
+
+Android and web share the SMTP/policy/government-ID reporting gate. Complete verification from Settings; no native session can bypass the server gate. Gallery uploads are resized locally before server-side validation and encrypted private storage. Browser native-bridge tests do not certify real camera, Keystore, ID file selection or email-to-app behavior.
+
+The checked-in Capacitor 7 project targets API 35. A new Google Play submission requires API 36 or higher under the [official target policy](https://developer.android.com/google/play/requirements/target-sdk), so the documented native upgrade and hardware acceptance remain prerequisites for store distribution. Asset synchronization is not an APK build or signed release. No new installable release was produced by this audit. See [current readiness](REPORTER_VERIFICATION_AUDIT_2026-11-24.md).

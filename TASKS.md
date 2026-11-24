@@ -1,5 +1,65 @@
 # Phased task tracker
 
+## Optional identity and administrator management — revision 3
+
+- [x] Remove old demo accounts/CSV/seeder and Google/Facebook sign-in routes/UI/native integrations; preserve email/password, recovery, MFA and news sharing.
+- [x] Seed the privately configured starter admin through normal deployment db:seed; preserve existing/deleted accounts and provide Settings creation/deletion/MFA setup with access revocation and audit/history safeguards.
+- [x] Make one-ID review optional for both roles and display a blue verified identity profile badge; retain required email/policies, admin MFA, consent/privacy/deletion and no self-approval.
+- [x] Apply additive admin-lifecycle migration and remove five known demos (three current samples and two legacy residents), preserving the other two accounts and report counts.
+- [x] Pass the fresh 21-check gate: 133 backend tests / 1,273 assertions and all 93 browser cases; separate MySQL 25 tests / 247 assertions. Refresh and validate capstone exports and prepare the superseding Hostinger candidate.
+- [ ] Owner configures production starter credentials, real host/domain/SMTP/cron/scanner/privacy/backup and municipal/device acceptance.
+
+Earlier sections preserve historical evidence. Revision 3 supersedes their mandatory-ID, demo and provider-sign-in instructions.
+
+## Both-role identity, Hostinger candidate and editable capstone ? 24 November 2026
+
+- [x] Require one government ID, email and current policy acceptance for administrators as well as community members; retain MFA, limit incomplete admins to own setup and prevent self-approval.
+- [x] Add independent operator-in-person first-admin review, deletion/provenance and role-change/withdrawal checks; apply only additive review-method migration, preserving seven accounts/zero reports.
+- [x] Confirm local SMTP credentials are now present/configuration-ready without displaying values or sending real email.
+- [x] Prepare allowlisted Hostinger packaging, production environment template and owner checklist; preserve undecided tier/domain/public privacy contact.
+- [x] Write/export editable five-chapter college capstone with references, proposed evaluation, honest results and editable academic details.
+- [x] Pass all 21 release-preparation checks after the Laravel 12.73.0 advisory patch: 148 backend tests / 1,438 assertions and 98 browser cases; separate post-patch MySQL run passes 27 tests / 291 assertions. Refresh/check result documentation and artifacts afterward. No deployment/push is authorized by preparation.
+- [ ] Owner selects actual hosting tier/domain, public privacy contact, service/retention/reviewer decisions, independent real admin verification and host-side delivery/backup/UAT acceptance.
+
+## Reporter verification and feature audit ? 24 November 2026
+
+- [x] Audit current features/mobile readiness and preserve existing unfinished external-service/operational acceptance items.
+- [x] Automatically queue SMTP verification at signup; require current policy acceptance and verified email plus approved government ID for citizen reports/confirmations.
+- [x] Add private encrypted one-ID submission, consent, admin review, rejection/resubmission, withdrawal, name-change revocation and seven-day cleanup.
+- [x] Add accessible signup policy disclosures, citizen verification Settings and admin review queue; document schema/API/manual/activation.
+- [x] Apply the additive local migration, preserving seven users and zero reports/photos.
+- [x] Pass 143 isolated backend tests / 1,377 assertions, MySQL onboarding/security regressions, the final 22-case browser rerun plus 15 form/phone checks after the consent-text correction, builds/type checking, PHPStan, formatting, documentation and source-secret checks. Keep initial broad-run failures and final retests explicit in the audit.
+- [x] Supply separate BANTAY Gmail credentials privately; workstation SMTP authentication-only check passes without sending email.
+- [ ] Supply an operator-approved public privacy contact; approve operational record/backup retention and policy wording.
+- [ ] Verify real SMTP/cron delivery, deploy only when authorized, and build/sign/test Android on physical devices.
+
+See [audit and implementation evidence](documentation/REPORTER_VERIFICATION_AUDIT_2026-11-24.md). No complete-release, deployment or physical-device claim is made.
+
+## NGINX deployment prerequisite — 19 November 2026
+
+- [x] Add an independent read-only checker for the alternative VPS and document all five nginx2root CVEs, exact vendor backports, restart and running-binary verification.
+- [x] Verify 26 local checker policy/syntax/unsupported-host cases; keep the selected provider-managed Hostinger Web/Cloud architecture.
+- [ ] Obtain provider patch confirmation for managed hosting, or run the checker and patch/verify the real VPS before activation. No host patch or production acceptance is claimed.
+
+## Ready sample accounts and compact Dashboard — 16 November 2026
+
+- [x] Provide three new CSV demo identities with one shared documented password, automatically created by local seeding without terminal password setup.
+- [x] Preserve existing accounts, transactional validation, hashed passwords, deployment exclusions and administrator authenticator enrollment; update fixtures, setup guides and production configuration checks.
+- [x] Seed/verify three sample accounts on the local database while preserving all four previous accounts unchanged.
+- [x] Move municipality/workspace information into a personalized Philippine-time Dashboard greeting; keep the live clock in the shared header across breakpoints.
+- [x] Replace repeated page/metric/map/report explanations with shared hover/focus/tap info tooltips and review desktop/320-pixel enlarged-text output.
+- [x] Pass 134 isolated backend tests / 1260 assertions, static analysis, builds, Android sync and source-secret scanning; rerun all initial browser failures with the final 32-case targeted group.
+- [ ] Production deployment, physical Android acceptance and a future exact-state publication gate remain separate.
+
+## Persistent connection banner — 16 November 2026
+
+- [x] Replace the header indicator with a top banner that persists during outages, animates entry/exit and shows Connected for three seconds after recovery.
+- [x] Distinguish browser-reported internet loss, unreachable server, HTTP service failure and request timeout; preserve backend field validation and unsent input.
+- [x] Add bounded health checks, offline/online recovery, server retry, demo isolation, reduced motion and mobile sticky-header offsets.
+- [x] Pass 40 distinct focused isolated Chromium cases across regression/final runs covering the banner, dashboard resilience, native sessions, social sign-in, headers, reading/feedback, manual and emergency notifications; inspect desktop and 320-pixel/200% screenshots.
+- [x] Pass final production build/type checking, documentation generation/consistency and Capacitor Android asset sync.
+- [ ] Hosting and physical Android verification remain separate; this change is not a deployment or GitHub publication.
+
 ## Admin statistical charts, exports and account menu — 12 November 2026
 
 - [x] Share category trend/totals charts across admin Dashboard and Incident summary with Philippine day/month/year grouping, explicit date basis and zero-filled periods.

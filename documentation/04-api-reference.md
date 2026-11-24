@@ -157,18 +157,7 @@ The API route group allows 120 requests/minute per throttle identity; login and 
 
 ## Social signup and login (FR-02)
 
-| Method | Path | Access and behavior |
-| --- | --- | --- |
-| GET | `/api/auth/providers` | Public; enabled flags for google/facebook only; no credentials. |
-| POST | `/api/auth/social/{provider}/attempts` | Public for login; authenticated plus current_password for link. Provider limited to google/facebook; 10/minute plus global throttle. |
-| POST | `/api/auth/social/exchange` | Public Android code/verifier exchange, 10/minute plus global throttle; one-use, no-store. |
-| GET | `/api/auth/social/accounts` | Authenticated; connected provider names only. |
-| GET | `/auth/social/{provider}/redirect` | Session-bound browser redirect; one-use prepared attempt, 20/minute. |
-| GET | `/auth/social/{provider}/callback` | Stateful provider callback, 20/minute; web cookie sign-in or fixed Android deep link. |
-
-Prepare body: `platform` web/android; `mode` login/link; optional whitelisted `intent` (overview/report/profile/mine/activity/news/reports/map). Web requires `return_origin` with no path/query/userinfo and exact origin allowlisting. Android requires URL-safe 43-character S256 `code_challenge`. Linking requires current_password and an authenticated account with password enabled. Returns 201 `{attempt,redirect_url}`; navigate top-level or use the Android system browser. Credentials missing => 503, invalid input/origin => 422, missing link session => 401. Browser POSTs retain the normal CSRF cookie/header requirements.
-
-Exchange body: attempt UUID, code (64 characters), code_verifier (43?128 RFC 7636 characters). Returns `{user,intent,linked,token?}`; token exists for Android login, not link. Replays, expiration, incorrect proof or exhausted five-try limit => 422. Provider denial/errors return safe reason codes; email collisions require explicit linking. Browser query status is never trusted as authentication: client confirms the real session with `/api/auth/me`. See [configuration and security](SOCIAL_AUTH_SETUP.md).
+Google and Facebook authentication have been removed: provider/prepare/callback/exchange/link routes, frontend integration, native callback, Socialite and native App/Browser dependencies are retired. Email/password, MFA and email/saved-code recovery remain. Historical social tables/migrations are preserved without reset; they provide no sign-in route. Former provider-only accounts must establish a password using the existing verified-email or saved-code recovery process. Social sharing of reviewed news remains a separate feature. Retired /api/auth/providers, /api/auth/social/* and /auth/social/* now return 404.
 
 ## Interview-aligned fields, private media and consolidation ? 8 November 2026
 
@@ -251,3 +240,31 @@ POST reports accepts optional boolean assistance_needed; the private resource re
 Private admin photo projections add authenticity.required/status/probability/model/version and nullable review.verdict/note/at/version. Owners retain photos without that metadata; public photos remain empty. New required incident evidence without a current accepted review blocks factual verification422, without blocking responder contact. No score changes report lifecycle automatically.
 
 Hotline settings additionally accept optional service police/fire/medical/rescue/other, area<=80, address<=160 and paired bounded latitude/longitude. Old name/number-only contacts remain valid. No geolocation data is sent to a discovery service. See [workflow/local detector contract](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
+
+
+## Verified reporter onboarding ? 24 November 2026
+
+| Method / path | Contract |
+| --- | --- |
+| GET `/api/policies` | Public; current version, operator/public privacy contact, terms/privacy paragraphs; no credentials |
+| GET `/api/account/verification` | Authenticated; own email/policy/identity status, readiness, supported types and can_report; no image/path |
+| POST `/api/account/policies` | Authenticated; accepted=true, version=current; idempotent acceptance |
+| POST `/api/account/identity` | Either role with verified local email/current acceptance; document_type, consent=true, version=current and one multipart image; private JPEG/PNG/WebP <=1 MB, <=1920px; 3 attempts/hour; 409 for already pending/approved; 503 without public privacy contact |
+| DELETE `/api/account/identity` | Own submission only; deletes image and removes optional badge; reporting/admin access is preserved |
+| GET `/api/admin/identities` | Admin; 20 pending nonexpired rows/page, deterministic creation/UUID order |
+| GET `/api/admin/identities/{identity}/image` | Admin plus recent authentication; nonexpired pending image only; authenticated WebP/no-store; 30/minute |
+| POST `/api/admin/identities/{identity}/review` | Admin plus recent authentication; decision=approved/rejected, checked=true; rejection reason=unreadable/name_mismatch/unsupported_document/cannot_verify; locks current account/submission, rejects changed/expired state with 409; deletes image; 20/minute |
+
+Web `/auth/register` and native `/api/auth/register` additionally require accepted=true and policy_version=current. Registration queues the existing SMTP challenge when configured; local_email_verified_at remains null until the existing consume endpoint redeems its single-use 30-minute proof. Missing credentials never grant eligibility. Existing users accept policies and send email verification from Settings. POST `/api/reports` and POST `/api/reports/{report}/confirm` return 403 plus verification_required=true until local email and current policies pass (ID is optional), including existing tokens. Profile name changes revoke identity; email changes clear email verification. All private responses remain no-store. See [audit](REPORTER_VERIFICATION_AUDIT_2026-11-24.md).
+
+
+## Both-role verification
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. User/login/profile and verification responses expose server-derived account_ready and identity_verified booleans. account_verified remains a compatibility alias for identity_verified, never an authorization input. Client-supplied role/verification flags cannot award a badge.
+
+| Method | Route | Contract |
+| --- | --- | --- |
+| GET | `/api/admin/accounts` | Recent authenticated administrator; 20-row paginated safe account fields |
+| POST | `/api/admin/accounts` | Name, unused email, private 12–72 byte password; fixed admin role, no auto-verification; MFA setup window 15 minutes |
+| POST | `/api/admin/accounts/{administrator}/enrollment` | Authorize a new 15-minute window only for an active admin without enrolled MFA |
+| DELETE | `/api/admin/accounts/{administrator}` | Refuse current/last active admin; revoke access, soft-delete and retain history/audit |

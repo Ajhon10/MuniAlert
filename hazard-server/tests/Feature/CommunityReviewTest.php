@@ -42,8 +42,8 @@ class CommunityReviewTest extends TestCase
 
     public function test_lists_statistics_search_and_nearby_never_reveal_unaccepted_submissions(): void
     {
-        $member = User::factory()->create();
-        $other = User::factory()->create();
+        $member = User::factory()->verifiedReporter()->create();
+        $other = User::factory()->verifiedReporter()->create();
         $own = $this->record($member);
         $pending = $this->record($other);
         $legacy = $this->record($other, status: 'verified', published: true);
@@ -65,7 +65,7 @@ class CommunityReviewTest extends TestCase
         $this->getJson('/api/reports/'.$pending->id)->assertForbidden();
         $this->postJson('/api/reports/'.$pending->id.'/confirm')->assertNotFound();
         $this->getJson('/api/admin/stats')->assertForbidden();
-        $this->authenticateUser(User::factory()->create(['role' => 'admin']));
+        $this->authenticateUser(User::factory()->verifiedReporter()->create(['role' => 'admin']));
         $this->getJson('/api/admin/reports')->assertJsonCount(4, 'data');
         $this->getJson('/api/admin/stats')->assertJsonPath('total', 4)->assertJsonPath('pending', 2);
         $this->getJson('/api/stats')->assertJsonPath('total', 1);
@@ -73,11 +73,11 @@ class CommunityReviewTest extends TestCase
 
     public function test_acceptance_requires_admin_attestation_and_keeps_the_review_record_private(): void
     {
-        $owner = User::factory()->create();
+        $owner = User::factory()->verifiedReporter()->create();
         $report = $this->record($owner);
         $this->authenticateUser($owner);
         $this->postJson('/api/admin/reports/'.$report->id.'/verify', $this->verification())->assertForbidden();
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->verifiedReporter()->create(['role' => 'admin']);
         $this->authenticateUser($admin);
         $this->postJson('/api/admin/reports/'.$report->id.'/verify', [...$this->verification(), 'confirmed_happened' => false])->assertUnprocessable();
         $this->postJson('/api/admin/reports/'.$report->id.'/verify', [...$this->verification(), 'verification_note' => 'short'])->assertUnprocessable();
@@ -99,9 +99,9 @@ class CommunityReviewTest extends TestCase
 
     public function test_only_fact_checked_reports_can_be_explicitly_published_and_shared_without_private_fields(): void
     {
-        $owner = User::factory()->create();
+        $owner = User::factory()->verifiedReporter()->create();
         $report = $this->record($owner);
-        $this->authenticateUser(User::factory()->create(['role' => 'admin']));
+        $this->authenticateUser(User::factory()->verifiedReporter()->create(['role' => 'admin']));
         $this->postJson('/api/admin/reports/'.$report->id.'/post', $this->postData())->assertUnprocessable();
         $this->get('/news/'.$report->id)->assertNotFound();
         $this->postJson('/api/admin/reports/'.$report->id.'/verify', $this->verification())->assertOk();
@@ -116,9 +116,9 @@ class CommunityReviewTest extends TestCase
 
     public function test_unpublishing_and_rejection_remove_public_posts_and_revoke_ineligible_progress(): void
     {
-        $owner = User::factory()->create();
+        $owner = User::factory()->verifiedReporter()->create();
         $report = $this->record($owner, status: 'verified', accepted: true, published: true);
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->verifiedReporter()->create(['role' => 'admin']);
         $this->authenticateUser($admin);
         $this->deleteJson('/api/admin/reports/'.$report->id.'/post')->assertOk();
         $this->getJson('/api/news')->assertJsonCount(0, 'data');
@@ -138,8 +138,8 @@ class CommunityReviewTest extends TestCase
 
     public function test_category_achievements_count_only_own_accepted_reports_once_in_each_category(): void
     {
-        $owner = User::factory()->create();
-        $other = User::factory()->create();
+        $owner = User::factory()->verifiedReporter()->create();
+        $other = User::factory()->verifiedReporter()->create();
         for ($i = 0; $i < 5; $i++) {
             $this->record($owner, status: 'verified', accepted: true);
         }
@@ -166,8 +166,8 @@ class CommunityReviewTest extends TestCase
 
     public function test_my_reports_includes_every_own_status_and_never_another_members_submission(): void
     {
-        $owner = User::factory()->create();
-        $other = User::factory()->create();
+        $owner = User::factory()->verifiedReporter()->create();
+        $other = User::factory()->verifiedReporter()->create();
         $statuses = ['submitted', 'under_verification', ...HazardReport::ACCEPTED_STATUSES, 'rejected'];
         foreach ($statuses as $status) {
             $this->record($owner, status: $status, accepted: in_array($status, HazardReport::ACCEPTED_STATUSES, true));
@@ -185,10 +185,10 @@ class CommunityReviewTest extends TestCase
     public function test_public_posts_use_reviewed_name_and_incident_time_snapshots_without_contact_or_evidence(): void
     {
         $name = '<b>Fixture Reporter</b>';
-        $owner = User::factory()->create(['name' => $name]);
+        $owner = User::factory()->verifiedReporter()->create(['name' => $name]);
         $report = $this->record($owner, status: 'verified', accepted: true);
         $report->forceFill(['occurred_at' => '2026-11-09 03:45:00'])->save();
-        $this->authenticateUser(User::factory()->create(['role' => 'admin']));
+        $this->authenticateUser(User::factory()->verifiedReporter()->create(['role' => 'admin']));
         $post = '/api/admin/reports/'.$report->id.'/post';
         $this->postJson($post, $this->postData())->assertOk()->assertJsonPath('data.public_reporter_name', null);
         $this->postJson($post, [...$this->postData(), 'include_reporter_name' => 'invalid'])->assertUnprocessable();

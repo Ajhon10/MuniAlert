@@ -3,14 +3,26 @@
 namespace Tests;
 
 use App\Models\User;
+use App\Services\AccountOnboarding;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 abstract class TestCase extends BaseTestCase
 {
-    /** Already-authenticated fixture for business tests; MFA flows have separate tests. */
-    protected function authenticateUser(User $user): void
+    /** Already-authenticated/reviewed admin fixture for business tests; pass false for onboarding denial tests. MFA flows have separate tests. */
+    protected function authenticateUser(User $user, bool $verifiedAdmin = true): void
     {
+        if ($user->role === 'admin' && $verifiedAdmin) {
+            $user->forceFill(['local_email_verified_at' => now()])->save();
+            app(AccountOnboarding::class)->accept($user);
+            DB::table('identity_verifications')->insertOrIgnore([
+                'id' => (string) Str::uuid(), 'user_id' => $user->id, 'applicant_name' => $user->name,
+                'document_type' => 'philsys', 'status' => 'approved', 'consent_version' => config('onboarding.policy_version'),
+                'consented_at' => now(), 'expires_at' => now()->addDays(7), 'reviewed_at' => now(), 'review_method' => 'operator_in_person', 'created_at' => now(), 'updated_at' => now(),
+            ]);
+        }
         if ($user->role === 'admin' && ! $user->mfa_enabled) {
             $user->forceFill(['mfa_secret' => 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP', 'mfa_confirmed_at' => now()])->save();
         }

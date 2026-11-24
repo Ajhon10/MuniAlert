@@ -37,6 +37,7 @@ class SecuritySessions
             $result = ['user' => $user];
         }
         app(SecurityEvents::class)->record('login_succeeded', $user, $request);
+        $result['user'] = app(AccountOnboarding::class)->serialize($user);
 
         return $result;
     }

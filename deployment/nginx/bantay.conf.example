@@ -1,4 +1,9 @@
 # Adapt paths, PHP-FPM socket, server_name, and TLS configuration before use.
+# Alternative VPS only; selected Hostinger Web/Cloud hosting is provider-managed.
+# Pass deployment/nginx-security/check.php on a VPS before activation; see
+# documentation/07-deployment-and-maintenance.md, NGINX security gate.
+# Keep HTTP/2 and QUIC disabled until the patched running binary is verified.
+# This template does not patch an installed NGINX package.
 server {
     listen 80;
     server_name hazards.example.org;

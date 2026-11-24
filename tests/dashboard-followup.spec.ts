@@ -4,7 +4,7 @@ import type { Page } from '@playwright/test';
 async function adminLogin(page: Page) {
   await page.goto('/'); await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
-  await auth.getByLabel('Email address', { exact: true }).fill('admin@example.test');
+  await auth.getByLabel('Email address', { exact: true }).fill('admin@munialert.test');
   await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click(); await finishAdminMfa(page);
   await expect(page.locator('.header-account')).toContainText('Municipal administrator');

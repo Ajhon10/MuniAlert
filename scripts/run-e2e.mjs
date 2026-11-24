@@ -21,16 +21,16 @@ try {
   const sqlite = resolve(root, '.cache/e2e.sqlite');
   const mysql = process.env.HAZARD_E2E_MYSQL === '1';
   if (!mysql) writeFileSync(sqlite, '');
-  const env = { ...phpEnv(), HAZARD_API_PORT: apiPort, HAZARD_WEB_PORT: webPort, APP_ENV: 'testing', APP_DEBUG: 'false', BCRYPT_ROUNDS: '4', APP_URL: apiUrl, FRONTEND_URLS: `${webUrl},http://localhost:${webPort}`, APP_KEY: 'base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', DB_CONNECTION: mysql ? 'mysql' : 'sqlite', DB_DATABASE: mysql ? 'municipal_hazards_e2e' : sqlite, SESSION_DRIVER: 'file', CACHE_STORE: 'database', QUEUE_CONNECTION: 'sync', GOOGLE_CLIENT_ID: '', GOOGLE_CLIENT_SECRET: '', GOOGLE_REDIRECT_URI: '', FACEBOOK_CLIENT_ID: '', FACEBOOK_CLIENT_SECRET: '', FACEBOOK_REDIRECT_URI: '', IMAGE_DETECTOR_ENABLED: 'false', IMAGE_DETECTOR_TOKEN: '', FCM_PROJECT_ID: '', GOOGLE_APPLICATION_CREDENTIALS: '', HAZARD_EVIDENCE_DISK: 'evidence', SANCTUM_STATEFUL_DOMAINS: `127.0.0.1:${webPort},localhost:${webPort}`, HAZARD_DEMO_ADMIN_PASSWORD: randomBytes(24).toString('base64url'), HAZARD_DEMO_CITIZEN_ONE_PASSWORD: randomBytes(24).toString('base64url'), HAZARD_DEMO_CITIZEN_TWO_PASSWORD: randomBytes(24).toString('base64url') };
+  const env = { ...phpEnv(), HAZARD_API_PORT: apiPort, HAZARD_WEB_PORT: webPort, APP_ENV: 'testing', APP_DEBUG: 'false', BCRYPT_ROUNDS: '4', APP_URL: apiUrl, FRONTEND_URLS: `${webUrl},http://localhost:${webPort}`, APP_KEY: 'base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', DB_CONNECTION: mysql ? 'mysql' : 'sqlite', DB_DATABASE: mysql ? 'municipal_hazards_e2e' : sqlite, SESSION_DRIVER: 'file', CACHE_STORE: 'database', QUEUE_CONNECTION: 'sync', GOOGLE_CLIENT_ID: '', GOOGLE_CLIENT_SECRET: '', GOOGLE_REDIRECT_URI: '', FACEBOOK_CLIENT_ID: '', FACEBOOK_CLIENT_SECRET: '', FACEBOOK_REDIRECT_URI: '', IMAGE_DETECTOR_ENABLED: 'false', IMAGE_DETECTOR_TOKEN: '', FCM_PROJECT_ID: '', GOOGLE_APPLICATION_CREDENTIALS: '', HAZARD_EVIDENCE_DISK: 'evidence', SANCTUM_STATEFUL_DOMAINS: `127.0.0.1:${webPort},localhost:${webPort}`, INITIAL_ADMIN_NAME: 'Synthetic Administrator', INITIAL_ADMIN_EMAIL: 'admin@munialert.test', INITIAL_ADMIN_PASSWORD: randomBytes(24).toString('base64url') };
   // Exercise both the Vite proxy and the packaged same-origin web deployment.
+  Object.assign(env, { PRIVACY_OPERATOR_NAME: 'BASISTA MUNICIPAL HALL', PRIVACY_CONTACT_EMAIL: 'privacy@example.test', MAIL_ENABLED: 'true', MAIL_MAILER: 'array', SECURITY_RECOVERY_ENABLED: 'true', SECURITY_FRONTEND_URL: webUrl });
   env.SANCTUM_STATEFUL_DOMAINS += `,127.0.0.1:${apiPort},localhost:${apiPort}`;
   env.FRONTEND_URLS += `,${apiUrl}`;
   env.E2E_ADMIN_MFA_SECRET = Array.from(randomBytes(32), byte => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'[byte & 31]).join('');
   if (peerUrl) env.HAZARD_E2E_PEER_URL = peerUrl;
   env.E2E_ADMIN_RECOVERY_CODE = randomBytes(5).toString('hex') + '-' + randomBytes(5).toString('hex');
-  env.E2E_ADMIN_PASSWORD = env.HAZARD_DEMO_ADMIN_PASSWORD;
-  env.HAZARD_DEMO_ADMIN_EMAIL = 'admin@example.test';
-  env.E2E_CITIZEN_PASSWORD = env.HAZARD_DEMO_CITIZEN_ONE_PASSWORD;
+  env.E2E_ADMIN_PASSWORD = env.INITIAL_ADMIN_PASSWORD;
+  env.E2E_CITIZEN_PASSWORD = env.INITIAL_ADMIN_PASSWORD;
   if (!env.PLAYWRIGHT_BROWSERS_PATH && existsSync(resolve(root, '.cache/playwright'))) env.PLAYWRIGHT_BROWSERS_PATH = resolve(root, '.cache/playwright');
   const migration = spawnSync(php, ['artisan', 'migrate:fresh', '--seed', '--force', '--no-ansi'], { cwd: resolve(root, 'hazard-server'), env, stdio: 'inherit' });
   if (migration.status !== 0) throw Error('Isolated test database setup failed.');

@@ -21,6 +21,7 @@ export const test = base.extend<{ isolatedCache: void }>({
       cwd: resolve(root, 'hazard-server'), env: phpEnv(), encoding: 'utf8', windowsHide: true,
     });
     if (security.status !== 0) throw Error(`Isolated MFA fixture failed: ${security.stderr || security.stdout}`);
+    verifyReporterFixture();
     await use();
   }, { auto: true }],
 });
@@ -98,9 +99,19 @@ export async function finishAdminMfa(page: Page) {
   await expect(page.getByRole('dialog', { name: 'Welcome to your community' })).toHaveCount(0);
 }
 export async function adminApiToken(request: APIRequestContext, origin: string) {
-  const pending = await request.post(`${origin}/api/auth/login`, { data: { email: 'admin@example.test', password: process.env.E2E_ADMIN_PASSWORD }, headers: { Accept: 'application/json' } });
+  const pending = await request.post(`${origin}/api/auth/login`, { data: { email: 'admin@munialert.test', password: process.env.E2E_ADMIN_PASSWORD }, headers: { Accept: 'application/json' } });
   expect(pending.ok()).toBe(true); const challenge = await pending.json();
   expect(challenge.token).toBeUndefined(); expect(challenge.mfa_required).toBe(true);
   const result = await request.post(`${origin}/api/auth/mfa/verify`, { data: { challenge_token: challenge.challenge_token, code: adminOtp() }, headers: { Accept: 'application/json' } });
   expect(result.ok()).toBe(true); return (await result.json()).token as string;
+}
+
+// These fixtures establish already-reviewed citizens for incident tests only.
+// The separate verification suite exercises actual consent/upload/admin review.
+export const policyAcceptance = { accepted: true, policy_version: '2026-11-24-r3' };
+export function verifyReporterFixture(email?: string) {
+  const result = spawnSync(php, ['artisan', 'db:seed', '--class=BrowserReporterSeeder', '--force', '--no-ansi'], {
+    cwd: resolve(root, 'hazard-server'), env: { ...phpEnv(), E2E_VERIFIED_REPORTER_EMAIL: email || '' }, encoding: 'utf8', windowsHide: true,
+  });
+  if (result.status !== 0) throw Error(`Isolated reporter fixture failed: ${result.stderr || result.stdout}`);
 }

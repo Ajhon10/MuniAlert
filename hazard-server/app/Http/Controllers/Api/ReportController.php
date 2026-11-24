@@ -9,6 +9,8 @@ use App\Jobs\ScreenReportImage;
 use App\Models\Category;
 use App\Models\Department;
 use App\Models\HazardReport;
+use App\Models\User;
+use App\Services\AccountOnboarding;
 use App\Services\AdminReportAlerts;
 use App\Services\PhotoStorage;
 use App\Services\ReportUpdates;
@@ -111,6 +113,8 @@ class ReportController extends Controller
                 $photos[] = $storage->store($file);
             }
             $report = DB::transaction(function () use ($request, $data, $photos) {
+                $reporter = User::whereKey($request->user()->id)->lockForUpdate()->firstOrFail();
+                app(AccountOnboarding::class)->requireReporter($reporter);
                 $data['user_id'] = $request->user()->id;
                 $data['department_id'] = Category::findOrFail($data['category_id'])->department_id;
                 $data['reference_number'] = 'HZ-'.now()->year.'-'.strtoupper(Str::random(8));
@@ -192,6 +196,8 @@ class ReportController extends Controller
     public function confirm(Request $request, HazardReport $report)
     {
         return DB::transaction(function () use ($request, $report) {
+            $reporter = User::whereKey($request->user()->id)->lockForUpdate()->firstOrFail();
+            app(AccountOnboarding::class)->requireReporter($reporter);
             $report = HazardReport::whereKey($report->id)->lockForUpdate()->firstOrFail();
             abort_unless($report->isCommunityVisible(), 404);
             abort_if(in_array($report->status, ['resolved', 'closed', 'rejected']), 422, 'This report is no longer active.');

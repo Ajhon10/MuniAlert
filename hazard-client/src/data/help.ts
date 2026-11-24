@@ -66,7 +66,7 @@ export const manualSections: ManualSection[] = [
     'Signed-in preferences are saved separately to your account and restored on other devices after sign-in. Guest preferences stay on this device. A sync error keeps your local changes and offers Retry saving preferences in Settings. Reset reading settings restores the defaults. Browser zoom and phone text settings remain available.',
   ], keywords: 'accessibility read text size large font bold contrast spacing animation motion toast messages android older elderly' },
   { id: 'getting-started', audience: 'all', title: 'Sign in and find your way around', summary: 'Your account, navigation and the preview workspace.', steps: [
-    'Use Sign in in the header. Create a citizen account with your name, email and password. Google and Facebook sign-in buttons are currently hidden; use your email and password. The header account icon opens My profile, Settings and Log out after sign-in.',
+    'Use Sign in in the header. Create a citizen account with your name, email and password. Use your email and password; Google/Facebook sign-in has been removed. The header account icon opens My profile, Settings and Log out after sign-in.',
     'On a phone, use Home, Map, Report, Updates and More. More opens workspace navigation. Find this guide in account icon → Settings. Administrator navigation shows Review and Manage instead of citizen reporting.',
     'In a popup, scroll the middle to read all fields or details. The title, close button and bottom actions stay visible. Use Go back to cancel a confirmation without losing the form underneath.',
     'A Demo workspace banner means the records are fictional. Exit preview before sending a real report. A report is accepted only when the system returns a reference number.',
@@ -149,10 +149,10 @@ export const manualSections: ManualSection[] = [
     'Save and confirm changes. Badge and reward descriptions are informational; payment or gift fulfillment is handled separately by the municipality.',
   ], keywords: 'cms settings manage hotline phone emergency map badge reward' },
   { id: 'troubleshooting', audience: 'all', title: 'Fix common reporting problems', summary: 'Connection, GPS, photo, map and account recovery steps.', steps: [
-    'No connection: keep the form open and retry when connected. Do not assume a report was accepted without a reference number. Unsent forms are not automatically saved or submitted in the background.',
+    'The top banner stays visible when disconnected. Not connected to the internet: enable Wi-Fi or mobile data. Not connected to the municipal server: check your connection, use Retry connection, or wait for automatic retries. Connected appears briefly after recovery. Keep the form open and retry. Unsent forms are not automatically saved or submitted. Do not assume acceptance without a report reference number.',
     'GPS denied or inaccurate: use a manual pin or known coordinates and confirm the incident location. If map tiles do not load, use available coordinate fields and an accurate landmark.',
     'Photo error: choose JPEG, PNG or WebP, wait for preparation and try a smaller image if needed. You can attach up to three incident photos, each prepared to at most 1 MB and 1920 pixels.',
-    'Session expired: sign in again. Disabled Google or Facebook buttons mean the municipality has not enabled that provider; use an available sign-in method.',
+    'Session expired: sign in again. Use email/password sign-in; provider sign-in is no longer available.',
     'No push alert: check Notifications and your phone permissions. Push is optional and its availability depends on the municipality enabling it.',
   ], keywords: 'offline retry error failed connection network denied permission gps photo login push help' },
 ];

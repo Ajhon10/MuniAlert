@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { readFileSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const git = args => {
@@ -9,6 +9,7 @@ const git = args => {
 };
 if (process.argv.includes('--clean') && git(['status', '--porcelain']).trim()) throw Error('Commit the intended changes and rerun verification before pushing.');
 const staged = git(['ls-files', '--stage', '-z']).split('\0').filter(Boolean);
+const removed = new Set(git(['ls-files', '--deleted', '-z']).split('\0').filter(Boolean).map(file => file.replaceAll('\\', '/')));
 const findings = [];
 const binary = /\.(png|jpg|jpeg|webp|gif|ico|pdf|wav|mp4|jar|woff2?|ttf)$/i;
 const deny = /(^|\/)(node_modules|vendor|\.cache|\.npm-cache|\.composer-cache|test-results|playwright-report)(\/|$)|(^|\/)\.env(?:$|\.(?!example$))|\.(?:sqlite|sqlite-journal|jks|keystore|p12|pfx|sql)$/i;
@@ -24,7 +25,11 @@ for (const record of staged) {
   if (mode === '160000') { findings.push(`${file}: embedded repository/submodule is not part of the selected single-repository layout`); continue; }
   if (deny.test(file) || /(?:google-services|firebase-credentials|service-account|auth)\.json$/i.test(file)) findings.push(`${file}: private/generated path`);
   if (/^hazard-server\/storage\/app\//.test(file) && !file.endsWith('/.gitignore')) findings.push(`${file}: private application storage`);
-  const absolute = resolve(root, file); const size = statSync(absolute).size;
+  const absolute = resolve(root, file);
+  // A legitimate unstaged source deletion has no working-tree content to scan.
+  // The --clean publication gate above still refuses every uncommitted change.
+  if (!existsSync(absolute) && removed.has(file)) continue;
+  const size = statSync(absolute).size;
   if (size > 50 * 1024 * 1024) findings.push(`${file}: file exceeds the source-publication size limit`);
   if (binary.test(file)) continue;
   const content = readFileSync(absolute, 'utf8');

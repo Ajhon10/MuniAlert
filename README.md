@@ -1,8 +1,10 @@
 # MuniAlert — Municipal Hazard Reporting
 
+**Current handoff (24 November, revision 3):** email/password login only; old demo accounts and Google/Facebook authentication are removed. Email/current policies remain required; one government ID is optional for both roles and earns a blue verified profile badge. Deployment seeding creates a privately configured starter administrator; Settings manages later admins. See [initial-account setup](documentation/TEST_ACCOUNTS.md), [Hostinger checklist](documentation/HOSTINGER_WEB_CLOUD.md), [editable capstone](documentation/capstone/MUNIALERT-CAPSTONE.docx) and [PDF](documentation/capstone/MUNIALERT-CAPSTONE.pdf).
+
 [Emergency-first reports, actionable notifications, hazard sounds and private image review](documentation/EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md) records the current workflow; real contacts and a local classifier need configuration.
 
-[Settings, saved reading preferences, authenticator 2FA and Gmail readiness](documentation/SETTINGS_2FA_EMAIL_2026-11-11.md) records the current refinement; real delivery needs BANTAY's separate app password.
+[Settings, saved reading preferences, authenticator 2FA and Gmail readiness](documentation/SETTINGS_2FA_EMAIL_2026-11-11.md) records the earlier refinement. BANTAY's separate credentials are now configured locally; host-side delivery remains unverified.
 
 Public source repository: **[Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert)**. One clone contains both apps, shared tests, documentation and Remotion source.
 
@@ -55,7 +57,7 @@ node scripts/php.mjs hazard-server/artisan hazard:admin admin@example.test
 
 Choose the administrator name/password when prompted. Create a separate citizen account through the app. Fresh installations have no owner accounts or incident records. Do not regenerate an existing app key or reset an existing database when updating.
 
-For optional local **administrator + citizen test accounts**, follow [Test accounts and the explicit seeder](documentation/TEST_ACCOUNTS.md). Choose three private passwords in your own server `.env`, then run `npm.cmd run db:seed` to seed all reference and configured sample accounts together. Without all three passwords, no shared/default login is supplied. Seed rows are visible in [the CSV catalog](hazard-server/database/data/). See [the phased security work](documentation/SECURITY_IMPLEMENTATION_PLAN.md) for implemented protections and remaining release requirements.
+Deployment seeding creates a starter administrator using private INITIAL_ADMIN_NAME/EMAIL/PASSWORD configuration. No public demo password or demo resident is included. See [initial-account setup](documentation/TEST_ACCOUNTS.md); existing accounts and reference-catalog edits are preserved.
 
 From the repository root, start both services and keep the terminal running:
 
@@ -79,7 +81,7 @@ See [stack and Hostinger options](documentation/STACK_AND_HOSTINGER.md), [UI des
 
 Confirmed target: **Hostinger Web/Cloud hosting; Android app + responsive web**. Follow [the Web/Cloud deployment guide](documentation/HOSTINGER_WEB_CLOUD.md) for `public_html`, private Laravel files and a single scheduled push cron. A VPS or persistent worker is not required for this mode; validate actual hosting limits and delivery latency before operational use.
 
-Google and Facebook signup/sign-in is implemented for web and Android. Configure server-only provider apps using [the social authentication guide](documentation/SOCIAL_AUTH_SETUP.md); unconfigured providers remain unavailable and email login continues working.
+Google and Facebook authentication have been removed: provider/prepare/callback/exchange/link routes, frontend integration, native callback, Socialite and native App/Browser dependencies are retired. Email/password, MFA and email/saved-code recovery remain. Historical social tables/migrations are preserved without reset; they provide no sign-in route. Former provider-only accounts must establish a password using the existing verified-email or saved-code recovery process. Social sharing of reviewed news remains a separate feature.
 
 Read the [8 November interview/screenshot and Android review](documentation/INTERVIEW_ALIGNMENT_2026-11-08.md) for corrected requirements, screenshot verdicts, private evidence, resolution photos and weekly/monthly incident records.
 
@@ -89,11 +91,11 @@ Application name: **MuniAlert**. Full capstone title: **Municipal Emergency and 
 The managing office is **Basista Municipal Hall, Pangasinan**, covering the 13 barangays confirmed by the user. See [map modes, boundary sources and filtering](documentation/BASISTA_MAP_2026-11-09.md). Open `?view=map` and choose Clear/Streets/Dark, boundary levels or the hazard type.
 
 
-For false or abusive reports, follow [the municipal review guide](documentation/FRAUD_PREVENTION.md). Current controls support human verification; verified contact enrollment and automated fraud detection are not implemented.
+For false or abusive reports, follow [the municipal review guide](documentation/FRAUD_PREVENTION.md). Current controls combine verified email, reviewed identity and human incident verification; automated fraud detection is not implemented.
 
 ## Continued security phases
 
-Administrator MFA and fresh verification, versioned/revoked credentials, verified-local-email recovery, production CSP, optional fail-closed scanning and private security events are implemented. See [the activation guide](documentation/SECURITY_OPERATIONS_2026-11-10.md) before migrating an operational system: existing password-only administrator sessions are rejected and enrollment needs operator approval. Email/scanning remain unconfigured until approved services are supplied. The expanded exact-state gate includes PHP static analysis, TypeScript and pinned/redacted source secret scanning. No push/deployment is implied.
+Administrator MFA and fresh verification, versioned/revoked credentials, verified-local-email recovery, production CSP, fail-closed upload scanning and private security events are implemented. See [the activation guide](documentation/SECURITY_OPERATIONS_2026-11-10.md) before migrating an operational system: existing password-only administrator sessions are rejected and enrollment needs operator approval. SMTP is configured locally; host delivery and an approved scanner service remain prerequisites. The expanded exact-state gate includes PHP static analysis, TypeScript and pinned/redacted source secret scanning. No push/deployment is implied.
 
 ## Community review and achievements
 

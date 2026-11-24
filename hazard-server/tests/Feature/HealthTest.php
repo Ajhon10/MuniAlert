@@ -8,6 +8,13 @@ use Tests\TestCase;
 
 class HealthTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // The mocked manager has no open connections for Laravel's teardown.
+        DB::shouldReceive('getConnections')->andReturn([]);
+    }
+
     public function test_local_health_identifies_the_workspace_without_exposing_its_path(): void
     {
         $this->app->detectEnvironment(fn () => 'local');

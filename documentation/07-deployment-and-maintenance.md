@@ -25,7 +25,7 @@ Create a new MySQL database named `municipal_hazards`, configure its credentials
 
 ```sh
 php hazard-server/artisan migrate --seed
-php hazard-server/artisan hazard:admin admin@example.test
+php hazard-server/artisan db:seed --force
 ```
 
 Start both services from BANTAY with `npm run dev` (`npm.cmd run dev` in PowerShell). It checks/reuses existing matching instances and verifies the client-to-API proxy before reporting success. The separate `composer run serve` and client `npm run dev` commands remain available. Use the PHP 8.5 PATH prefix for Composer in Git Bash. See [the startup repair](STARTUP_REPAIR_2026-11-04.md).
@@ -57,7 +57,7 @@ DB_PASSWORD="replace-with-your-actual-local-password"
 
 ```sh
 php hazard-server/artisan migrate --seed
-php hazard-server/artisan hazard:admin admin@example.test
+php hazard-server/artisan db:seed --force
 ```
 
 Start both applications separately as shown above.
@@ -66,7 +66,7 @@ Use a **plain email address**, not `[admin@example.test](mailto:admin@example.te
 
 The Vite and PHP server startup messages only confirm that HTTP servers started. They do not prove database authentication or migrations succeeded. If the MySQL password is unknown, obtain it from the owner of that local installation or follow that installation's authorized account-recovery process before continuing.
 
-For local development accounts, set three distinct `HAZARD_DEMO_*_PASSWORD` values of at least 12 characters and at most 72 UTF-8 bytes in `hazard-server/.env`, clear configuration, then run `npm run db:seed:accounts` from the root. `HAZARD_DEMO_ADMIN_EMAIL` defaults to `admin@example.test`; two regular citizens use `example.test`. It is explicit, local/testing-only, transactional, and skips existing accounts without resetting passwords or roles. See [test accounts](TEST_ACCOUNTS.md). Do not deploy these demo credentials. Private evidence does not need a public storage symlink.
+InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
 
 Before deployment, run `node scripts/php.mjs hazard-server/artisan hazard:security-check` against the intended production configuration. It is read-only, prints no configuration values, and must fail for the normal local HTTP/root-database/demo setup. It checks only the Phase 1 configuration baseline; complete [all remaining security phases](SECURITY_IMPLEMENTATION_PLAN.md), hosting/TLS checks and operational acceptance separately. Production requests additionally suppress debug details and force Secure/HttpOnly cookies. Verify HTTPS/trusted proxy behavior on the real hosting account rather than assuming these source guards configure the server.
 
@@ -158,8 +158,7 @@ Run `schedule:run` every minute via cron, as shown in `deployment/scheduler.cron
 
 ## Optional Google/Facebook setup
 
-Follow [SOCIAL_AUTH_SETUP.md](SOCIAL_AUTH_SETUP.md) for server environment keys, exact registered callback URIs, HTTPS/cookie/proxy requirements and Android app return links. Deploy the additive social-auth migration without resets. Keep secrets outside public_html and frontend build variables. The existing scheduler cron cleans expired attempts daily. Complete real-provider and physical Android tests before enabling public sign-in. The source feature can be locally verified while these external credentials/review steps remain pending.
-
+Google and Facebook authentication have been removed: provider/prepare/callback/exchange/link routes, frontend integration, native callback, Socialite and native App/Browser dependencies are retired. Email/password, MFA and email/saved-code recovery remain. Historical social tables/migrations are preserved without reset; they provide no sign-in route. Former provider-only accounts must establish a password using the existing verified-email or saved-code recovery process. Social sharing of reviewed news remains a separate feature.
 
 ## Basista map assets
 
@@ -181,7 +180,7 @@ Apply the additive fact-check/publication migration without resets. It adds null
 
 ## Settings and separate Gmail delivery — 11 November 2026
 
-Apply the additive account-preferences migration with PHP8.5; do not reset the database. Default demo administrators must use a reserved .test address such as admin@example.test. Changing the seeder default does not rename or promote an existing account.
+InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
 
 Gmail SMTP is the selected provider, matching PDEA's provider with separate BANTAY credentials. Configure MAIL_ENABLED=true, MAIL_MAILER=smtp, MAIL_HOST=smtp.gmail.com, MAIL_PORT=587, MAIL_SCHEME=smtp, MAIL_REQUIRE_TLS=true, MAIL_USERNAME and MAIL_FROM_ADDRESS with the authorized sender, and MAIL_PASSWORD with its separate app password in the ignored server environment. Use SECURITY_RECOVERY_ENABLED=true and an exact public HTTPS SECURITY_FRONTEND_URL (no path/query/fragment). Local loopback HTTP is allowed only for local/testing. Keep the application key stable for encrypted delivery proofs. Run config:clear after local changes or rebuild the production config cache during deployment. Never put mail secrets in frontend variables or copy another project's app password.
 
@@ -192,3 +191,66 @@ Keep the existing single scheduler cron; hazard:work-security-mail runs bounded 
 Apply the two additive assistance/image-review migrations without resets. Publish municipality-approved contacts in Content management; coordinates are optional but needed for closest sorting. No real numbers are seeded. Configure image inference only with a maintained evaluated classifier on the same trusted host. IMAGE_DETECTOR_ENABLED defaults false; numeric-loopback IMAGE_DETECTOR_URL and server-only optional IMAGE_DETECTOR_TOKEN never reach frontend settings. No third-party photo egress is permitted.
 
 The existing single scheduler can run hazard:work-image-screening in bounded overlapping-safe batches when enabled. Verify actual hosting support for local inference; shared-hosting PHP alone does not supply a model/service. Leave automated screening off and use explicit human review if unavailable. Test actual browser/device sound, background/push delivery, agency contact accuracy, workload and municipal operating policy separately. See [configuration/limits](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
+
+## NGINX security gate ? 19 November 2026
+
+The selected Hostinger Web/Cloud plan is provider-managed. Ask Hostinger to confirm
+the web server, affected features and vendor security fixes for all five CVEs.
+Do not try to install OS packages, add sudo privileges or require systemd on
+shared hosting. The following checker applies only to the alternative Linux VPS
+configuration when its operator has authorized shell access.
+
+Before release, verify fixes for CVE-2026-123007, CVE-2026-123633, CVE-2026-123634,
+CVE-2026-121810 and CVE-2026-113425. Upstream fixed releases are **1.30.7 stable**
+and **1.31.9 mainline**: <https://nginx.org/en/security_advisories.html>.
+Ubuntu still listed supported packages as vulnerable at review time; recheck
+<https://ubuntu.com/security/CVE-2026-123007> and the other four vendor records.
+An ordinary APT success or application dependency update is not proof of a fix.
+
+For a standard Linux host with /usr/sbin/nginx and nginx.service, DevOps can run
+the standalone read-only checker from a reviewed, operator-controlled copy of
+this project's source, using PHP 8.2+ (no Composer install or .env is needed):
+
+```sh
+sudo /usr/bin/php deployment/nginx-security/check.php
+```
+
+Do not grant standing generic sudo PHP access to application-owned source. The
+checker rejects an unverified package, invalid config, inactive master, stale
+master/worker executable or inaccessible process evidence. It prints sanitized
+JSON only after all checks pass. Never dump nginx -T into a public ticket or CI
+log. Its --version option is an offline policy test and does not inspect a host.
+
+If the package is unpatched, back up /etc/nginx outside include directories,
+review the signed package origin and dynamic modules, install a vendor-confirmed
+fixed package, run nginx -t, then restart nginx.service and rerun the checker.
+A reload keeps the old master executable. Plan a brief service interruption and
+retain a tested compatible configuration rollback; do not blindly downgrade to
+the vulnerable binary. No package repository migration is authorized by this
+example. Return sanitized package, restart, running-binary and HTTPS smoke-test
+evidence before accepting production protection.
+
+An older-version vendor backport requires a root-owned, non-writable-by-others
+regular file at /etc/bantay/nginx-security.json. The operator must first
+confirm all five fixes, then record package_version (exact dpkg-query nginx
+version), binary_sha256 (exact /usr/sbin/nginx hash), and an advisories object
+mapping each CVE above to its HTTPS Ubuntu, Debian, NGINX or F5 notice. This is
+operator attestation, not automated interpretation of vendor notices. A package
+or binary change invalidates it; HTTP/2 mitigation alone is insufficient.
+
+If no fixed package is available, temporarily remove http2 from every exposed
+listen directive and turn existing http2 on directives off where supported;
+validate and restart to end old connections. Confirm h2 is not negotiated on
+any exposed hostname/port, including direct origins. Inspect HTTP/3/QUIC,
+variable upstream resolver use with SSI/mirror and mail proxy exposure
+separately. This mitigates only the two HTTP/2 CVEs and does not pass the full
+patch gate. See <https://cert.europa.eu/publications/security-advisories/2026-022/pdf>.
+
+The supplied template keeps its existing protocol/routing configuration. Do not
+add HTTP/2/QUIC until patch verification. Local checker tests are separate from
+Linux host execution, deployment and workload acceptance.
+
+
+## Reporter verification activation
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. Set a public privacy contact before collecting optional ID images, protect private storage/keys and run the existing hourly cleanup. InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter. Complete host mail/cron/scanner/backup and municipal acceptance separately.

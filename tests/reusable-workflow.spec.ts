@@ -6,8 +6,8 @@ async function login(page: Page, admin = false) {
   await page.goto('/');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
-  await auth.getByLabel('Email address', { exact: true }).fill(admin ? 'admin@example.test' : 'citizen.two@example.test');
-  await auth.getByLabel('Password', { exact: true }).fill(admin ? process.env.E2E_ADMIN_PASSWORD! : process.env.HAZARD_DEMO_CITIZEN_TWO_PASSWORD!);
+  await auth.getByLabel('Email address', { exact: true }).fill(admin ? 'admin@munialert.test' : 'resident2@munialert.test');
+  await auth.getByLabel('Password', { exact: true }).fill(admin ? process.env.E2E_ADMIN_PASSWORD! : process.env.E2E_CITIZEN_PASSWORD!);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
   if (admin) await finishAdminMfa(page);
   await expect(auth).toHaveCount(0);
@@ -27,7 +27,9 @@ test('shared notification rows clamp long previews and open the full authorized 
   for (const size of [100, 200]) {
     const zoom = await page.addStyleTag({ content: `html { font-size: ${size}% !important; }` });
     await page.setViewportSize({ width: size === 200 ? 375 : 1280, height: 900 });
-    expect((await rows.nth(0).boundingBox())!.height).toBeCloseTo((await rows.nth(1).boundingBox())!.height, 0);
+    // Measure both rows in the same layout snapshot while ResizeObserver
+    // updates their shared height after the font/viewport change.
+    await expect.poll(() => rows.evaluateAll(nodes => Math.abs(nodes[0]!.getBoundingClientRect().height - nodes[1]!.getBoundingClientRect().height))).toBeLessThan(0.5);
     await expect.poll(async () => Math.abs((await rows.first().boundingBox())!.height - (await inbox.locator('.modal-header').boundingBox())!.height)).toBeLessThan(1);
     expect(await rows.first().locator('p').evaluate(el => el.scrollHeight > el.clientHeight)).toBe(true);
     expect(await inbox.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);

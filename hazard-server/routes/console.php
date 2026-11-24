@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Storage;
 
 // Invoke Artisan in this PHP process: shared hosting may disable proc_open.
+Schedule::call(fn () => Artisan::call('hazard:prune-identity'))->name('identity-image-cleanup')->hourly();
 Schedule::call(function () {
     Cache::store('database')->put('security.scheduler.heartbeat', now()->timestamp, 600);
     if (config('security.monitor_enabled')) {

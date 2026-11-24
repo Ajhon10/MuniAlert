@@ -5,13 +5,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\AccountMfa;
+use App\Services\AccountOnboarding;
+use App\Services\AccountRecovery;
 use App\Services\SecurityEvents;
 use App\Services\WebDeviceSessions;
 use App\Support\PasswordInput;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -22,8 +26,15 @@ class AuthController extends Controller
         if (is_string($request->input('email'))) {
             $request->merge(['email' => strtolower(trim($request->input('email')))]);
         }
-        $data = $request->validate(['name' => 'required|string|min:2|max:80', 'email' => 'required|string|email|max:255|unique:users', 'password' => ['required', ...PasswordInput::rules(true)]]);
-        $user = User::create($data);
+        $data = $request->validate(['name' => 'required|string|min:2|max:80', 'email' => 'required|string|email|max:255|unique:users', 'password' => ['required', ...PasswordInput::rules(true)],
+            'accepted' => 'required|accepted', 'policy_version' => ['required', Rule::in([config('onboarding.policy_version')])]]);
+        $user = DB::transaction(function () use ($data, $request) {
+            $user = User::create(Arr::only($data, ['name', 'email', 'password']));
+            app(AccountOnboarding::class)->accept($user);
+            app(AccountRecovery::class)->request($user->email, 'verify', $request);
+
+            return $user;
+        });
 
         return $this->issue($request, $user, 201);
     }

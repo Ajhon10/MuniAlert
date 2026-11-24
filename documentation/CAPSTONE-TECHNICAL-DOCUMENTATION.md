@@ -6,7 +6,7 @@ Application name: **MuniAlert**. Baseline: 2026-10-02. Institution, proponents a
 
 This appendix documents the implementation and testing evidence. It does not invent field research, cloud deployment or evaluation findings.
 
-<!-- Source SHA256: cc012917daa3b6bd69077f096ed2f6407a540bd70bad55ddb27695f293f50b2e -->
+<!-- Source SHA256: 294d4fc1de7748a382d5f0db4ff9bf1b58cb84825b95691780eb556209ed11a4 -->
 
 # 01 — Project overview and requirements
 
@@ -99,9 +99,9 @@ Not yet externally validated: real R2 access, FCM delivery, signed APK/AAB, actu
 
 Outside this version: offline submission/synchronization, native iOS packaging, continuous location tracking, emergency dispatch guarantees, AI hazard classification, real-time responder tracking, verified identity enrollment, heatmaps, advanced analytics, and an administrative account-management UI. A report is not an emergency call.
 
-## Social authentication extension ? 4 November 2026
+## Social authentication extension
 
-FR-02 now includes Google and Facebook signup/sign-in through Laravel Socialite for responsive web and Android. Password accounts can explicitly connect a provider after confirming their password. New social accounts are citizens; matching email never silently links identities. Provider configuration, real consent/callback tests, physical Android and target-host acceptance remain external requirements. See [provider setup](SOCIAL_AUTH_SETUP.md).
+Google and Facebook authentication have been removed: provider/prepare/callback/exchange/link routes, frontend integration, native callback, Socialite and native App/Browser dependencies are retired. Email/password, MFA and email/saved-code recovery remain. Historical social tables/migrations are preserved without reset; they provide no sign-in route. Former provider-only accounts must establish a password using the existing verified-email or saved-code recovery process. Social sharing of reviewed news remains a separate feature.
 
 ## FR-25 — Readable controls, feedback and motion
 
@@ -109,7 +109,7 @@ The interface provides shared success/error/information toast feedback for user 
 
 ## FR-26 — Privileged identity and continued security phases
 
-Administrators must complete operator-approved authenticator enrollment and MFA before receiving an administrator session/token, including social and Android paths. Sensitive administration requires recent device/session verification. Versioned credentials enforce suspension and authority changes. Generic, verified-local-email recovery, one-use proofs/codes, encrypted secrets, private queued mail, enforced production CSP, optional fail-closed scanner/quarantine integration, redacted security events and maintained source checks extend the baseline. Real services, deployment policy and operational acceptance remain separate. See [the Phase 2/3 record](SECURITY_PHASE_2_2026-11-10.md).
+Administrators must complete operator-approved authenticator enrollment and MFA before receiving an administrator session/token, on web and Android. Sensitive administration requires recent device/session verification. Versioned credentials enforce suspension and authority changes. Generic, verified-local-email recovery, one-use proofs/codes, encrypted secrets, private queued mail, enforced production CSP, optional fail-closed scanner/quarantine integration, redacted security events and maintained source checks extend the baseline. Real services, deployment policy and operational acceptance remain separate. See [the Phase 2/3 record](SECURITY_PHASE_2_2026-11-10.md).
 
 ## FR-27 — Durable device access and dashboard appearance
 
@@ -132,11 +132,23 @@ Photos remain on BANTAY; an optional loopback-only local classifier produces adv
 Administrators compare counts by hazard type on Dashboard and Incident summary using daily, weekly, monthly or yearly charts, exact tables, date/category filters and an explicit submission/incident date basis in Philippine time. Downloadable PDF, Word DOCX and Excel XLSX reports include the selected aggregate chart and counts without private report details. The shared header account menu contains Profile, Settings and Log out, with guest Sign in in the header and reading settings available to guests. Notification previews remain bounded to the notification header height. See [details](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).
 
 
+## FR-32 ? Verified reporter onboarding and policy consent
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. Encrypted ID images require separate consent, a public operator privacy contact and bounded private handling/deletion. BASISTA MUNICIPAL HALL is the proposed operator. Live host mail, retention approval and municipal/device acceptance remain separate.
+## FR-33 — Administrator lifecycle
+
+Provide a deployable initial administrator seeder with private credentials and idempotent behavior; allow an authenticated administrator with recent MFA-backed verification to create other admins, authorize bounded MFA setup and delete other admins without self-deletion or loss of the last active administrator. Revoke removed credentials and retain municipal history and a removal audit.
+
+
 ---
 
 # 02 — System architecture and source structure
 
 ## Accepted technology baseline
+
+The 16 November compact dashboard moves municipality/workspace context from the sidebar into a Philippine-time greeting. The shared `WorkspaceHeader` owns the live clock on all breakpoints. `InfoTooltip` centralizes hover/focus/tap explanations, Escape/outside dismissal and viewport-bounded floating placement; page context, metric explanations and map/report captions no longer require full-width paragraphs. Critical errors and form instructions remain visible.
+
+InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
 
 The [12 November shared-interface and workflow update](REUSABLE_WORKFLOWS_2026-11-12.md) centralizes modal/form/table controls, adds administrator-managed departments/category routing, provides visible CSV seed catalogs with one configured seed entry point, and adds one-time saved-code password recovery. Community coordinate editing is replaced by confirmed map-pin actions. Server JSON remains authoritative for validation; floating feedback does not consume modal layout space. Social sharing exports only reviewed public fields, with copied Facebook captions and a deployed public link needed for crawler previews.
 
@@ -286,7 +298,7 @@ The Haversine formula calculates approximate distance in meters. A latitude-band
 
 ## Authentication boundaries
 
-Local demo identities are explicitly provisioned with `DemoAccountSeeder`, outside normal reference seeding. The configurable administrator email defaults to `admin@example.test`; two citizen identities use `example.test`. All three passwords are private per-install configuration, validated before transactional creation; existing accounts stay unchanged. See [test accounts](TEST_ACCOUNTS.md). A shared password-input boundary prevents bcrypt overflow/truncation and malformed email casts. Global `SecurityHeaders` middleware applies response/cache protections and production debug/cookie guards. See [the phased security plan](SECURITY_IMPLEMENTATION_PLAN.md) for unimplemented MFA, CSP and operational controls.
+InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter. Password input validation, HTTP-only browser sessions and native secure storage remain in force.
 
 Web clients obtain Laravel's CSRF cookie and retain HttpOnly session/remember cookies plus a registered encrypted per-device proof. Session state has a configurable lifetime (default 90 days), while the device proof can rebuild authenticated/MFA state after closure without granting recent-action verification. Browser/OS storage retention still applies. Android uses Capacitor secure-storage 7.1.3 and Android Keystore; native credentials default to no automatic expiry with AUTH_PERSISTENT_LOGIN=true. The optional expiring policy still checks expiry before renewal. Logout revokes the current device; password/security changes revoke affected tokens/registrations. Login and credential changes lock the user row. Public registration cannot grant administrator authority, and private history/GPS remain owner/admin protected. See [the continuation](SECURITY_PHASE_3_DASHBOARD_2026-11-10.md) and [Laravel Sanctum](https://laravel.com/docs/12.x/sanctum).
 
@@ -296,7 +308,7 @@ With `HAZARD_SCHEDULED_PUSH=true`, the hPanel scheduler cron runs a CLI-only `ha
 
 ## Google and Facebook authentication
 
-Laravel Socialite performs provider redirects and code exchange; server-only credentials live in services configuration. Web returns to an allowlisted origin and uses Sanctum-compatible HttpOnly session/remember cookies. Android uses Capacitor App/Browser plugins, an external browser, a fixed custom-scheme callback and a 90-second one-use code protected by an S256 verifier held in native secure storage. No provider access/refresh token or Sanctum token is placed in client redirect URLs. Google also uses PKCE on the server-to-provider authorization flow. Accounts link only through explicit password confirmation and authenticated identity proof. This adds no permanent worker requirement to Hostinger Web/Cloud. See [setup and acceptance](SOCIAL_AUTH_SETUP.md).
+Google and Facebook authentication have been removed: provider/prepare/callback/exchange/link routes, frontend integration, native callback, Socialite and native App/Browser dependencies are retired. Email/password, MFA and email/saved-code recovery remain. Historical social tables/migrations are preserved without reset; they provide no sign-in route. Former provider-only accounts must establish a password using the existing verified-email or saved-code recovery process. Social sharing of reviewed news remains a separate feature.
 
 ## MuniAlert identity, local guidance and promotional authoring
 
@@ -322,7 +334,13 @@ The camera migration changes only the former generic Manila center to Basista; i
 
 ## Compact header and team publication — 9 November 2026
 
-Compact widths (up to 1023 CSS pixels) use bottom **More** as their workspace navigation entry. The header shows the app name, connection indicator and account menu; guest Sign in is in the header. Profile, Settings and Log out are in the account dropdown, with Settings also available to guests. The former Settings icon and sidebar account/profile/settings controls are removed. Clock/page context remains in the content heading. Desktop utilities share the page-heading row, with no dedicated blank toolbar row. A shared `WorkspaceHeader` and `AccountMenu` render in the appropriate location when the breakpoint changes. The menu supports arrow keys, Home/End, Escape, outside dismissal and focus return. The header uses a solid reading surface. Keyboard drawer dismissal restores focus to More.
+Compact widths (up to 1023 CSS pixels) use bottom **More** as their workspace navigation entry. The header shows the app name and account menu; guest Sign in is in the header. Connection feedback now uses the persistent top banner described below. Profile, Settings and Log out are in the account dropdown, with Settings also available to guests. The former Settings icon and sidebar account/profile/settings controls are removed. Clock/page context remains in the content heading. Desktop utilities share the page-heading row, with no dedicated blank toolbar row. A shared `WorkspaceHeader` and `AccountMenu` render in the appropriate location when the breakpoint changes. The menu supports arrow keys, Home/End, Escape, outside dismissal and focus return. The header uses a solid reading surface. Keyboard drawer dismissal restores focus to More.
+
+## Persistent connection banner — 16 November 2026
+
+`services/connection.ts` separates browser-reported internet loss from an unreachable/unavailable municipal API. The workspace monitors online/offline events and checks when the page becomes visible, using the existing `/api/health` endpoint every 15 seconds with an eight-second timeout and no cached response. Only successful JSON `{ status: 'ok' }` health responses establish recovery; stale responses cannot override newer failures. Browser online status alone does not prove internet reachability. API/CSRF failures share specific internet, server, HTTP-5xx and timeout messages; field validation, permission and session errors retain their existing semantics.
+
+`ConnectionBanner` stays at the viewport top during checking/outages, offers server retry, and shows Connected for three seconds before collapsing. Renewed outages cancel dismissal. Its measured height offsets compact sticky headers and fixed navigation. Motion respects system and saved reading preferences, status updates use a polite live region, and demo mode hides live-connection claims and suspends health polling. Recovery refreshes the dashboard snapshot without automatically submitting pending forms. This adds no server route, schema change, external probe or dependency.
 
 The compact header attaches to the viewport's top edge with no forced margin or sticky breathing offset. Real device safe-area padding is inside the header surface, rather than an empty band above it. Desktop heading placement is unchanged by this compact-only rule.
 
@@ -372,9 +390,28 @@ AdminReportAlerts inserts active-admin inbox rows inside the report transaction.
 
 LocalImageDetector accepts numeric-loopback endpoints only, bounded sanitized private bytes and strictly validated small JSON responses. Separate image-screening database jobs are atomic with photo creation and run in bounded scheduled batches. ImageReviewController locks report then photo, checks assessment version and records confirmed administrator verdict/notes. A queued manual decision cancels late automatic mutation. Factual acceptance enforces required incident-image review independently of a score. No local model installation, external image transfer, real inference or dispatch is implied. See [contract/readiness](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
 
+## NGINX deployment boundary — 19 November
+
+Hostinger Web/Cloud remains provider-managed. Its operator must obtain web-server
+patch confirmation from the provider before production acceptance. The optional
+VPS uses a standalone read-only NGINX checker before activation; it verifies the
+installed and running executable rather than assuming a reload or application
+upgrade patches NGINX. See the **NGINX security gate** in
+[deployment and maintenance](07-deployment-and-maintenance.md). No root daemon,
+new hosting choice, application dependency or host patch is introduced here.
+
 ## Admin statistics and document generation — 12 November
 
 `IncidentAnalytics` and `StatisticsChart` are shared by administrator Dashboard and Incident summary. `IncidentStatistics` aggregates SQL counts by category and Philippine period across all matching records. Daily/weekly/monthly queries allow 366 days and annual queries allow 20 calendar years. The UI selects submission dates by default; explicit incident-time fallback remains available and is still the default for old API callers. `StatisticsExport` generates PDF/DOCX/XLSX attachments with a GD chart, counts and date metadata, using Dompdf/PHPWord/PhpSpreadsheet. Generation is admin-only, bounded, rate-limited and private, with no remote PDF resources or spreadsheet formula inference. No schema change is needed. NotificationPanel observes its dialog header to keep rows equally sized. See [implementation and verification scope](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).
+
+
+## Verified reporter boundary
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. AccountOnboarding separately derives account_ready and identity_verified; the compatibility account_verified field refers to the badge. Reporter submission is rechecked under the user lock. ID consent/encryption/private storage/deletion/expiry remain unchanged. A missing public privacy contact blocks optional ID collection only.
+
+## Administrator identity boundary
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. RequireSecureAccount limits admins missing email/policies to their own setup. AdminAccountController manages administrator creation, bounded MFA setup authorization and soft deletion. Deleted admins are inactive; browser/native credentials and push devices are revoked. users.deleted_at preserves incident-history foreign keys; admin_account_actions records actor, target, action and time. InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
 
 
 ---
@@ -524,14 +561,7 @@ The system does not retain the original full-resolution phone image. The stored 
 
 ## Social authentication migration
 
-`2026_11_04_000001_add_social_authentication` adds `users.password_enabled` (boolean, default true); the user response exposes computed `has_password`, while hiding the underlying flag and hash. Social-only accounts store a random disabled password hash, preserving the established non-null password schema.
-
-| Table | Fields and invariants |
-| --- | --- |
-| social_accounts | id; user_id FK/cascade; provider (16); provider_id (255); timestamps. Unique (provider, provider_id) and (user_id, provider). Stores identity only, no provider tokens. |
-| social_auth_attempts | UUID id; provider/platform/mode; allowlisted return_origin; intent; code_challenge (43); link_user_id/user_id FKs/null-on-delete; auth_fingerprint (64); access_token_id; exchange_code_hash (64); failures; expires_at index; started_at/completed_at/consumed_at; timestamps. Start lifetime 10 minutes; completed Android code lifetime 90 seconds; row-locked one-use consumption. |
-
-Both tables relate to users. Link proof includes a password/remember-token fingerprint and optional mobile credential ID; it is rechecked at callback. No foreign key is attached to access_token_id so expired/revoked tokens may be pruned and detected as absent. Schedule cleanup removes attempts expired for more than a day. Additive migration preserves existing user/report data; do not reset/reseed a normal database. Schema rollback drops social identities and would strand social-only accounts: plan recovery before any production rollback.
+Historical social_accounts/social_auth_attempts schema is retained for migration/history compatibility; sign-in integration and routes are removed. No provider credentials/tokens are used for authentication.
 
 ## Account security extension — 10 November 2026
 
@@ -571,6 +601,20 @@ Existing notifications hold a safe status snapshot used for optional report emai
 Migration 2026_11_11_000002 adds hazard_reports.assistance_needed default false. The flag is private, reporter-declared and cannot certify severity/facts. Existing reports remain unchanged. Admin report_submitted and reporter report_updated notifications share the existing table but are role-scoped on reads; single read is owner-scoped. Submission alert insertion is transactional.
 
 Migration 2026_11_11_000003 adds hazard_photos.authenticity_review_required default false, ai_status, nullable ai_probability/model/time, assessment_version and nullable review_verdict/note/by/at/reviewed_assessment_version. New stored photos require review; legacy photos are not retroactively certified. Only required incident images gate factual acceptance. Results/notes are admin-only and never public/reporter projections. A separate image-screening queue contains opaque photo UUIDs only. Localhost additive migration preserved four accounts/zero reports.
+
+
+## Verified reporter records ? 24 November 2026
+
+Migration 2026_11_24_000001 creates policy_acceptances (user FK, unique user/version, acceptance time) and identity_verifications (UUID, unique user FK, account-name snapshot, supported document type, status, nullable encrypted-file path, consent version/time, expiry, reviewer FK/time, allowlisted rejection reason, timestamps). Both cascade on account deletion; reviewer deletion clears the reviewer FK. Only pending reviews have images. Public/auth user projections do not include these tables or file paths; admin queue projects only UUID/name/type/creation/expiry. No ID number or original filename is stored. Existing local seven users/zero reports/zero photos were preserved by the additive migration. See [retention/access](REPORTER_VERIFICATION_AUDIT_2026-11-24.md).
+
+
+## Independent administrator review provenance
+
+Additive migration 2026_11_24_000002 adds nullable identity_verifications.review_method. New staff decisions record administrator with reviewed_by; the designated server operator's first-admin original-ID attestation records operator_in_person with a separate redacted security event. Existing records are not certified/backfilled. Email verification, consent, expiry and account-name checks are retained. The local migration preserved seven accounts and zero reports; no real ID approval occurred.
+
+## Administrator lifecycle and trust badge
+
+The additive 2026_11_24_000003 migration adds nullable users.deleted_at and admin_account_actions (id, actor_id, target_id, action, created_at). User soft deletion preserves municipal-history foreign keys while excluding deleted accounts from authentication and management lists. Account deletion additionally sets inactive and revokes credentials/devices. Badge state is derived from existing approved identity/name/email/policy state; it is not a writable users flag. Reporting/admin eligibility no longer depends on the optional ID record. InitialAccountSeeder never marks email, ID, consent or MFA as verified.
 
 
 ---
@@ -734,18 +778,7 @@ The API route group allows 120 requests/minute per throttle identity; login and 
 
 ## Social signup and login (FR-02)
 
-| Method | Path | Access and behavior |
-| --- | --- | --- |
-| GET | `/api/auth/providers` | Public; enabled flags for google/facebook only; no credentials. |
-| POST | `/api/auth/social/{provider}/attempts` | Public for login; authenticated plus current_password for link. Provider limited to google/facebook; 10/minute plus global throttle. |
-| POST | `/api/auth/social/exchange` | Public Android code/verifier exchange, 10/minute plus global throttle; one-use, no-store. |
-| GET | `/api/auth/social/accounts` | Authenticated; connected provider names only. |
-| GET | `/auth/social/{provider}/redirect` | Session-bound browser redirect; one-use prepared attempt, 20/minute. |
-| GET | `/auth/social/{provider}/callback` | Stateful provider callback, 20/minute; web cookie sign-in or fixed Android deep link. |
-
-Prepare body: `platform` web/android; `mode` login/link; optional whitelisted `intent` (overview/report/profile/mine/activity/news/reports/map). Web requires `return_origin` with no path/query/userinfo and exact origin allowlisting. Android requires URL-safe 43-character S256 `code_challenge`. Linking requires current_password and an authenticated account with password enabled. Returns 201 `{attempt,redirect_url}`; navigate top-level or use the Android system browser. Credentials missing => 503, invalid input/origin => 422, missing link session => 401. Browser POSTs retain the normal CSRF cookie/header requirements.
-
-Exchange body: attempt UUID, code (64 characters), code_verifier (43?128 RFC 7636 characters). Returns `{user,intent,linked,token?}`; token exists for Android login, not link. Replays, expiration, incorrect proof or exhausted five-try limit => 422. Provider denial/errors return safe reason codes; email collisions require explicit linking. Browser query status is never trusted as authentication: client confirms the real session with `/api/auth/me`. See [configuration and security](SOCIAL_AUTH_SETUP.md).
+Google and Facebook authentication have been removed: provider/prepare/callback/exchange/link routes, frontend integration, native callback, Socialite and native App/Browser dependencies are retired. Email/password, MFA and email/saved-code recovery remain. Historical social tables/migrations are preserved without reset; they provide no sign-in route. Former provider-only accounts must establish a password using the existing verified-email or saved-code recovery process. Social sharing of reviewed news remains a separate feature. Retired /api/auth/providers, /api/auth/social/* and /auth/social/* now return 404.
 
 ## Interview-aligned fields, private media and consolidation ? 8 November 2026
 
@@ -830,9 +863,54 @@ Private admin photo projections add authenticity.required/status/probability/mod
 Hotline settings additionally accept optional service police/fire/medical/rescue/other, area<=80, address<=160 and paired bounded latitude/longitude. Old name/number-only contacts remain valid. No geolocation data is sent to a discovery service. See [workflow/local detector contract](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
 
 
+## Verified reporter onboarding ? 24 November 2026
+
+| Method / path | Contract |
+| --- | --- |
+| GET `/api/policies` | Public; current version, operator/public privacy contact, terms/privacy paragraphs; no credentials |
+| GET `/api/account/verification` | Authenticated; own email/policy/identity status, readiness, supported types and can_report; no image/path |
+| POST `/api/account/policies` | Authenticated; accepted=true, version=current; idempotent acceptance |
+| POST `/api/account/identity` | Either role with verified local email/current acceptance; document_type, consent=true, version=current and one multipart image; private JPEG/PNG/WebP <=1 MB, <=1920px; 3 attempts/hour; 409 for already pending/approved; 503 without public privacy contact |
+| DELETE `/api/account/identity` | Own submission only; deletes image and removes optional badge; reporting/admin access is preserved |
+| GET `/api/admin/identities` | Admin; 20 pending nonexpired rows/page, deterministic creation/UUID order |
+| GET `/api/admin/identities/{identity}/image` | Admin plus recent authentication; nonexpired pending image only; authenticated WebP/no-store; 30/minute |
+| POST `/api/admin/identities/{identity}/review` | Admin plus recent authentication; decision=approved/rejected, checked=true; rejection reason=unreadable/name_mismatch/unsupported_document/cannot_verify; locks current account/submission, rejects changed/expired state with 409; deletes image; 20/minute |
+
+Web `/auth/register` and native `/api/auth/register` additionally require accepted=true and policy_version=current. Registration queues the existing SMTP challenge when configured; local_email_verified_at remains null until the existing consume endpoint redeems its single-use 30-minute proof. Missing credentials never grant eligibility. Existing users accept policies and send email verification from Settings. POST `/api/reports` and POST `/api/reports/{report}/confirm` return 403 plus verification_required=true until local email and current policies pass (ID is optional), including existing tokens. Profile name changes revoke identity; email changes clear email verification. All private responses remain no-store. See [audit](REPORTER_VERIFICATION_AUDIT_2026-11-24.md).
+
+
+## Both-role verification
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. User/login/profile and verification responses expose server-derived account_ready and identity_verified booleans. account_verified remains a compatibility alias for identity_verified, never an authorization input. Client-supplied role/verification flags cannot award a badge.
+
+| Method | Route | Contract |
+| --- | --- | --- |
+| GET | `/api/admin/accounts` | Recent authenticated administrator; 20-row paginated safe account fields |
+| POST | `/api/admin/accounts` | Name, unused email, private 12–72 byte password; fixed admin role, no auto-verification; MFA setup window 15 minutes |
+| POST | `/api/admin/accounts/{administrator}/enrollment` | Authorize a new 15-minute window only for an active admin without enrolled MFA |
+| DELETE | `/api/admin/accounts/{administrator}` | Refuse current/last active admin; revoke access, soft-delete and retain history/audit |
+
+
 ---
 
 # 05 — Testing and validation
+
+## Current revision 3 verification
+
+The optional-ID/admin-lifecycle change passes 133 backend tests / 1,273 assertions, a separate 25-test / 247-assertion isolated MySQL run, five focused new-feature browser cases and a 24-case broad retest. The first broad run passed 85/93 browser cases: failures exposed obsolete demo-name/provider-return expectations, profile-name overflow at 200% phone text and a notification measurement race between separate layout reads. Fixtures now use synthetic identities, manual return tests follow email sign-in, profile names wrap, and notification rows are sampled together while retaining equal-height/header/clamping assertions. The 24-case retest includes all eight failures. The subsequent fresh complete run passed all 21 checks, including 133 backend tests / 1,273 assertions and all 93 browser cases. Native synchronization and dependency/document/source-secret checks passed. Result-record/export updates received refreshed document/artifact/source checks afterward; a future push still requires its own fresh exact-state gate. Historical counts below do not replace this result.
+
+
+## Ready sample accounts and compact dashboard — 16 November 2026
+
+All 134 isolated backend tests pass with 1260 assertions. Updated seed checks cover default shared-password role/login behavior, in-app administrator MFA before token issuance, shared overrides, byte/length rejection, existing-account preservation, sample opt-out and production reference-only seeding. The actual local database then received three missing sample accounts; their roles/password hashes were verified and all four previous account records remained unchanged. No destructive migration/reset was run.
+
+The initial full Chromium run passed 88 of 96 cases. Eight failures identified old dashboard-title/display-name/removed-caption assertions and a connection-error regression discarding HTTP 503 response messages. The assertions now follow the requested UI/identities; service errors retain useful server text alongside the specific HTTP connection message. A final 32-case rerun covers every failure plus greeting/clock, tooltips, enlarged-text header reflow, connection-banner and validation/session regressions. Desktop and 320-pixel/200% screenshots were inspected. Production/native/web builds, Android asset synchronization and PHPStan pass; Gitleaks scanned 499 intended source files with no findings. These results do not constitute a fresh full nineteen-check publication gate, physical-device acceptance or deployment.
+
+## Connection banner checks — 16 November 2026
+
+The focused run of `connection-banner`, `dashboard-resilience`, `native-session`, `social-auth`, `header` and `accessibility-feedback` passed all 32 Chromium cases using the existing isolated SQLite browser runner. Eight new cases cover persistent internet/server outages, scrolling/navigation, manual/automatic recovery, three-second confirmation/dismissal, renewed outage cancellation, malformed health responses, HTTP/transport/timeout feedback, preserved offline sign-in values, authoritative field validation, demo separation and 320-pixel/200% reduced-motion reflow. Desktop and enlarged mobile screenshots were inspected. An initial font-only fixture omitted the app's reading-layout flags; using the actual saved text-size setting fixed the fixture without changing assertions. These local results do not replace the full pre-push gate or establish hosting/physical Android acceptance.
+
+Final follow-up reran all eight banner cases after the recovery wording update. Five guide and three emergency-notification cases also passed after retaining the original unsent-form warning and replacing the removed indicator readiness selector: 40 distinct passing browser cases across these runs. Final production build/type checking, generated-document consistency and Capacitor Android asset sync passed.
 
 ## Administrative chart/export and account navigation checks — 12 November 2026
 
@@ -1023,9 +1101,7 @@ The isolated Laravel feature suite now checks CMS authorization/validation, conf
 
 ## Social authentication follow-up
 
-`SocialAuthenticationTest` uses isolated SQLite and mocked provider identities. It verifies real Google redirect state/PKCE generation and invalid-state rejection, safe creation/repeat identity, collisions, explicit linking, stale proof, HttpOnly remembered sessions, native verifier binding, expiration, replay and five-failure exhaustion. `social-auth.spec.ts` covers both provider buttons, availability, cancellation, return intent, forged return queries and a simulated Android cold launch. Ordinary email/password, reporting and profile regression tests remain required. Browser-runner environments explicitly disable real provider credentials. Real Google/Facebook consent and physical-device/Hostinger acceptance remain pending; see [the setup checklist](SOCIAL_AUTH_SETUP.md).
-
-Social-auth local evidence (4 November): 52 Laravel tests / 390 assertions, 28 browser tests and five launcher tests; the twelve-check parent gate passes. Both npm dependency lockfiles have zero findings; Composer has no advisories and the locked platform requirements pass on PHP 8.5.1. These results use isolated test data/mocked identity providers, including simulated Android cold launch/cancellation. Actual Google/Facebook, physical Android and target hosting acceptance remain pending. See [the dated record](SOCIAL_AUTH_2026-11-04.md).
+Historical provider-flow tests have been retired with the removed feature. SocialAuthenticationTest now asserts that all old provider/prepare/callback/exchange/link endpoints return 404 without creating accounts. social-auth.spec.ts verifies email/password-only UI and absence of provider requests/forged-return authentication at desktop and phone widths. Existing email/MFA/recovery and native-session cases remain applicable.
 
 ## Interview and Android alignment ? 8 November 2026
 
@@ -1107,9 +1183,38 @@ Final emergency-workflow verification passed all **19 checks**, including **122 
 See [feature evidence](evidence/emergency-workflow-2026-11-11.json) and [gate report](evidence/emergency-workflow-gate-final-2026-11-11.json).
 
 
+## Reporter-verification regression ? 24 November 2026
+
+ReporterVerificationTest covers required/current policy acceptance, privilege/verification injection, transactional queued signup link and one-use redemption, stale-email proof, missing SMTP, reporting/confirmation gate, public-contact fail-closed behavior, explicit consent, upload type/dimensions/rate limits, encrypted storage, cross-account denial, recent-admin verification, approval/image deletion/replay, rejection/resubmission, withdrawal, expiry and profile/email/policy changes. Existing incident suites use explicit verifiedReporter factory states. Browser fixtures are isolated to .cache/e2e.sqlite or municipal_hazards_e2e and synthetic email domains, never a runtime exemption.
+
+reporter-verification.spec.ts exercises the actual signup/policies/consume/upload/admin-image-review/reporting chain at desktop/phone widths with synthetic evidence. Reading a test queued proof is not live SMTP verification. Screenshots are reviewed locally; physical Android acceptance remains separate. Final results and remaining limits are recorded in [the audit](REPORTER_VERIFICATION_AUDIT_2026-11-24.md).
+
+
+## Administrator identity and delivery checks
+
+AdminIdentityTest covers restricted admin GET/mutations, allowed own setup, own-ID upload, no self-approval, another verified reviewer, operator attestation, missing/stale setup and immediate withdrawal/name-change denial. admin-identity.spec.ts tests the real restricted-admin journey and reload at phone width. Business fixtures explicitly represent already-reviewed administrators only in isolated test schemas. The Hostinger package test includes private-data canaries and refuses destination reuse. Capstone export validates required cover/chapter text and well-formed DOCX XML; artifact hashes detect stale PDF/DOCX/HTML/Markdown. Final command results are recorded in MEMORY/TASKS and the preparation record.
+
+
+## Framework advisory detected during preparation
+
+The initial expanded gate passed 148 backend tests / 1,438 assertions and all 98 browser cases, then Composer audit stopped it for GHSA-63hm-g96r-2m2q (CVE-2026-128083), affecting locked Laravel 12.69.3. The final dependency update changes only laravel/framework to 12.73.0, retains the PHP 8.2 baseline and Laravel 12 stack, and raises the manifest floor to ^12.71. Composer dry-run installation confirms lock/installed parity and the package audit is clean. This is a dependency finding, not proof of an exposed concurrency route or exploitation. Four framework-teardown test-mock failures were corrected by allowing empty connection enumeration while preserving the original never-connect assertions. The fresh complete patched run passed all 21 checks, 148 backend tests / 1,438 assertions and 98 browser cases; the separate post-patch MySQL run passed 27 tests / 291 assertions. Result documentation/exports received refreshed checks afterward; a future push still requires a fresh exact-state gate. The initial failed run is not recorded as a complete pass.
+
+
 ---
 
 # 06 — Citizen and administrator user manual
+
+## Dashboard greeting and compact help — 16 November 2026
+
+The Dashboard welcomes you with Magandang umaga, Magandang hapon or Magandang gabi using Philippine time, and your first name after sign-in. Basista Municipal Hall and your workspace label now appear beside this welcome, freeing the sidebar for navigation. The live date/time stays in the header on both desktop and phones.
+
+Use the small **info** icons beside page headings, dashboard metrics and map/report headings to read explanations. Hover with a mouse, focus with the keyboard or tap on a phone. You can move the pointer over the explanation to read it; press Escape, tap the icon again or tap elsewhere to close it. These replace repeated explanatory strips, including the public hazard-visibility notice. Validation errors, connection failures and required form instructions still appear when needed. [Ready-to-login sample accounts](TEST_ACCOUNTS.md) are available for local development without terminal password setup; administrator authenticator enrollment remains in the app.
+
+## Connection status
+
+A banner stays at the top while connecting or disconnected. **Not connected to the internet** means your device reports it is offline: enable Wi-Fi or mobile data. **Not connected to the municipal server** means the app cannot confirm server availability: check your connection and try **Retry connection**, or wait for automatic retries. The app cannot always distinguish an internet outage from a server outage when the device still reports being online. Request errors also identify server timeouts and HTTP service failures.
+
+When the server becomes reachable, the banner shows **Connected** for three seconds and disappears with a short animation. Reduced-motion settings disable the animation. Keep an unsent form open and retry its action after recovery; reconnection does not automatically submit it. Demo preview has no live connection banner.
 
 ## Updated controls and recovery — 12 November 2026
 
@@ -1117,7 +1222,7 @@ Dismiss dialogs using the X in their header. Footers contain actions only. Error
 
 Report location uses GPS or a map pin. Pan/tap/drag the map, or choose Place pin at map center, then confirm the location. Raw latitude/longitude inputs are hidden. Content management lets administrators add/edit offices and set each hazard's responsible office; reassign categories before archiving an office. New routing does not rewrite existing report history.
 
-Forgot your password offers Send email reset link or Use recovery code. Email needs a verified deliverable account address and configured municipal mail. Save one-time recovery codes from Settings before losing access. A password reset signs out old sessions and keeps administrator authenticator 2FA required. Google/Facebook sign-in buttons are temporarily hidden.
+Forgot your password offers Send email reset link or Use recovery code. Email needs a verified deliverable account address and configured municipal mail. Save one-time recovery codes from Settings before losing access. A password reset signs out old sessions and keeps administrator authenticator 2FA required. Google/Facebook sign-in has been removed.
 
 A news post's Facebook/X/WhatsApp action opens prepared reviewed text. For Facebook, use Copy post & open Facebook, then paste the copied text into the composer. A live preview requires the deployed public HTTPS news URL; localhost cannot be reached by Facebook or other users. Private evidence and exact locations are excluded. See [workflow notes](REUSABLE_WORKFLOWS_2026-11-12.md).
 
@@ -1228,9 +1333,7 @@ Sign in once on your personal browser or Android app. Normal closing/reopening r
 
 ## Sign up or sign in with Google or Facebook
 
-Choose **Continue with Google** or **Continue with Facebook** on the sign-in/create-account form. Allow the provider to share your name and email, then return to MuniAlert. Your first successful sign-in creates a citizen account. On Android, complete this in the system browser; MuniAlert resumes when the browser returns to the app. If you were about to report a hazard, the report form opens after sign-in. Cancel sign-in in MuniAlert if you closed the browser.
-
-Unavailable buttons mean the municipality has not enabled that provider; use email. If the provider does not share an email, allow email access or register using email. If your email already belongs to an account, sign in using its existing method. For an email/password account, open My profile and confirm your MuniAlert password under Connected sign-in accounts before connecting a provider. Social-only accounts continue using their original provider; manage that provider's password through its own account settings.
+Google/Facebook authentication has been removed from the application. Use email/password, authenticator MFA for administrators and the existing email/saved-code recovery flows. Historical social tables remain for migration compatibility, with no active provider routes. Sharing reviewed news to Facebook or other platforms remains available.
 
 ## Incident observations, resolution and period records
 
@@ -1298,6 +1401,19 @@ In Content management, add approved agency numbers with service/area/address and
 The bottom-right **Help tour** button launches the highlighted walkthrough above the phone dock. The searchable manual remains in Settings. Closing/Escape returns keyboard focus to the launcher. See [implementation and service readiness](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
 
 
+## Email setup and optional verified identity
+
+1. Register with your name/email/password and accept the current terms/privacy notice.
+2. Open the SMTP verification link, return to Settings and refresh verification status. Once email/policies are complete you can submit or confirm a report without an ID.
+3. Optionally select one Philippine government ID in Settings to earn the blue profile check badge. Cover ID number, QR/barcode, signature, birth date and address; retain readable name/photo/issuer/type. Supply one redacted JPEG/PNG/WebP, read the separate consent and submit privately. Do not email an ID when collection is unavailable.
+4. A municipal reviewer approves or requests resubmission. The image is deleted after review/withdrawal or seven-day expiry. Withdrawal or name change removes the badge, while reporting remains available. Email changes require fresh email verification.
+5. View the badge beside your name in My profile. It records manual identity review, not incident truth or endorsement. Admins review optional submissions in Settings > Government-ID review, with recent authentication and no self-approval.
+
+## Administrator account verification
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. In Settings, use Administrator accounts to create a replacement with a private initial password, authorize MFA setup if needed and delete another administrator after confirming. Your own account cannot be deleted while you use it. Deletion removes sign-in access and retains municipal action history. InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
+
+
 ---
 
 # 07 — Deployment, Android build and maintenance
@@ -1327,7 +1443,7 @@ Create a new MySQL database named `municipal_hazards`, configure its credentials
 
 ```sh
 php hazard-server/artisan migrate --seed
-php hazard-server/artisan hazard:admin admin@example.test
+php hazard-server/artisan db:seed --force
 ```
 
 Start both services from BANTAY with `npm run dev` (`npm.cmd run dev` in PowerShell). It checks/reuses existing matching instances and verifies the client-to-API proxy before reporting success. The separate `composer run serve` and client `npm run dev` commands remain available. Use the PHP 8.5 PATH prefix for Composer in Git Bash. See [the startup repair](STARTUP_REPAIR_2026-11-04.md).
@@ -1359,7 +1475,7 @@ DB_PASSWORD="replace-with-your-actual-local-password"
 
 ```sh
 php hazard-server/artisan migrate --seed
-php hazard-server/artisan hazard:admin admin@example.test
+php hazard-server/artisan db:seed --force
 ```
 
 Start both applications separately as shown above.
@@ -1368,7 +1484,7 @@ Use a **plain email address**, not `[admin@example.test](mailto:admin@example.te
 
 The Vite and PHP server startup messages only confirm that HTTP servers started. They do not prove database authentication or migrations succeeded. If the MySQL password is unknown, obtain it from the owner of that local installation or follow that installation's authorized account-recovery process before continuing.
 
-For local development accounts, set three distinct `HAZARD_DEMO_*_PASSWORD` values of at least 12 characters and at most 72 UTF-8 bytes in `hazard-server/.env`, clear configuration, then run `npm run db:seed:accounts` from the root. `HAZARD_DEMO_ADMIN_EMAIL` defaults to `admin@example.test`; two regular citizens use `example.test`. It is explicit, local/testing-only, transactional, and skips existing accounts without resetting passwords or roles. See [test accounts](TEST_ACCOUNTS.md). Do not deploy these demo credentials. Private evidence does not need a public storage symlink.
+InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
 
 Before deployment, run `node scripts/php.mjs hazard-server/artisan hazard:security-check` against the intended production configuration. It is read-only, prints no configuration values, and must fail for the normal local HTTP/root-database/demo setup. It checks only the Phase 1 configuration baseline; complete [all remaining security phases](SECURITY_IMPLEMENTATION_PLAN.md), hosting/TLS checks and operational acceptance separately. Production requests additionally suppress debug details and force Secure/HttpOnly cookies. Verify HTTPS/trusted proxy behavior on the real hosting account rather than assuming these source guards configure the server.
 
@@ -1460,8 +1576,7 @@ Run `schedule:run` every minute via cron, as shown in `deployment/scheduler.cron
 
 ## Optional Google/Facebook setup
 
-Follow [SOCIAL_AUTH_SETUP.md](SOCIAL_AUTH_SETUP.md) for server environment keys, exact registered callback URIs, HTTPS/cookie/proxy requirements and Android app return links. Deploy the additive social-auth migration without resets. Keep secrets outside public_html and frontend build variables. The existing scheduler cron cleans expired attempts daily. Complete real-provider and physical Android tests before enabling public sign-in. The source feature can be locally verified while these external credentials/review steps remain pending.
-
+Google and Facebook authentication have been removed: provider/prepare/callback/exchange/link routes, frontend integration, native callback, Socialite and native App/Browser dependencies are retired. Email/password, MFA and email/saved-code recovery remain. Historical social tables/migrations are preserved without reset; they provide no sign-in route. Former provider-only accounts must establish a password using the existing verified-email or saved-code recovery process. Social sharing of reviewed news remains a separate feature.
 
 ## Basista map assets
 
@@ -1483,7 +1598,7 @@ Apply the additive fact-check/publication migration without resets. It adds null
 
 ## Settings and separate Gmail delivery — 11 November 2026
 
-Apply the additive account-preferences migration with PHP8.5; do not reset the database. Default demo administrators must use a reserved .test address such as admin@example.test. Changing the seeder default does not rename or promote an existing account.
+InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
 
 Gmail SMTP is the selected provider, matching PDEA's provider with separate BANTAY credentials. Configure MAIL_ENABLED=true, MAIL_MAILER=smtp, MAIL_HOST=smtp.gmail.com, MAIL_PORT=587, MAIL_SCHEME=smtp, MAIL_REQUIRE_TLS=true, MAIL_USERNAME and MAIL_FROM_ADDRESS with the authorized sender, and MAIL_PASSWORD with its separate app password in the ignored server environment. Use SECURITY_RECOVERY_ENABLED=true and an exact public HTTPS SECURITY_FRONTEND_URL (no path/query/fragment). Local loopback HTTP is allowed only for local/testing. Keep the application key stable for encrypted delivery proofs. Run config:clear after local changes or rebuild the production config cache during deployment. Never put mail secrets in frontend variables or copy another project's app password.
 
@@ -1495,10 +1610,79 @@ Apply the two additive assistance/image-review migrations without resets. Publis
 
 The existing single scheduler can run hazard:work-image-screening in bounded overlapping-safe batches when enabled. Verify actual hosting support for local inference; shared-hosting PHP alone does not supply a model/service. Leave automated screening off and use explicit human review if unavailable. Test actual browser/device sound, background/push delivery, agency contact accuracy, workload and municipal operating policy separately. See [configuration/limits](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md).
 
+## NGINX security gate ? 19 November 2026
+
+The selected Hostinger Web/Cloud plan is provider-managed. Ask Hostinger to confirm
+the web server, affected features and vendor security fixes for all five CVEs.
+Do not try to install OS packages, add sudo privileges or require systemd on
+shared hosting. The following checker applies only to the alternative Linux VPS
+configuration when its operator has authorized shell access.
+
+Before release, verify fixes for CVE-2026-123007, CVE-2026-123633, CVE-2026-123634,
+CVE-2026-121810 and CVE-2026-113425. Upstream fixed releases are **1.30.7 stable**
+and **1.31.9 mainline**: <https://nginx.org/en/security_advisories.html>.
+Ubuntu still listed supported packages as vulnerable at review time; recheck
+<https://ubuntu.com/security/CVE-2026-123007> and the other four vendor records.
+An ordinary APT success or application dependency update is not proof of a fix.
+
+For a standard Linux host with /usr/sbin/nginx and nginx.service, DevOps can run
+the standalone read-only checker from a reviewed, operator-controlled copy of
+this project's source, using PHP 8.2+ (no Composer install or .env is needed):
+
+```sh
+sudo /usr/bin/php deployment/nginx-security/check.php
+```
+
+Do not grant standing generic sudo PHP access to application-owned source. The
+checker rejects an unverified package, invalid config, inactive master, stale
+master/worker executable or inaccessible process evidence. It prints sanitized
+JSON only after all checks pass. Never dump nginx -T into a public ticket or CI
+log. Its --version option is an offline policy test and does not inspect a host.
+
+If the package is unpatched, back up /etc/nginx outside include directories,
+review the signed package origin and dynamic modules, install a vendor-confirmed
+fixed package, run nginx -t, then restart nginx.service and rerun the checker.
+A reload keeps the old master executable. Plan a brief service interruption and
+retain a tested compatible configuration rollback; do not blindly downgrade to
+the vulnerable binary. No package repository migration is authorized by this
+example. Return sanitized package, restart, running-binary and HTTPS smoke-test
+evidence before accepting production protection.
+
+An older-version vendor backport requires a root-owned, non-writable-by-others
+regular file at /etc/bantay/nginx-security.json. The operator must first
+confirm all five fixes, then record package_version (exact dpkg-query nginx
+version), binary_sha256 (exact /usr/sbin/nginx hash), and an advisories object
+mapping each CVE above to its HTTPS Ubuntu, Debian, NGINX or F5 notice. This is
+operator attestation, not automated interpretation of vendor notices. A package
+or binary change invalidates it; HTTP/2 mitigation alone is insufficient.
+
+If no fixed package is available, temporarily remove http2 from every exposed
+listen directive and turn existing http2 on directives off where supported;
+validate and restart to end old connections. Confirm h2 is not negotiated on
+any exposed hostname/port, including direct origins. Inspect HTTP/3/QUIC,
+variable upstream resolver use with SSI/mirror and mail proxy exposure
+separately. This mitigates only the two HTTP/2 CVEs and does not pass the full
+patch gate. See <https://cert.europa.eu/publications/security-advisories/2026-022/pdf>.
+
+The supplied template keeps its existing protocol/routing configuration. Do not
+add HTTP/2/QUIC until patch verification. Local checker tests are separate from
+Linux host execution, deployment and workload acceptance.
+
+
+## Reporter verification activation
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. Set a public privacy contact before collecting optional ID images, protect private storage/keys and run the existing hourly cleanup. InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter. Complete host mail/cron/scanner/backup and municipal acceptance separately.
+
 
 ---
 
 # 08 — Capstone manuscript preparation guide
+
+## Complete editable draft ? 24 November 2026
+
+The five-chapter manuscript is now available as [editable Word](capstone/MUNIALERT-CAPSTONE.docx), [PDF](capstone/MUNIALERT-CAPSTONE.pdf), [HTML](capstone/MUNIALERT-CAPSTONE.html) and [Markdown](capstone/MANUSCRIPT.md). The seven numbered chapter/front-matter/reference files under `documentation/capstone/` are the editable sources. Run `npm run docs:capstone` after source changes; regeneration replaces generated files, so transfer Word-only edits into source first if they must be retained.
+
+The draft includes Introduction, Related Literature and Systems, Methodology/Design, Implementation/Results, Conclusions/Recommendations, references and proposed evaluation forms. Academic identity fields remain editable as requested. It preserves the actual interview review's finding that no major telephone-reporting problem was identified. Chapter 4 distinguishes engineering evidence from unperformed municipal evaluation; Chapter 5 makes no invented field-effectiveness claims. Follow the institution's approved structure before submission.
 
 This is an adaptable technical manuscript guide, not a fabricated completed study. Follow the institution's required chapter structure, citation style, approval process and formatting.
 
@@ -1642,9 +1826,7 @@ Profile password changes require the current password. Separate rate-limit prefi
 
 ## Social identities and sign-in attempts
 
-Google/Facebook identities are validated server-side through Socialite's session-bound state flow. New Google email must be provider-verified; Facebook email is recorded without a verified-email claim. Matching emails never merge accounts. Linking requires an authenticated password account and current password, then rechecks the user fingerprint/current credential at callback. Provider identities are unique, role remains citizen for new users, and provider access/refresh tokens are discarded. Social-only password authentication is disabled.
-
-Android uses an external browser, a fixed app callback and S256-bound opaque code exchange. The native verifier is stored separately in secure storage, the code expires in 90 seconds and can be consumed once, and five incorrect proofs exhaust it. No bearer tokens/profile data appear in deep links; web continues using HttpOnly cookies. Redirect origins are exact allowlisted origins; callbacks/exchange responses disable caching and referrer forwarding. Provider exception logs contain only provider/class, never remote error details/codes/tokens. OAuth attempts are pruned after expiration plus a day. Follow [setup and privacy requirements](SOCIAL_AUTH_SETUP.md), including the provider's publication/deletion process; no municipal acceptance is claimed.
+Google and Facebook authentication have been removed: provider/prepare/callback/exchange/link routes, frontend integration, native callback, Socialite and native App/Browser dependencies are retired. Email/password, MFA and email/saved-code recovery remain. Historical social tables/migrations are preserved without reset; they provide no sign-in route. Former provider-only accounts must establish a password using the existing verified-email or saved-code recovery process. Social sharing of reviewed news remains a separate feature.
 
 ## Phase 2 implementation and operational boundary — 10 November 2026
 
@@ -1668,7 +1850,7 @@ Verification and publication are locked, separately authorized actions with audi
 
 Reading settings are private to the current account. The server ignores client ownership choices and requires a matching account-context guard before saving only allowlisted display fields. Guest preferences and signed-in caches use separate storage scopes; signing out restores the guest scope. Public resources never expose settings/email opt-in.
 
-Authenticator 2FA uses six-digit TOTP from an app, not email sign-in codes. QR generation stays local; hashed recovery codes, replay prevention, enrollment approval, lockout and recent-action verification remain in force. Sample administrator seeding rejects real-address domains, and existing personal accounts are untouched.
+Authenticator 2FA uses six-digit TOTP from an app, not email sign-in codes. QR generation stays local; hashed recovery codes, replay prevention, enrollment approval, lockout and recent-action verification remain in force. Initial administrator seeding requires a reachable non-reserved email in production and never changes existing accounts.
 
 Real mail requires enabled TLS SMTP with separate credentials and a deliverable sender. Reserved/sample recipient addresses are blocked. Report emails are off by default, require a locally verified recipient, contain only a reference/status/sign-in link and recheck eligibility at delivery. Private notes/photos/locations and credentials are excluded from ordinary queue payloads/logs. Security proofs remain encrypted and expire after30minutes. SMTP acknowledgement loss can cause an at-least-once retry; delivery is not guaranteed by the local fake-mail tests. See [readiness and limits](SETTINGS_2FA_EMAIL_2026-11-11.md).
 
@@ -1677,6 +1859,11 @@ Real mail requires enabled TLS SMTP with separate credentials and a deliverable 
 Active-admin report alerts contain no original title, identity, address, image or private note. Current-role inbox filtering and owner-scoped item-read prevent former-role/foreign-notification exposure. Report opening reauthorizes through the existing private endpoint; no caller-supplied redirect URL is followed. Stale identity replies cannot reopen another account's data.
 
 User consent restricts private photos to BANTAY. The detector adapter rejects public/DNS names and redirects, streams at most16KB of response, bounds image/time, and suppresses response bodies/credentials in failures. Queue payloads contain UUIDs only. Scores never establish factual authenticity or automatically accept/reject/publish. Admin human confirmation and corroboration are required for new incident evidence. Report/photo locks and version checks reject stale decisions; late automatic results cannot overwrite a manual choice. Public/reporter responses omit internal scores/notes. No actual external transfer, model accuracy or emergency dispatch is claimed.
+
+
+## Administrator identity requirement
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. Private ID processing keeps its separate consent, public-contact prerequisite, stable user locks, no self-review, encrypted images, immediate decision/withdrawal deletion and seven-day expiry. Admin lifecycle actions require recent authentication, fixed-role/allowlisted input, duplicate-email protection and durable actor/target audit. Deleted admins retain history through soft deletion, with credentials revoked. InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
 
 
 ---
@@ -1760,7 +1947,7 @@ Before collecting results, define target users, authorized sample selection, app
 
 ## FR-02 social sign-in extension
 
-Implementation: `SocialAuthController`, `SocialAccounts`, social-auth migration, `socialAuth.ts`, `SocialLoginButtons`, AuthForm/ProfilePanel, Android App/Browser plugins and manifest callback. Evidence: isolated backend `SocialAuthenticationTest`, browser `social-auth.spec.ts` and full gate. Required external acceptance: real Google/Facebook new/repeat/cancel/link flows on HTTPS and physical Android including a killed-app callback. Provider console credentials/audience/review, publication privacy/deletion requirements and deployment remain pending. See [provider setup](SOCIAL_AUTH_SETUP.md).
+Google and Facebook authentication have been removed: provider/prepare/callback/exchange/link routes, frontend integration, native callback, Socialite and native App/Browser dependencies are retired. Email/password, MFA and email/saved-code recovery remain. Historical social tables/migrations are preserved without reset; they provide no sign-in route. Former provider-only accounts must establish a password using the existing verified-email or saved-code recovery process. Social sharing of reviewed news remains a separate feature. SocialAuthenticationTest and social-auth.spec.ts now verify removal and absence of automatic provider authentication.
 
 ## Identity, guidance and promotion extension
 
@@ -1784,7 +1971,7 @@ See [the dated review](ACCESSIBILITY_FEEDBACK_2026-11-10.md). Local evidence is 
 
 | Requirement | Implementation | Local evidence / remaining acceptance |
 | --- | --- | --- |
-| FR-26 | Shared MFA/full-credential boundary across password/social/native; approved enrollment; replay/expiry/attempt guards; recent verification; version/status enforcement; verified-local-email recovery; private queued mail; CSP; fail-closed scanner adapter; redacted events; static/secret CI checks | AccountSecurityTest, SocialAuthenticationTest, UploadSecurityTest, security-phase2 browser tests, isolated MySQL dual-process consumption, PHPStan/TypeScript, Gitleaks positive/negative fixtures and full gate. Real enrollment/recovery policy, mail/scanner/Hostinger, staging, backup, alerts, Android and municipal/workload acceptance remain pending. |
+| FR-26 | Shared MFA/full-credential boundary across password/web/native; approved enrollment; replay/expiry/attempt guards; recent verification; version/status enforcement; verified-local-email recovery; private queued mail; CSP; fail-closed scanner adapter; redacted events; static/secret CI checks | AccountSecurityTest, SocialAuthenticationTest, UploadSecurityTest, security-phase2 browser tests, isolated MySQL dual-process consumption, PHPStan/TypeScript, Gitleaks positive/negative fixtures and full gate. Real enrollment/recovery policy, mail/scanner/Hostinger, staging, backup, alerts, Android and municipal/workload acceptance remain pending. |
 
 Detailed states: [implementation](SECURITY_PHASE_2_2026-11-10.md), [operations](SECURITY_OPERATIONS_2026-11-10.md), [evidence](evidence/security-phase-2-2026-11-10.json).
 
@@ -1818,3 +2005,20 @@ See [dated implementation and limits](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-
 ## FR-31 administrative statistics and header navigation
 
 `IncidentStatistics`, `StatisticsExport`, `IncidentAnalytics`, `StatisticsChart` and `AccountMenu` implement category counts, daily/weekly/monthly/yearly charts, bounded administrator PDF/DOCX/XLSX exports and the requested account navigation. `StatisticsExportTest` verifies counts, dates, empty periods, authorization and document contents. `admin-statistics.spec.ts` exercises charts/downloads and keyboard account access; the notification preview test compares row/header height at normal/enlarged text. Hosting, native downloads, actual office-application rendering and municipal workload acceptance remain separate. See [implementation scope](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).
+
+
+## FR-32 ? Verified reporter onboarding
+
+| Requirement | Implementation | Evidence / limits |
+| --- | --- | --- |
+| FR-32 | AccountOnboarding, RequireVerifiedReporter, transactional signup mail/policy acceptance, private encrypted IdentityVerificationController, versioned policies, Settings panels and bounded identity cleanup; profile-name revocation and commit-time rechecks | ReporterVerificationTest, existing incident/privacy regressions and reporter-verification.spec.ts. Separate Gmail password/public privacy contact, operator policy/retention approval, live delivery and physical-device acceptance remain open. See [audit](REPORTER_VERIFICATION_AUDIT_2026-11-24.md). |
+
+
+## FR-32 administrator extension and delivery artifacts
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. ReporterVerificationTest exercises reporting without an ID and badge approval/withdrawal/privacy; AdminIdentityTest exercises optional admin badges and persistent email/policy gates. The Hostinger template and capstone follow revision 3; older mandatory-ID packages are superseded.
+
+
+## FR-33 — Administrator lifecycle
+
+InitialAccountSeeder, AdminAccountController and AdminAccountsPanel implement private initial provisioning, idempotency, creation, bounded MFA setup and deletion. InitialAccountSeederTest/AdminAccountsTest and admin-accounts.spec.ts cover production seed configuration, no implicit promotion/verification, fresh authentication, self-deletion denial, credential revocation, retained audits and the Settings journey. Host-side seed/login/acceptance remain separate.

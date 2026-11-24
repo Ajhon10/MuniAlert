@@ -89,9 +89,9 @@ Not yet externally validated: real R2 access, FCM delivery, signed APK/AAB, actu
 
 Outside this version: offline submission/synchronization, native iOS packaging, continuous location tracking, emergency dispatch guarantees, AI hazard classification, real-time responder tracking, verified identity enrollment, heatmaps, advanced analytics, and an administrative account-management UI. A report is not an emergency call.
 
-## Social authentication extension ? 4 November 2026
+## Social authentication extension
 
-FR-02 now includes Google and Facebook signup/sign-in through Laravel Socialite for responsive web and Android. Password accounts can explicitly connect a provider after confirming their password. New social accounts are citizens; matching email never silently links identities. Provider configuration, real consent/callback tests, physical Android and target-host acceptance remain external requirements. See [provider setup](SOCIAL_AUTH_SETUP.md).
+Google and Facebook authentication have been removed: provider/prepare/callback/exchange/link routes, frontend integration, native callback, Socialite and native App/Browser dependencies are retired. Email/password, MFA and email/saved-code recovery remain. Historical social tables/migrations are preserved without reset; they provide no sign-in route. Former provider-only accounts must establish a password using the existing verified-email or saved-code recovery process. Social sharing of reviewed news remains a separate feature.
 
 ## FR-25 — Readable controls, feedback and motion
 
@@ -99,7 +99,7 @@ The interface provides shared success/error/information toast feedback for user 
 
 ## FR-26 — Privileged identity and continued security phases
 
-Administrators must complete operator-approved authenticator enrollment and MFA before receiving an administrator session/token, including social and Android paths. Sensitive administration requires recent device/session verification. Versioned credentials enforce suspension and authority changes. Generic, verified-local-email recovery, one-use proofs/codes, encrypted secrets, private queued mail, enforced production CSP, optional fail-closed scanner/quarantine integration, redacted security events and maintained source checks extend the baseline. Real services, deployment policy and operational acceptance remain separate. See [the Phase 2/3 record](SECURITY_PHASE_2_2026-11-10.md).
+Administrators must complete operator-approved authenticator enrollment and MFA before receiving an administrator session/token, on web and Android. Sensitive administration requires recent device/session verification. Versioned credentials enforce suspension and authority changes. Generic, verified-local-email recovery, one-use proofs/codes, encrypted secrets, private queued mail, enforced production CSP, optional fail-closed scanner/quarantine integration, redacted security events and maintained source checks extend the baseline. Real services, deployment policy and operational acceptance remain separate. See [the Phase 2/3 record](SECURITY_PHASE_2_2026-11-10.md).
 
 ## FR-27 — Durable device access and dashboard appearance
 
@@ -120,3 +120,11 @@ Photos remain on BANTAY; an optional loopback-only local classifier produces adv
 ## FR-31 — Administrative statistical charts and office exports
 
 Administrators compare counts by hazard type on Dashboard and Incident summary using daily, weekly, monthly or yearly charts, exact tables, date/category filters and an explicit submission/incident date basis in Philippine time. Downloadable PDF, Word DOCX and Excel XLSX reports include the selected aggregate chart and counts without private report details. The shared header account menu contains Profile, Settings and Log out, with guest Sign in in the header and reading settings available to guests. Notification previews remain bounded to the notification header height. See [details](ADMIN_STATISTICS_ACCOUNT_MENU_2026-11-12.md).
+
+
+## FR-32 ? Verified reporter onboarding and policy consent
+
+Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. Encrypted ID images require separate consent, a public operator privacy contact and bounded private handling/deletion. BASISTA MUNICIPAL HALL is the proposed operator. Live host mail, retention approval and municipal/device acceptance remain separate.
+## FR-33 — Administrator lifecycle
+
+Provide a deployable initial administrator seeder with private credentials and idempotent behavior; allow an authenticated administrator with recent MFA-backed verification to create other admins, authorize bounded MFA setup and delete other admins without self-deletion or loss of the last active administrator. Revoke removed credentials and retain municipal history and a removal audit.

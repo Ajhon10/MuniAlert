@@ -4,17 +4,23 @@ import type { User } from '../types';
 import { API_SERVER_URL as base } from '../config/api';
 import { readSessionToken, saveSessionToken, clearSessionToken } from './sessionStore';
 import { prepareServerValidation } from './feedback';
+import { connectionFailure } from './connection';
 export const native = Capacitor.isNativePlatform();
 let sessionGeneration = 0;
 export async function clearToken() { sessionGeneration++; await clearSessionToken(); }
-export async function csrf() { if (!native) await fetch(`${base}/sanctum/csrf-cookie`, { credentials: 'include', headers: { Accept: 'application/json' } }); }
+export async function csrf() { if (!native) await api<void>('/sanctum/csrf-cookie'); }
 async function request(path: string, options: RequestInit = {}): Promise<Response> {
+  if (!navigator.onLine) throw new Error(connectionFailure());
   let response: Response;
   const generation = sessionGeneration;
   const token = await readSessionToken();
   const xsrf = document.cookie.split('; ').find(item => item.startsWith('XSRF-TOKEN='))?.slice(11);
   try { response = await fetch(`${base}${path}`, { ...options, credentials: native ? 'omit' : 'include', signal: options.signal || AbortSignal.timeout(30000), headers: { Accept: 'application/json', ...(options.body && !(options.body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(!native && xsrf ? { 'X-XSRF-TOKEN': decodeURIComponent(xsrf) } : {}), ...options.headers } }); }
-  catch { throw new Error('Unable to reach the municipal server. Check your connection and try again.'); }
+  catch (error) {
+    if (options.signal?.aborted) throw error;
+    throw new Error(connectionFailure(error));
+  }
+  if (response.status >= 500) connectionFailure(undefined, response.status);
   if (response.status === 401 && generation === sessionGeneration) {
     try { await clearToken(); }
     finally { window.dispatchEvent(new Event('session-expired')); }
@@ -26,6 +32,19 @@ export async function apiBlob(path: string): Promise<Blob> {
   const response = await request(path);
   if (!response.ok) throw new Error('This evidence is unavailable or you do not have permission to view it.');
   if (!response.headers.get('Content-Type')?.startsWith('image/')) throw new Error('The evidence server returned an invalid image.');
+  return response.blob();
+}
+export async function identityBlob(path: string, steppedUp = false): Promise<Blob> {
+  if (!/^\/api\/admin\/identities\/[a-f0-9-]{36}\/image$/.test(path)) throw new Error('Invalid identity image link.');
+  const response = await request(path);
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    if (response.status === 428 && data?.reauthentication_required && !steppedUp) {
+      await requestStepUp(data); return identityBlob(path, true);
+    }
+    throw new Error(data?.message || 'The identity image is unavailable.');
+  }
+  if (!response.headers.get('Content-Type')?.startsWith('image/webp')) throw new Error('Invalid identity image response.');
   return response.blob();
 }
 export async function statisticsExport(path: string): Promise<Blob> {
@@ -50,14 +69,17 @@ export async function api<T>(path: string, options: RequestInit = {}, steppedUp 
     return api<T>(path, options, true);
   }
   if (!response.ok) {
+    if (response.status === 403 && data?.account_verification_required) window.dispatchEvent(new CustomEvent('account-verification-required', { detail: data }));
     const details = data?.errors ? Object.values(data.errors).flat().join(' ') : data?.message;
-    const message = response.status === 419 ? 'Your session expired. Reload the page and sign in again.' : details || `Request failed (${response.status}).`;
+    const message = response.status === 419 ? 'Your session expired. Reload the page and sign in again.'
+      : response.status >= 500 ? `${connectionFailure(undefined, response.status)}${details ? ` ${details}` : ''}`
+        : details || `Request failed (${response.status}).`;
     if (data?.errors) prepareServerValidation(message, data.errors);
     throw new Error(message);
   }
   return data as T;
 }
-export async function authenticate(register: boolean, values: { email: string; password: string; name?: string }) {
+export async function authenticate(register: boolean, values: { email: string; password: string; name?: string; accepted?: boolean; policy_version?: string }) {
   await csrf();
   const result = await api<({ user: User; token?: string }) | MfaChallenge>(`${native ? '/api' : ''}/auth/${register ? 'register' : 'login'}`, { method: 'POST', body: JSON.stringify(values) });
   if ('mfa_required' in result) return result;

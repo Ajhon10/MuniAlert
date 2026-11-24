@@ -62,10 +62,10 @@ test('profile and password recovery offer independent visibility controls for ev
   await page.goto('/');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const login = page.getByRole('dialog', { name: 'Welcome to your community', exact: true });
-  await login.getByLabel('Email address', { exact: true }).fill('citizen.two@example.test');
-  await login.getByLabel('Password', { exact: true }).fill(process.env.HAZARD_DEMO_CITIZEN_TWO_PASSWORD!);
+  await login.getByLabel('Email address', { exact: true }).fill('resident2@munialert.test');
+  await login.getByLabel('Password', { exact: true }).fill(process.env.E2E_CITIZEN_PASSWORD!);
   await login.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.locator('.header-account')).toContainText('Sample Citizen Two');
+  await expect(page.locator('.header-account')).toContainText('Synthetic Resident 2');
   await accountOption(page, 'My profile');
   for (const label of ['Current password', 'New password', 'Confirm new password']) {
     const input = page.getByLabel(label, { exact: true });

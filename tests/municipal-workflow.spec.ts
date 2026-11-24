@@ -1,4 +1,4 @@
-import { test, expect, finishAdminMfa, adminApiToken, reviewIncidentImages, accountOption } from './fixtures';
+import { test, expect, policyAcceptance, verifyReporterFixture, finishAdminMfa, adminApiToken, reviewIncidentImages, accountOption } from './fixtures';
 import type { Page } from '@playwright/test';
 
 async function signIn(page: Page, email: string, password: string) {
@@ -7,7 +7,7 @@ async function signIn(page: Page, email: string, password: string) {
   await dialog.getByLabel('Email address').fill(email);
   await dialog.getByLabel('Password', { exact: true }).fill(password);
   await dialog.getByRole('button', { name: 'Sign in', exact: true }).click();
-  if (email === 'admin@example.test') await finishAdminMfa(page);
+  if (email === 'admin@munialert.test') await finishAdminMfa(page);
   await expect(dialog).toHaveCount(0);
 }
 
@@ -19,9 +19,9 @@ test('municipal lifecycle reaches the citizen inbox, profile edits persist, and 
   const email = `workflow-${Date.now()}@example.test`;
   const password = 'isolated-municipal-workflow-password';
   const registration = await request.post(`${origin}/api/auth/register`, {
-    headers: { Accept: 'application/json' }, data: { name: 'Workflow Citizen', email, password },
+    headers: { Accept: 'application/json' }, data: { ...policyAcceptance, name: 'Workflow Citizen', email, password },
   });
-  expect(registration.status()).toBe(201);
+  expect(registration.status()).toBe(201); verifyReporterFixture(email);
   const token = (await registration.json()).token as string;
   await page.goto('/');
   const image = await page.evaluate(() => {
@@ -37,7 +37,7 @@ test('municipal lifecycle reaches the citizen inbox, profile edits persist, and 
     expect(response.status()).toBe(201);
     reports.push((await response.json()).data);
   }
-  await signIn(page, 'admin@example.test', process.env.E2E_ADMIN_PASSWORD!);
+  await signIn(page, 'admin@munialert.test', process.env.E2E_ADMIN_PASSWORD!);
   await page.getByRole('button', { name: /^Review reports(?: \d+)?$/ }).click();
   await page.getByRole('button', { name: /Municipal lifecycle test hazard/ }).click();
   const detail = page.getByRole('dialog', { name: 'Hazard report', exact: true });

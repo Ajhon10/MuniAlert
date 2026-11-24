@@ -25,7 +25,7 @@ class HazardWorkflowTest extends TestCase
 
     private function citizen(): User
     {
-        return User::factory()->create();
+        return User::factory()->verifiedReporter()->create();
     }
 
     private function admin(): User
@@ -137,7 +137,7 @@ class HazardWorkflowTest extends TestCase
 
     public function test_registration_never_accepts_an_admin_role_and_mobile_tokens_can_be_revoked(): void
     {
-        $response = $this->postJson('/api/auth/register', ['name' => 'Test Citizen', 'email' => 'citizen@example.test', 'password' => 'a-long-test-password', 'role' => 'admin'])->assertCreated()->assertJsonPath('user.role', 'citizen');
+        $response = $this->postJson('/api/auth/register', ['accepted' => true, 'policy_version' => config('onboarding.policy_version'), 'name' => 'Test Citizen', 'email' => 'citizen@example.test', 'password' => 'a-long-test-password', 'role' => 'admin'])->assertCreated()->assertJsonPath('user.role', 'citizen');
         $token = $response->json('token');
         $this->withToken($token)->getJson('/api/auth/me')->assertOk();
         $this->withToken($token)->postJson('/api/auth/logout')->assertOk();

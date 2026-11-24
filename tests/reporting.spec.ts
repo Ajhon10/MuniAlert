@@ -1,8 +1,8 @@
-import { test, expect, finishAdminMfa, adminApiToken, continueReport, reviewIncidentImagesApi, accountOption } from './fixtures';
+import { test, expect, policyAcceptance, verifyReporterFixture, finishAdminMfa, adminApiToken, continueReport, reviewIncidentImagesApi, accountOption } from './fixtures';
 test('demo dashboard filters, details, export, and mobile layout', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('/?demo=1');
-  await expect(page.getByRole('heading', { name: 'Community dashboard', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Magandang (umaga|hapon|gabi),/ })).toBeVisible();
   await expect(page.locator('.metric-value').first()).toContainText('06');
   await page.getByRole('combobox', { name: 'Filter by category' }).selectOption('tree');
   await expect(page.locator('tbody tr')).toHaveCount(2);
@@ -25,9 +25,14 @@ test('citizen registers, reports a compressed photo and confirmed manual locatio
   await page.goto('/'); await page.getByRole('button', { name: 'Report a hazard', exact: true }).click(); await continueReport(page);
   await page.getByRole('button', { name: 'Create an account', exact: true }).click();
   await page.getByLabel('Full name').fill('Browser Test Citizen');
-  await page.getByLabel('Email address').fill(`citizen-${Date.now()}@example.test`);
+  const email = `citizen-${Date.now()}@example.test`;
+  await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password', { exact: true }).fill('a-secure-browser-test-password');
+  await page.getByRole('checkbox', { name: 'I agree to the terms and conditions and acknowledge the privacy notice.' }).check();
   await page.getByRole('button', { name: 'Create your account' }).click();
+  await expect(page.getByRole('heading', { name: 'Reporter verification', exact: true })).toBeVisible();
+  verifyReporterFixture(email);
+  await page.getByRole('button', { name: 'Report a hazard', exact: true }).click(); await continueReport(page);
   await expect(page.getByRole('dialog', { name: 'Report a hazard', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Fallen tree', exact: true }).click();
   const image = await page.evaluate(async () => { const canvas = document.createElement('canvas'); canvas.width = 2500; canvas.height = 2000; const ctx = canvas.getContext('2d')!; ctx.fillStyle = '#4a7d5f'; ctx.fillRect(0, 0, 2500, 2000); return canvas.toDataURL('image/jpeg').split(',')[1]; });
@@ -79,11 +84,11 @@ test('administrator sees operations controls and publishes municipal CMS changes
   await page.goto('/');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
-  await auth.getByLabel('Email address').fill('admin@example.test');
+  await auth.getByLabel('Email address').fill('admin@munialert.test');
   await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
   await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
   await finishAdminMfa(page);
-  await expect(page.getByRole('heading', { name: 'Municipal dashboard', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Magandang (umaga|hapon|gabi),/ })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Content management' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Report a hazard' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Content management' }).click();
@@ -104,8 +109,8 @@ test('verified news supports citizen reactions, comments and sharing', async ({ 
   const origin = `http://127.0.0.1:${process.env.HAZARD_API_PORT || '18000'}`;
   const email = `news-${Date.now()}@example.test`;
   const password = 'a-long-isolated-news-password';
-  const registration = await request.post(`${origin}/api/auth/register`, { data: { name: 'News Test Citizen', email, password }, headers: { Accept: 'application/json' } });
-  expect(registration.ok()).toBe(true);
+  const registration = await request.post(`${origin}/api/auth/register`, { data: { ...policyAcceptance, name: 'News Test Citizen', email, password }, headers: { Accept: 'application/json' } });
+  expect(registration.ok()).toBe(true); verifyReporterFixture(email);
   const citizenToken = (await registration.json()).token as string;
   await page.goto('/');
   const image = await page.evaluate(() => { const canvas = document.createElement('canvas'); canvas.width = 20; canvas.height = 20; const context = canvas.getContext('2d')!; context.fillStyle = '#318863'; context.fillRect(0, 0, 20, 20); return canvas.toDataURL('image/png').split(',')[1]; });

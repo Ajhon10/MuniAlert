@@ -127,6 +127,6 @@ class CommunityFeaturesTest extends TestCase
         for ($i = 0; $i < 7; $i++) {
             $this->getJson('/api/settings')->assertOk();
         }
-        $this->postJson('/api/auth/register', ['name' => 'New Citizen', 'email' => 'new-citizen@example.test', 'password' => 'a-long-safe-test-password'])->assertCreated();
+        $this->postJson('/api/auth/register', ['accepted' => true, 'policy_version' => config('onboarding.policy_version'), 'name' => 'New Citizen', 'email' => 'new-citizen@example.test', 'password' => 'a-long-safe-test-password'])->assertCreated();
     }
 }

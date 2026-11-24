@@ -67,11 +67,11 @@ test.describe('Android phone interview alignment', () => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Sign in', exact: true }).click();
     const auth = page.getByRole('dialog', { name: 'Welcome to your community' });
-    await auth.getByLabel('Email address').fill('admin@example.test');
+    await auth.getByLabel('Email address').fill('admin@munialert.test');
     await auth.getByLabel('Password', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
     await auth.getByRole('button', { name: 'Sign in', exact: true }).click();
   await finishAdminMfa(page);
-    await expect(page.getByRole('heading', { name: 'Municipal dashboard', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Magandang (umaga|hapon|gabi),/ })).toBeVisible();
     await page.getByRole('button', { name: 'More navigation', exact: true }).click();
     await page.getByRole('button', { name: 'Incident summary', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Incident records by period', exact: true })).toBeVisible();

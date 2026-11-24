@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Services\AccountOnboarding;
 use App\Services\AccountRecovery;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
@@ -33,23 +34,27 @@ class CheckSecurityConfiguration extends Command
             ['evidence', 'Private evidence storage selected', in_array(config('hazards.photo_disk'), ['evidence', 'r2'], true)],
             ['cors', 'Explicit HTTPS web origins and fixed native origins only', is_array($origins) && count($origins) > 0 && collect($origins)->every(fn ($origin) => in_array($origin, ['https://localhost', 'capacitor://localhost'], true) || $this->httpsOrigin($origin)) && config('cors.allowed_origins_patterns') === []],
             ['password_hash', 'Bcrypt work factor is at least 12', config('hashing.driver') === 'bcrypt' && (int) config('hashing.bcrypt.rounds') >= 12],
-            ['demo_credentials', 'Demo passwords absent from deployment', ! config('hazards.demo_admin_password') && ! config('hazards.demo_citizen_one_password') && ! config('hazards.demo_citizen_two_password')],
         ];
         if ($this->option('phase') === '2') {
             try {
                 $schema = Schema::hasColumn('users', 'mfa_enrollment_until') && Schema::hasTable('security_challenges');
+                $reporterSchema = Schema::hasTable('policy_acceptances') && Schema::hasTable('identity_verifications');
+                $activeAdmins = $reporterSchema ? User::where('role', 'admin')->where('is_active', true)->get() : collect();
+                $identitiesReady = $activeAdmins->isNotEmpty() && $activeAdmins->every(fn ($admin) => app(AccountOnboarding::class)->state($admin)['can_administer']);
                 $adminsReady = $schema && User::where('role', 'admin')->where('is_active', true)->exists()
                     && ! User::where('role', 'admin')->where('is_active', true)->whereNull('mfa_confirmed_at')->exists();
             } catch (\Throwable) {
-                $schema = $adminsReady = false;
+                $schema = $adminsReady = $reporterSchema = $identitiesReady = false;
             }
             $file = public_path('app/security-policy.json');
             $policy = is_file($file) ? (json_decode(file_get_contents($file), true)['policy'] ?? '') : '';
             $checks = [...$checks,
                 ['security_schema', 'Account security migrations applied', $schema],
                 ['admin_enrollment', 'Active administrators have completed MFA enrollment', $adminsReady],
+                ['admin_identities', 'Active administrators have verified email and accepted current policies; ID is optional', $identitiesReady],
                 ['csp_build', 'Built web policy forbids inline/evaluated scripts and framing', is_string($policy) && str_contains($policy, "script-src 'self';") && str_contains($policy, "frame-ancestors 'none'") && ! str_contains($policy, 'unsafe-eval')],
                 ['security_mail', 'Verified-email recovery has a real configured mail transport', app(AccountRecovery::class)->available()],
+                ['reporter_verification', 'Reporter verification schema and public operator privacy contact configured', $reporterSchema && app(AccountOnboarding::class)->configured()],
                 ['upload_scanner', 'Private upload scanner selected; service acceptance remains separate', config('security.scan_uploads') === true],
                 ['event_retention', 'Bounded security event retention configured', config('security.event_retention_days') >= 1 && config('security.event_retention_days') <= 90],
             ];

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\HazardResource;
 use App\Models\HazardReport;
 use App\Models\User;
+use App\Services\AccountOnboarding;
 use App\Services\HazardAchievements;
 use App\Services\SecurityEvents;
 use App\Services\SecuritySessions;
@@ -91,7 +92,7 @@ class CommunityController extends Controller
         $user = $request->user();
         $count = HazardReport::communityVisible()->where('user_id', $user->id)->count();
 
-        return ['user' => $user, 'verified_reports' => $count, 'hazard_achievements' => app(HazardAchievements::class)->forUser($user), 'badges' => DB::table('badges')->orderBy('threshold')->get()->map(fn ($badge) => [...(array) $badge, 'earned' => $count >= $badge->threshold])];
+        return ['user' => app(AccountOnboarding::class)->serialize($user), 'verified_reports' => $count, 'hazard_achievements' => app(HazardAchievements::class)->forUser($user), 'badges' => DB::table('badges')->orderBy('threshold')->get()->map(fn ($badge) => [...(array) $badge, 'earned' => $count >= $badge->threshold])];
     }
 
     public function updateProfile(Request $request)
@@ -104,6 +105,9 @@ class CommunityController extends Controller
             $user = User::whereKey($request->user()->id)->lockForUpdate()->firstOrFail();
             $changingPassword = ! empty($data['password']);
             $changingEmail = $data['email'] !== $user->email;
+            if ($data['name'] !== $user->name) {
+                app(AccountOnboarding::class)->invalidateIdentity($user);
+            }
             if ($changingPassword && (! $user->has_password || ! Hash::check($data['current_password'] ?? '', $user->password))) {
                 throw ValidationException::withMessages(['current_password' => 'Current password is incorrect.']);
             }
