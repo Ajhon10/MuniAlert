@@ -4,6 +4,8 @@
 
 The user explicitly requested pushing the completed BANTAY changes to their personal GitHub account. The configured destination is Ajhon10/MuniAlert, branch main; the repository is public and its remote base was confirmed before publication. Keep the existing pre-push full verification and clean-source gates enabled. Prior no-commit/no-push statements below describe earlier implementation sessions; repository history, the exact-commit local gate report and GitHub Actions establish the subsequent publication outcome. This request authorizes source publication, not Hostinger deployment. Private environment, credentials, account/evidence data and local release archives remain excluded.
 
+Publication review caught a Windows CRLF versus committed LF mismatch in generated document hashes before upload. Both document builders now normalize source newlines before rendering/hashing; the Word/PDF/HTML/Markdown exports were regenerated. Validate committed source and artifact bytes as well as the local gate when preparing future cross-platform documentation changes.
+
 ## Optional identity, email-only sign-in and administrator lifecycle — revision 3
 
 The user supersedes mandatory ID for both roles: email/current policy remain required, admins retain MFA, and optional manual one-ID approval earns a blue verified profile badge. Declining, pending/rejected/expired/withdrawn ID never blocks reporting/administration. No self-approval or client-supplied badge flags. Policy version is 2026-11-24-r3. Google/Facebook frontend/backend/native integration and dependencies are removed; historical tables remain, with no provider authentication route. Email/saved-code recovery remains for any former provider-only account.

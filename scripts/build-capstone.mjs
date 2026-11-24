@@ -11,7 +11,7 @@ const dir = resolve(root, 'documentation/capstone');
 const sources = readdirSync(dir).filter(file => /^\d\d-.*\.md$/.test(file)).sort();
 if (sources.length !== 7) throw Error('Expected front matter, five chapters and references/appendices.');
 const md = new MarkdownIt({ html: false, linkify: true, xhtmlOut: true });
-const documents = sources.map(file => ({ file, text: readFileSync(resolve(dir, file), 'utf8') }));
+const documents = sources.map(file => ({ file, text: readFileSync(resolve(dir, file), 'utf8').replace(/\r\n/g, '\n') }));
 const combined = documents.map(document => document.text).join('\n\n---\n\n');
 const toc = documents.slice(1).map((document, index) => `<li><a href="#part-${index + 1}">${md.utils.escapeHtml(document.text.split('\n')[0].replace(/^# /, ''))}</a></li>`).join('');
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>MuniAlert — Editable Capstone Chapters 1–5</title><style>

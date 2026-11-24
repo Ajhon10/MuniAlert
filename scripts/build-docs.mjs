@@ -6,7 +6,7 @@ const dir = resolve(import.meta.dirname, '../documentation');
 const identity = JSON.parse(readFileSync(resolve(dir, '../hazard-client/src/config/identity.json'), 'utf8'));
 const municipality = JSON.parse(readFileSync(resolve(dir, '../hazard-client/src/config/municipality.json'), 'utf8'));
 const files = readdirSync(dir).filter(name => /^\d\d-.*\.md$/.test(name)).sort();
-const documents = files.map(name => ({ name, text: readFileSync(resolve(dir, name), 'utf8') }));
+const documents = files.map(name => ({ name, text: readFileSync(resolve(dir, name), 'utf8').replace(/\r\n/g, '\n') }));
 const digest = createHash('sha256').update(JSON.stringify(identity)).update(JSON.stringify(municipality)).update(documents.map(d => d.name + '\n' + d.text).join('\n')).digest('hex');
 const marker = `Source SHA256: ${digest}`;
 const markdown = '# ' + identity.capstoneTitle + '\n\n## Capstone technical documentation appendix\n\nApplication name: **' + identity.name + '**. Baseline: 2026-10-02. Institution, proponents and adviser: **to be supplied**. Municipality: **' + municipality.name + ', ' + municipality.province + '**.\n\nThis appendix documents the implementation and testing evidence. It does not invent field research, cloud deployment or evaluation findings.\n\n<!-- ' + marker + ' -->\n\n' + documents.map(d => d.text).join('\n\n---\n\n');

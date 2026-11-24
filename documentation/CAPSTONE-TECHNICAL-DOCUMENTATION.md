@@ -6,7 +6,7 @@ Application name: **MuniAlert**. Baseline: 2026-10-02. Institution, proponents a
 
 This appendix documents the implementation and testing evidence. It does not invent field research, cloud deployment or evaluation findings.
 
-<!-- Source SHA256: 294d4fc1de7748a382d5f0db4ff9bf1b58cb84825b95691780eb556209ed11a4 -->
+<!-- Source SHA256: ed5ddbe3ceb3aae71dfb42750196bcba457b0def3d9f27e735e6327ed9ccbbb8 -->
 
 # 01 — Project overview and requirements
 
