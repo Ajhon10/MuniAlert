@@ -8,7 +8,7 @@
 
 [Emergency-first reports, actionable notifications, hazard sounds and private image review](EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md) records the current workflow; real contacts and a local classifier need configuration.
 
-[Settings, saved reading preferences, authenticator 2FA and Gmail readiness](SETTINGS_2FA_EMAIL_2026-11-11.md) records the current refinement; real delivery needs BANTAY's separate app password.
+[Settings, saved reading preferences, authenticator 2FA and Gmail readiness](SETTINGS_2FA_EMAIL_2026-11-11.md) records the current refinement; real delivery needs MuniAlert's separate app password.
 
 [Single validation toasts, password visibility and schema inventory](TOAST_PASSWORD_SCHEMAS_2026-11-11.md) explains the latest UI changes and which local databases serve the app versus tests/archived setup.
 
@@ -79,3 +79,7 @@ For a new teammate: [first-download quickstart](COLLABORATOR_QUICKSTART.md), [fi
 ## Verified community publication and hazard collections
 
 See [private submissions, factual review, separate news and category achievements](COMMUNITY_REVIEW_ACHIEVEMENTS_2026-11-10.md) for current visibility, admin actions, sharing and milestone rules.
+
+## Local MuniAlert environment alignment
+
+The server .env.example is the canonical local key list and layout. The private .env uses the same keys with the operator's own APP_KEY, MySQL and SMTP values. Keep APP_ENV=local, local HTTP origins and SESSION_SECURE_COOKIE=false until deployment. Retired provider/demo keys are removed. Production configuration is a separate deployment template; do not copy its production/debug/cookie settings over local development. The current MuniAlert Hostinger layout uses munialert/hazard-server beside public_html. Older archives and templates using another private directory are superseded.

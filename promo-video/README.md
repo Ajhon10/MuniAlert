@@ -55,7 +55,7 @@ Six half-second fades overlap the scenes, producing exactly 60 seconds.
 
 Narration uses the same local **Kokoro `af_heart`** preset as KIKOS Order Planner, as requested by the user. `npm run narration` generates all seven clips; `npm run narration:offline` reuses the ignored local model cache. See [narration sources and reproduction](NARRATION.md). `scripts/generate-music.py` creates the original synthesized instrumental; no sampled or third-party recordings are used. `npm run check:narration` validates the preset/clip hashes and actual WAV durations against their scene windows.
 
-Regenerating screenshots requires the parent BANTAY workspace's Playwright installation/browser and the application running on port 5173. Previewing and rendering the already captured video do not require the app server, an API, a database or cloud credentials.
+Regenerating screenshots requires the parent MuniAlert workspace's Playwright installation/browser and the application running on port 5173. Previewing and rendering the already captured video do not require the app server, an API, a database or cloud credentials.
 
 ## Dependencies and verification
 

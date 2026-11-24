@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const server = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const workspace = createHash('sha256').update(dirname(server).replaceAll('\\', '/').toLowerCase()).digest('hex').slice(0, 16);
-const php = process.platform === 'win32' ? 'C:/php85/php.exe' : (process.env.BANTAY_PHP_BINARY || 'php');
+const php = process.platform === 'win32' ? 'C:/php85/php.exe' : (process.env.MUNIALERT_PHP_BINARY || 'php');
 
 export async function ensureApi() {
   const port = Number(process.env.HAZARD_API_PORT || 8000);
@@ -14,9 +14,9 @@ export async function ensureApi() {
   let existing;
   try { existing = await fetch(`${url}/api/health`, { signal: AbortSignal.timeout(4000) }); } catch {}
   if (existing) {
-    if (existing.headers.get('x-bantay-dev') !== workspace) throw Error(`Port ${port} is occupied by a different server. Stop that server or choose HAZARD_API_PORT explicitly.`);
-    if (!existing.ok || (await existing.json()).status !== 'ok') throw Error(`BANTAY API is running but its database health check failed. Check hazard-server/.env and storage/logs/laravel.log.`);
-    console.log(`BANTAY API is already running: ${url}`);
+    if (existing.headers.get('x-munialert-dev') !== workspace) throw Error(`Port ${port} is occupied by a different server. Stop that server or choose HAZARD_API_PORT explicitly.`);
+    if (!existing.ok || (await existing.json()).status !== 'ok') throw Error(`MuniAlert API is running but its database health check failed. Check hazard-server/.env and storage/logs/laravel.log.`);
+    console.log(`MuniAlert API is already running: ${url}`);
     return null;
   }
   if (process.platform === 'win32' && !existsSync(php)) throw Error('Install/configure the required workstation PHP at C:/php85/php.exe.');
@@ -30,11 +30,11 @@ export async function ensureApi() {
     const deadline = Date.now() + 30000;
     while (Date.now() < deadline) {
       if (failure) throw failure;
-      if (child.exitCode !== null) throw Error(`BANTAY API exited (${child.exitCode}). Read the server error above.`);
+      if (child.exitCode !== null) throw Error(`MuniAlert API exited (${child.exitCode}). Read the server error above.`);
       try {
         const response = await fetch(`${url}/api/health`, { signal: AbortSignal.timeout(1500) });
-        if (response.headers.get('x-bantay-dev') === workspace && response.ok && (await response.json()).status === 'ok') {
-          console.log(`BANTAY API ready: ${url} (${php})`);
+        if (response.headers.get('x-munialert-dev') === workspace && response.ok && (await response.json()).status === 'ok') {
+          console.log(`MuniAlert API ready: ${url} (${php})`);
           return child;
         }
       } catch {}

@@ -41,6 +41,6 @@ jobs:
         run: ./gradlew --no-daemon assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: bantay-android-debug
+          name: munialert-android-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error

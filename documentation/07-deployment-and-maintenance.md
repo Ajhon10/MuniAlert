@@ -8,7 +8,7 @@ Production target: **Hostinger Web/Cloud hosting**, one HTTPS origin, PHP/MySQL,
 
 ## Local setup
 
-From the `BANTAY` parent folder:
+From the `MuniAlert` parent folder:
 
 ```sh
 npm ci --prefix hazard-client
@@ -28,7 +28,7 @@ php hazard-server/artisan migrate --seed
 php hazard-server/artisan db:seed --force
 ```
 
-Start both services from BANTAY with `npm run dev` (`npm.cmd run dev` in PowerShell). It checks/reuses existing matching instances and verifies the client-to-API proxy before reporting success. The separate `composer run serve` and client `npm run dev` commands remain available. Use the PHP 8.5 PATH prefix for Composer in Git Bash. See [the startup repair](STARTUP_REPAIR_2026-11-04.md).
+Start both services from MuniAlert with `npm run dev` (`npm.cmd run dev` in PowerShell). It checks/reuses existing matching instances and verifies the client-to-API proxy before reporting success. The separate `composer run serve` and client `npm run dev` commands remain available. Use the PHP 8.5 PATH prefix for Composer in Git Bash. See [the startup repair](STARTUP_REPAIR_2026-11-04.md).
 
 The administrator command prompts for the name and a hidden password; no shared password is seeded. Open `http://localhost:5173`. API: `http://localhost:8000/api/health`. Use one hostname consistently for browser session cookies. A separate terminal can run `php hazard-server/artisan queue:work --tries=3`; the default database queue is required for configured FCM delivery.
 
@@ -92,7 +92,7 @@ Do not commit credentials or embed them in `VITE_*` variables. Confirm authentic
 1. Create/configure the municipality-owned Firebase project and enable the FCM API.
 2. Place the service-account JSON outside `public/`, restrict file permissions, and set `FCM_PROJECT_ID` and the absolute `GOOGLE_APPLICATION_CREDENTIALS` path on the backend.
 3. For web push, set all `VITE_FIREBASE_*` fields and the public VAPID key in the frontend environment, then rebuild. Serve over HTTPS (localhost is suitable for development).
-4. For Android, register `ph.municipal.bantay` (or the deliberately changed application ID) in Firebase and place its `google-services.json` in `hazard-client/android/app/`. That file is ignored by Git.
+4. For Android, register `ph.municipal.munialert` (or the deliberately changed application ID) in Firebase and place its `google-services.json` in `hazard-client/android/app/`. That file is ignored by Git.
 5. Keep a queue worker running. Enable push from a signed-in client and change one of that citizen's report statuses using a separate administrator account.
 6. Record real foreground/background delivery and token cleanup results. The in-app inbox is the fallback when push is unavailable.
 
@@ -108,7 +108,7 @@ The default OpenStreetMap tile endpoint is for small development use; preserve a
 
 See [Android phone testing](ANDROID_TESTING.md) for USB forwarding of the running website, persistent-login checks and the installed-app procedure. This workstation has no configured SDK/JDK or attached device.
 
-The generated native project is in `hazard-client/android` and installs as **Bantay** (`ph.municipal.bantay`). Install Android Studio with its bundled JDK and SDK Platform 35, matching `hazard-client/android/variables.gradle`. Set `VITE_API_BASE_URL` in `hazard-client/.env` to a phone-reachable HTTPS Laravel origin. A phone cannot use the computer's `localhost`; the server must be reachable from the phone. Then:
+The generated native project is in `hazard-client/android` and installs as **MuniAlert** (`ph.municipal.munialert`). Install Android Studio with its bundled JDK and SDK Platform 35, matching `hazard-client/android/variables.gradle`. Set `VITE_API_BASE_URL` in `hazard-client/.env` to a phone-reachable HTTPS Laravel origin. A phone cannot use the computer's `localhost`; the server must be reachable from the phone. Then:
 
 ```sh
 npm run android:sync -w hazard-client
@@ -124,13 +124,13 @@ The client repository also includes a manual GitHub Actions workflow, **Build An
 ## Alternative VPS deployment procedure (not the selected target)
 
 1. Provision the approved domain, TLS certificate, Linux service account, MySQL database/user and PHP-FPM runtime.
-2. Place an approved, tested release under a path such as `/var/www/bantay`. Do not expose the repository root through the web server.
+2. Place an approved, tested release under a path such as `/var/www/munialert`. Do not expose the repository root through the web server.
 3. Install backend production dependencies with `composer install --no-dev --prefer-dist --optimize-autoloader` inside `hazard-server`.
 4. Install locked frontend dependencies using `npm ci`, then run `npm run build:web` to package same-origin assets inside `hazard-server/public/app`.
 5. Configure `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://your-domain`, a unique `APP_KEY`, MySQL credentials, `SESSION_SECURE_COOKIE=true`, the exact frontend host in `SANCTUM_STATEFUL_DOMAINS`, and appropriate `FRONTEND_URLS`.
 6. Restrict environment/service-account file permissions. Grant the PHP service account write access only to Laravel's `storage` and `bootstrap/cache` as required.
 7. Back up before schema changes, then run `php artisan migrate --force --seed`, `php artisan storage:link` for local images, and `php artisan optimize`.
-8. Adapt `deployment/nginx/bantay.conf.example`, serve only `hazard-server/public`, with compiled assets at `/app/` and dynamic requests through `index.php`, then validate Nginx configuration before reload.
+8. Adapt `deployment/nginx/munialert.conf.example`, serve only `hazard-server/public`, with compiled assets at `/app/` and dynamic requests through `index.php`, then validate Nginx configuration before reload.
 9. Install/adapt the queue service example and add the scheduler cron. Restart workers after deploying new code.
 10. Verify login/CSRF, upload/retrieval, admin authorization, notifications, HTTPS, failed-job handling and a restore rehearsal. Record acceptance before operational use.
 
@@ -182,7 +182,7 @@ Apply the additive fact-check/publication migration without resets. It adds null
 
 InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter.
 
-Gmail SMTP is the selected provider, matching PDEA's provider with separate BANTAY credentials. Configure MAIL_ENABLED=true, MAIL_MAILER=smtp, MAIL_HOST=smtp.gmail.com, MAIL_PORT=587, MAIL_SCHEME=smtp, MAIL_REQUIRE_TLS=true, MAIL_USERNAME and MAIL_FROM_ADDRESS with the authorized sender, and MAIL_PASSWORD with its separate app password in the ignored server environment. Use SECURITY_RECOVERY_ENABLED=true and an exact public HTTPS SECURITY_FRONTEND_URL (no path/query/fragment). Local loopback HTTP is allowed only for local/testing. Keep the application key stable for encrypted delivery proofs. Run config:clear after local changes or rebuild the production config cache during deployment. Never put mail secrets in frontend variables or copy another project's app password.
+Gmail SMTP is the selected provider, matching PDEA's provider with separate MuniAlert credentials. Configure MAIL_ENABLED=true, MAIL_MAILER=smtp, MAIL_HOST=smtp.gmail.com, MAIL_PORT=587, MAIL_SCHEME=smtp, MAIL_REQUIRE_TLS=true, MAIL_USERNAME and MAIL_FROM_ADDRESS with the authorized sender, and MAIL_PASSWORD with its separate app password in the ignored server environment. Use SECURITY_RECOVERY_ENABLED=true and an exact public HTTPS SECURITY_FRONTEND_URL (no path/query/fragment). Local loopback HTTP is allowed only for local/testing. Keep the application key stable for encrypted delivery proofs. Run config:clear after local changes or rebuild the production config cache during deployment. Never put mail secrets in frontend variables or copy another project's app password.
 
 Keep the existing single scheduler cron; hazard:work-security-mail runs bounded batches of up to three jobs/30seconds under an overlap lock. Do not run a competing persistent daemon on shared hosting. Enable email verification in Settings before testing optional Report update emails. Validate delivery only with an authorized recipient, including spam folders, failed-job handling and the actual public HTTPS link. Current local code tests use fake mail and do not establish Gmail delivery. Google requires 2-Step Verification for [app passwords](https://support.google.com/accounts/answer/185833). See [the feature/readiness record](SETTINGS_2FA_EMAIL_2026-11-11.md).
 
@@ -231,7 +231,7 @@ example. Return sanitized package, restart, running-binary and HTTPS smoke-test
 evidence before accepting production protection.
 
 An older-version vendor backport requires a root-owned, non-writable-by-others
-regular file at /etc/bantay/nginx-security.json. The operator must first
+regular file at /etc/munialert/nginx-security.json. The operator must first
 confirm all five fixes, then record package_version (exact dpkg-query nginx
 version), binary_sha256 (exact /usr/sbin/nginx hash), and an advisories object
 mapping each CVE above to its HTTPS Ubuntu, Debian, NGINX or F5 notice. This is
@@ -254,3 +254,7 @@ Linux host execution, deployment and workload acceptance.
 ## Reporter verification activation
 
 Both roles require locally verified email and acceptance of current policies (2026-11-24-r3); administrators additionally require MFA. One Philippine government ID is optional. Approval earns a blue verified identity badge on the profile; absent, pending, rejected, expired, withdrawn or name-changed ID status does not block reporting or administration. Identity review is independent of incident factual review. Self-approval remains prohibited; another authorized administrator reviews optional admin IDs, or an independently attested operator can perform that optional review. The badge disappears after withdrawal/name changes or unmet email/policy requirements. Set a public privacy contact before collecting optional ID images, protect private storage/keys and run the existing hourly cleanup. InitialAccountSeeder is called by the normal DatabaseSeeder in local and production deployments. It provides a starter administrator identity (Municipal Administrator / admin@munialert.test) and requires a private INITIAL_ADMIN_PASSWORD; production also requires a real INITIAL_ADMIN_EMAIL. No shared password or demo residents are included. Set INITIAL_ADMIN_NAME/EMAIL/PASSWORD privately, run db:seed --force, and sign in within the 15-minute MFA setup window. Use hazard:account-security <email> --authorize-mfa if that window expires. Reruns preserve existing accounts and never recreate a deleted starter admin. Later administrators are created/deleted in Settings > Administrator accounts, with recent authentication, no self-deletion, last-active-admin protection and retained municipal history. A replacement admin must complete MFA/email/policies and sign in before removing the starter. Complete host mail/cron/scanner/backup and municipal acceptance separately.
+
+## Local MuniAlert environment alignment
+
+The server .env.example is the canonical local key list and layout. The private .env uses the same keys with the operator's own APP_KEY, MySQL and SMTP values. Keep APP_ENV=local, local HTTP origins and SESSION_SECURE_COOKIE=false until deployment. Retired provider/demo keys are removed. Production configuration is a separate deployment template; do not copy its production/debug/cookie settings over local development. The current MuniAlert Hostinger layout uses munialert/hazard-server beside public_html. Older archives and templates using another private directory are superseded.

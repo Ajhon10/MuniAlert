@@ -5,8 +5,8 @@ use Illuminate\Http\Request;
 define('LARAVEL_START', microtime(true));
 
 // Upload this as public_html/index.php. The private application is a sibling:
-// domains/your-domain/bantay/hazard-server (never inside public_html).
-$basePath = dirname(__DIR__).'/bantay/hazard-server';
+// domains/your-domain/munialert/hazard-server (never inside public_html).
+$basePath = dirname(__DIR__).'/munialert/hazard-server';
 
 if (file_exists($maintenance = $basePath.'/storage/framework/maintenance.php')) {
     require $maintenance;

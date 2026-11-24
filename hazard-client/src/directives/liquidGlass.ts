@@ -140,7 +140,7 @@ export const vLiquidGlass: ObjectDirective<HTMLElement> = {
       if (!map) return;
 
       clearLens();
-      const id = `bantay-glass-lens-${++nextFilterId}`;
+      const id = `munialert-glass-lens-${++nextFilterId}`;
       svg = svgElement("svg", {
         width: "0",
         height: "0",

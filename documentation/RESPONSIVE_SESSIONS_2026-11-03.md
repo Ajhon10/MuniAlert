@@ -8,7 +8,7 @@ This follow-up supersedes the earlier memory-only Android session decision.
 ## Layout
 
 Applied the `ui-ux-pro-max` skill's responsive layout, content priority, readable
-type, accessible feedback and keyboard guidance. The existing Bantay identity is
+type, accessible feedback and keyboard guidance. The existing MuniAlert identity is
 retained. `responsive.css` contains a readable adaptation layer over the existing
 base stylesheet; `ReportCards.vue` supplies the phone representation.
 

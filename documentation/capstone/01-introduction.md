@@ -4,7 +4,7 @@
 
 Emergency information is useful when it reaches an appropriate person with enough context for a considered response. A report may describe what happened, where it occurred, when it was observed and whether immediate assistance is requested. A municipality also needs records that can be inspected afterward, including the actions taken and the information subsequently verified. Software can organize these records, but it cannot replace the judgment, staffing and authority of emergency personnel.
 
-MuniAlert is developed as a supplementary reporting and record-management channel for Basista, Pangasinan. It provides community forms and municipal administration through responsive web screens and an Android-capable client. The formal title retains the approved emphasis on photographs and location-based incident tracking. BANTAY identifies the development workspace; MuniAlert is the application name presented to users.
+MuniAlert is developed as a supplementary reporting and record-management channel for Basista, Pangasinan. It provides community forms and municipal administration through responsive web screens and an Android-capable client. The formal title retains the approved emphasis on photographs and location-based incident tracking. The application and its documentation consistently use the name MuniAlert.
 
 The Philippine Disaster Risk Reduction and Management Act establishes a framework that includes local institutions and community participation. That context supports studying tools for municipal coordination, but it does not endorse this application or establish that it meets an agency's operating requirements (Republic Act No. 10121, 2010). Municipal approval and field evaluation are therefore distinct from implementation.
 

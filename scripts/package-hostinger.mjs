@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 export function stageHostinger(root, target) {
   const server = resolve(root, 'hazard-server');
-  const privateApp = resolve(target, 'bantay/hazard-server');
+  const privateApp = resolve(target, 'munialert/hazard-server');
   const publicRoot = resolve(target, 'public_html');
   if (!existsSync(resolve(root, 'hazard-client/dist-web/index.html'))) throw Error('Run npm run build:web first.');
   if (existsSync(target)) throw Error('Release destination must be new; existing releases are preserved.');

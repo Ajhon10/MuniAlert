@@ -4,7 +4,7 @@
 
 [Emergency-first reports, actionable notifications, hazard sounds and private image review](documentation/EMERGENCY_NOTIFICATIONS_IMAGE_REVIEW_2026-11-11.md) records the current workflow; real contacts and a local classifier need configuration.
 
-[Settings, saved reading preferences, authenticator 2FA and Gmail readiness](documentation/SETTINGS_2FA_EMAIL_2026-11-11.md) records the earlier refinement. BANTAY's separate credentials are now configured locally; host-side delivery remains unverified.
+[Settings, saved reading preferences, authenticator 2FA and Gmail readiness](documentation/SETTINGS_2FA_EMAIL_2026-11-11.md) records the earlier refinement. MuniAlert's separate credentials are now configured locally; host-side delivery remains unverified.
 
 Public source repository: **[Ajhon10/MuniAlert](https://github.com/Ajhon10/MuniAlert)**. One clone contains both apps, shared tests, documentation and Remotion source.
 
@@ -65,7 +65,7 @@ From the repository root, start both services and keep the terminal running:
 npm run dev
 ```
 
-Use `npm.cmd run dev` in PowerShell if `npm.ps1` is blocked. Open `http://localhost:5173`. The launcher selects PHP 8.5 on Windows, checks database health, starts the API before the client, and checks the web-to-API proxy. Existing healthy BANTAY instances are reused, so running the command again does not create duplicates or produce a port-5173 error. Occupied ports belonging to another project are reported and left running.
+Use `npm.cmd run dev` in PowerShell if `npm.ps1` is blocked. Open `http://localhost:5173`. The launcher selects PHP 8.5 on Windows, checks database health, starts the API before the client, and checks the web-to-API proxy. Existing healthy MuniAlert instances are reused, so running the command again does not create duplicates or produce a port-5173 error. Occupied ports belonging to another project are reported and left running.
 
 The separate client/server commands in the table also reuse their existing matching service. Do not start extra Vite/Artisan instances manually. In Git Bash, use `PATH="/c/php85:$PATH" composer run serve` when invoking Composer directly, so Composer itself uses the required PHP runtime. [Startup troubleshooting and verification](documentation/STARTUP_REPAIR_2026-11-04.md).
 

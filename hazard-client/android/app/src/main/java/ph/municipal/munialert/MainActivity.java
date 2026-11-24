@@ -1,4 +1,4 @@
-package ph.municipal.bantay;
+package ph.municipal.munialert;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -16,7 +16,7 @@ npm.cmd run dev
 
 Open `http://localhost:5173`. Leave `VITE_API_BASE_URL` blank for this browser workflow. Vite proxies API/auth/photo requests to the local server on port 8000. `?demo=1` shows fictional read-only records without the API. Never overwrite an existing environment during an update. To start only the client after the API is already running, use `npm run dev -w hazard-client`.
 
-The development command reuses an existing client from this workspace instead of failing when its port is occupied. From the parent BANTAY folder, prefer `npm run dev` to start/check both API and web together. A server from another project on that port is reported and left untouched.
+The development command reuses an existing client from this workspace instead of failing when its port is occupied. From the parent MuniAlert folder, prefer `npm run dev` to start/check both API and web together. A server from another project on that port is reported and left untouched.
 
 Run `npm run typecheck` and `npm run build` to verify the client. For Android, configure a reachable HTTPS `VITE_API_BASE_URL` before `npm run android:sync`.
 
@@ -26,7 +26,7 @@ Keep `.env`, Firebase configuration, signing keys, generated builds, and depende
 
 ## Dedicated Android app
 
-The `android/` project is an installable Capacitor app with its own app ID (`ph.municipal.bantay`), launcher icon, camera, location, and notification permissions. The native app uses the same citizen and administrator accounts as the web app. It is a separate installed application, not a browser shortcut.
+The `android/` project is an installable Capacitor app with its own app ID (`ph.municipal.munialert`), launcher icon, camera, location, and notification permissions. The native app uses the same citizen and administrator accounts as the web app. It is a separate installed application, not a browser shortcut.
 
 Install Android Studio with its bundled JDK and Android SDK Platform 35. In `.env`, set `VITE_API_BASE_URL` to the **phone-reachable HTTPS origin** of `hazard-server` (for example, `https://api.your-domain.example`). Do not use `localhost` or `127.0.0.1`: on a phone, those refer to the phone itself. Keep the API available while testing. For native requests, the server's `FRONTEND_URLS` must allow `https://localhost`, which the example server configuration already includes.
 

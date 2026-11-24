@@ -1,6 +1,6 @@
 # Security Phase 2 and Phase 3 automation — 10 November 2026
 
-The user confirmed BANTAY/MuniAlert as the project for continuing the security phases. This work preserves Vue 3/Capacitor and Laravel 12/Sanctum/MySQL. Existing Phase 1 and accessibility work remains in place. Implementation, local verification, deployment and municipal acceptance are separate states.
+The user confirmed MuniAlert/MuniAlert as the project for continuing the security phases. This work preserves Vue 3/Capacitor and Laravel 12/Sanctum/MySQL. Existing Phase 1 and accessibility work remains in place. Implementation, local verification, deployment and municipal acceptance are separate states.
 
 ## Identity protections implemented
 

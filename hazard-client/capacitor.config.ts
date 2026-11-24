@@ -1,3 +1,3 @@
 import type { CapacitorConfig } from '@capacitor/cli';
-const config: CapacitorConfig = { appId: 'ph.municipal.bantay', appName: 'MuniAlert', webDir: 'dist', server: { androidScheme: 'https' }, plugins: { PushNotifications: { presentationOptions: ['badge', 'sound', 'alert'] } } };
+const config: CapacitorConfig = { appId: 'ph.municipal.munialert', appName: 'MuniAlert', webDir: 'dist', server: { androidScheme: 'https' }, plugins: { PushNotifications: { presentationOptions: ['badge', 'sound', 'alert'] } } };
 export default config;

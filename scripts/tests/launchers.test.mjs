@@ -13,7 +13,7 @@ const workspace = createHash('sha256').update(root.replaceAll('\\', '/').toLower
 async function fixture(run, { identity = workspace, status = 200, apiPort } = {}) {
   const previous = { api: process.env.HAZARD_API_PORT, web: process.env.HAZARD_WEB_PORT };
   const server = createServer((request, response) => {
-    response.writeHead(status, { 'Content-Type': 'application/json', 'X-Bantay-Dev': identity, 'X-Bantay-Api-Port': String(apiPort ?? server.address().port) });
+    response.writeHead(status, { 'Content-Type': 'application/json', 'X-MuniAlert-Dev': identity, 'X-MuniAlert-Api-Port': String(apiPort ?? server.address().port) });
     response.end(JSON.stringify({ status: 'ok' }));
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -56,7 +56,7 @@ test('combined launcher verifies the proxy and exits cleanly when both services 
   try {
     const code = await new Promise((resolve, reject) => { child.once('error', reject); child.once('exit', resolve); });
     assert.equal(code, 0, stderr);
-    assert.match(stdout, /BANTAY is connected/);
+    assert.match(stdout, /MuniAlert is connected/);
     assert.match(stdout, /no duplicate processes were started/);
   } finally { clearTimeout(timeout); }
 }));

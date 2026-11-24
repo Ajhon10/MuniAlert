@@ -1,4 +1,4 @@
-# BANTAY engineering acceptance
+# MuniAlert engineering acceptance
 
 Updated 8 November 2026. This records source/local verification separately from
 deployment and municipal acceptance.

@@ -1,5 +1,13 @@
 # Phased task tracker
 
+## Unified identity and local environment ? 24 November 2026
+
+- [x] Use MuniAlert throughout current app labels, policies, source/package names, deployment templates and documentation; preserve historical evidence and required storage migration aliases.
+- [x] Align private local .env and sample keys/layout, preserve configured encryption/database/SMTP values and local settings, remove retired keys, protect rollback copy and clear configuration cache.
+- [x] Update the unreleased Android ID/source path and MuniAlert storage names, preserving old-key migration and logout/revocation behavior.
+- [x] Refresh document exports/screenshots, validate local environment/native flows and produce a superseding MuniAlert deployment candidate (187 manifest hashes checked). Backend 133/1,273 and all six continuation checks pass; both full-run browser timing failures are corrected and included in 17 passing focused retests, with two responsive checks passing separately.
+- [ ] Before a future authorized push, rerun the complete exact-state gate; the two preceding full browser runs each recorded 93/94 and are not complete passes. Hostinger/device/municipal acceptance remains separate.
+
 ## Optional identity and administrator management — revision 3
 
 - [x] Remove old demo accounts/CSV/seeder and Google/Facebook sign-in routes/UI/native integrations; preserve email/password, recovery, MFA and news sharing.
@@ -29,7 +37,7 @@ Earlier sections preserve historical evidence. Revision 3 supersedes their manda
 - [x] Add accessible signup policy disclosures, citizen verification Settings and admin review queue; document schema/API/manual/activation.
 - [x] Apply the additive local migration, preserving seven users and zero reports/photos.
 - [x] Pass 143 isolated backend tests / 1,377 assertions, MySQL onboarding/security regressions, the final 22-case browser rerun plus 15 form/phone checks after the consent-text correction, builds/type checking, PHPStan, formatting, documentation and source-secret checks. Keep initial broad-run failures and final retests explicit in the audit.
-- [x] Supply separate BANTAY Gmail credentials privately; workstation SMTP authentication-only check passes without sending email.
+- [x] Supply separate MuniAlert Gmail credentials privately; workstation SMTP authentication-only check passes without sending email.
 - [ ] Supply an operator-approved public privacy contact; approve operational record/backup retention and policy wording.
 - [ ] Verify real SMTP/cron delivery, deploy only when authorized, and build/sign/test Android on physical devices.
 
@@ -103,7 +111,7 @@ The exact-state nineteen-check gate and subsequent GitHub run remain the publica
 - [x] Ask about immediate assistance first; searchable approved hotlines, optional closest sorting and no-call online submission; preserve private assistance flag.
 - [x] Insert safe active-admin alerts atomically; add per-hazard sound patterns/volume/test/mute, initial-inbox baseline and bounded account-scoped state.
 - [x] Add manual responder contact/minimal copy brief and a bottom-right highlighted guide above the dock with focus restoration.
-- [x] Keep photos on BANTAY; add bounded numeric-loopback detector adapter/jobs and explicit private admin image-review gating, with stale-result protection.
+- [x] Keep photos on MuniAlert; add bounded numeric-loopback detector adapter/jobs and explicit private admin image-review gating, with stale-result protection.
 - [x] Apply only additive local migrations preserving four accounts/zero reports; intermediate SQLite/MySQL checks pass.
 - [x] Complete the nineteen-check gate, refreshed manual/technical exports, final review and redacted evidence.
 - [x] Restore Lenovo ownership across 75 scopes, preserve all 42 sampled access permissions and complete post-record documentation/secret checks.
@@ -121,7 +129,7 @@ See [implementation/readiness](documentation/EMERGENCY_NOTIFICATIONS_IMAGE_REVIE
 - [x] Apply only the additive preference migration on localhost, preserving four accounts/zero reports; copy no PDEA credentials and send no real mail.
 - [x] Complete all nineteen local checks, refreshed manual/technical exports and redacted evidence.
 - [x] Restore Lenovo ownership across 64 scopes with all 32 sampled access permissions preserved; complete post-record documentation/secret checks.
-- [ ] Add a separate Gmail app password directly to BANTAY's ignored server environment and validate authorized real delivery/public HTTPS links; deployment/device/municipal acceptance remain open.
+- [ ] Add a separate Gmail app password directly to MuniAlert's ignored server environment and validate authorized real delivery/public HTTPS links; deployment/device/municipal acceptance remain open.
 
 See [implementation/readiness](documentation/SETTINGS_2FA_EMAIL_2026-11-11.md).
 
@@ -281,7 +289,7 @@ Owner: project development team. Updated: 2026-10-02.
 
 - [x] Read both supplied requirements and apply the replacement stack.
 - [x] Create a dedicated project with separate frontend and backend directories.
-- [x] Split the applications into local `hazard-client` and `hazard-server` repositories under `BANTAY` and add independent development commands.
+- [x] Split the applications into local `hazard-client` and `hazard-server` repositories under `MuniAlert` and add independent development commands.
 - [ ] Publish the user-selected single private Ajhon10/MuniAlert workspace after exact-state verification; preserve earlier local histories.
 - [x] Scaffold Vue 3/TypeScript and Laravel 12/Sanctum with lockfiles.
 - [x] Record the accepted stack and persistent user preferences in `MEMORY.md`.

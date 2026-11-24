@@ -1,15 +1,15 @@
 # Startup repair — 4 November 2026
 
-The user could not start BANTAY from separate terminals. Composer/Git reported
+The user could not start MuniAlert from separate terminals. Composer/Git reported
 that the sandbox account owned `hazard-server`, and Vite refused to start because
 port 5173 was occupied. The existing browser/API/database path was healthy; the
 terminal commands were attempting to start additional servers. Two PHP server
 trees and an existing Vite process were identified and restarted as one matched
-pair. Only verified BANTAY development processes were stopped.
+pair. Only verified MuniAlert development processes were stopped.
 
 ## Changes
 
-- Restored the Lenovo account as owner of both BANTAY repository roots and their
+- Restored the Lenovo account as owner of both MuniAlert repository roots and their
   `.git` directories, preserving access permissions. The requested wider audit
   restored 14 additional sandbox-owned project/repository directories under
   PERSONAL/WORK. Git ownership protection remains enabled; no wildcard trust was
@@ -56,7 +56,7 @@ Three PHP health tests cover local identity, safe database failure and no identi
 header in production. Full release-gate and normal runtime results are recorded
 in [dated evidence](evidence/startup-repair-2026-11-04.json). All **12 checks passed**: **35 backend tests / 221 assertions**, **20 browser tests**, **five launcher tests**, builds, formatting, Android asset synchronization, both dependency audits and documentation checks. Composer startup and Git repository access were verified under the actual Lenovo account.
 
-The normal browser showed Connected, returned HTTP 200 for catalog/statistics/reports/settings and proxied health, fit a 390px viewport and had no page errors. A fresh combined launch and repeated combined/individual commands worked without duplicate processes. BANTAY ownership was restored on 52,955 files/folders with zero failures; newly created verification files were also restored.
+The normal browser showed Connected, returned HTTP 200 for catalog/statistics/reports/settings and proxied health, fit a 390px viewport and had no page errors. A fresh combined launch and repeated combined/individual commands worked without duplicate processes. MuniAlert ownership was restored on 52,955 files/folders with zero failures; newly created verification files were also restored.
 
 An initial browser run discovered the Node tests as browser files and inherited a temporary test port. The Node suite was moved to `scripts/tests`, keeping all five launcher tests in the release gate, and the complete gate was rerun successfully.
 

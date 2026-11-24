@@ -1,0 +1,87 @@
+{
+  "application": "MuniAlert",
+  "date": "2026-11-24",
+  "scope": "local identity and environment continuation",
+  "environment": {
+    "same_key_count": 86,
+    "same_key_order": true,
+    "local_http_preserved": true,
+    "encryption_database_smtp_preserved": true,
+    "real_records_reset": false
+  },
+  "backend": {
+    "tests": 133,
+    "assertions": 1273,
+    "passed": true
+  },
+  "full_browser_attempts": [
+    {
+      "passed": 93,
+      "total": 94,
+      "failure": "routing-save test synchronization"
+    },
+    {
+      "passed": 93,
+      "total": 94,
+      "failure": "recovery-notice test clock"
+    }
+  ],
+  "corrected_focused_browser_retest": {
+    "passed": 17,
+    "total": 17,
+    "groups": [
+      "connection-banner",
+      "native-session",
+      "reusable-workflow"
+    ]
+  },
+  "responsive_retest": {
+    "passed": 2,
+    "total": 2
+  },
+  "post_browser_checks": [
+    {
+      "name": "Android asset synchronization",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "Node dependency audit",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "PHP dependency audit",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "Documentation consistency",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "Editable capstone artifacts",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "Promotional source and dependencies",
+      "passed": true,
+      "exitCode": 0
+    }
+  ],
+  "exact_state_full_gate_passed": false,
+  "future_push_requires_fresh_full_gate": true,
+  "release": {
+    "manifest_file_count": 187,
+    "crc_and_all_manifest_hashes_verified": true,
+    "archive_sha256": "0291af17eb0313ffbbfa5ed8e748290aafc260fb940b85b4ec9c4e019cd531bb",
+    "private_environment_included": false,
+    "requires_target_composer_install": true,
+    "deployed": false
+  },
+  "real_email_sent": false,
+  "physical_android_acceptance": false,
+  "municipal_acceptance": false
+}

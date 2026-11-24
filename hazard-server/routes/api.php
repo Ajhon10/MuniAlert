@@ -36,7 +36,7 @@ Route::middleware('throttle:120,1,api-global')->group(function () {
         }
         if (app()->environment('local')) {
             $workspace = strtolower(str_replace('\\', '/', dirname(base_path())));
-            $response->header('X-Bantay-Dev', substr(hash('sha256', $workspace), 0, 16));
+            $response->header('X-MuniAlert-Dev', substr(hash('sha256', $workspace), 0, 16));
         }
 
         return $response;

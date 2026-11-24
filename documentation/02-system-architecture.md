@@ -39,7 +39,7 @@ flowchart TB
 ## Repository structure
 
 ```text
-BANTAY/
+MuniAlert/
 ├── hazard-client/
 │   ├── src/
 │   │   ├── views/DashboardView.vue      # Workspace composition
@@ -79,7 +79,7 @@ BANTAY/
 
 The reference was read from the existing local `PDEA/pdea-server` and `PDEA/pdea-client` source, including `composer.json`, `routes/api.php`, `app/Services/FileStorageService.php`, `tests/Feature/SecurityHardeningTest.php`, `src/config/api.ts`, `src/services/authService.ts`, and the frontend `views`, `layout`, and `composables` directories. PDEA's historical architecture HTML labels itself historical, so current source took precedence.
 
-| Reference principle | Application in Bantay |
+| Reference principle | Application in MuniAlert |
 | --- | --- |
 | Separate Vue client and Laravel server | Independent `hazard-client/` and `hazard-server/` roots |
 | API controller namespace | `Http/Controllers/Api` with Sanctum-protected routes |
@@ -89,7 +89,7 @@ The reference was read from the existing local `PDEA/pdea-server` and `PDEA/pdea
 | Role checks and security feature tests | Owner/admin privacy, role enforcement, token and workflow tests |
 | Migrations and operational handover | Versioned schema, deployment guide, task/release records |
 
-PDEA's domain-specific museum modules, data, credentials, DigitalOcean settings, legacy bootstrap layout, and historical deployment details were not copied. Bantay uses the Laravel 12 application skeleton and its accepted R2/MySQL design. The single workspace uses local view state rather than PDEA's larger multi-page router structure.
+PDEA's domain-specific museum modules, data, credentials, DigitalOcean settings, legacy bootstrap layout, and historical deployment details were not copied. MuniAlert uses the Laravel 12 application skeleton and its accepted R2/MySQL design. The single workspace uses local view state rather than PDEA's larger multi-page router structure.
 
 ## Report submission sequence
 
@@ -170,7 +170,7 @@ Google and Facebook authentication have been removed: provider/prepare/callback/
 
 The user approved the full capstone title: **Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking**. The selected short application name is **MuniAlert**, with subtitle **Emergency & Public Hazard Reporting**. Display names and current documentation are updated; stable Android package/auth identifiers stay compatible with existing installations and callbacks. Client identity lives in `src/config/identity.json`.
 
-The default browser-session cookie remains `bantay_session`, independently of `APP_NAME`, so a display-name change preserves existing browser sessions. An explicitly configured `SESSION_COOKIE` is still respected. Native package ID, deep-link callback and secure-storage keys also retain their established values.
+The default browser-session cookie is `munialert_session`; explicit SESSION_COOKIE settings remain supported. Existing registered-device/remember proofs keep their own MuniAlert identity. The unreleased Android package and scheme are ph.municipal.munialert. New native credentials use munialert.session, with a read-and-delete migration for earlier keys when those records are available in the same app storage. A changed Android application ID is a separate installation, not an update to an older debug package; no signed or physical-device release is claimed.
 
 `?view=guide` loads a bundled static, searchable citizen/admin manual. It needs no new API, database, account privilege or external service. The six-step `FeatureTour` uses a native dialog, highlights real overview controls, supports back/next/skip/ESC, and can be replayed. Instructions describe only implemented behavior; public reading of administrator instructions grants no administrative access. Browser print support produces an expanded manual.
 
@@ -236,7 +236,7 @@ The community navigation refinement removes the standalone Verified hazards dest
 
 Settings owns the reading panel, guide and Account security & email. The old header/sidebar reading and guide shortcuts and community callout are removed. readingAccount serializes debounced preference saves, keeps account-specific dirty caches for retry and changes scope synchronously when identity changes. The server authenticates ownership and requires an account_id matching the current identity to reject delayed cross-account requests. Six explicit display fields are allowlisted; other profile/security state cannot be written through this endpoint.
 
-TwoFactorInput supplies six numeric cells with whole-code paste, keyboard navigation, one-time-code autocomplete and a separate recovery-code mode. Existing TOTP, operator enrollment, replay/lockout/recent-verification controls are preserved. AccountMailDelivery admits configured TLS SMTP only outside tests; sample addresses are excluded. Gmail uses BANTAY's own credentials, never PDEA's. SendReportEmail queues only a notification UUID transactionally and rechecks current owner, active/verified/opt-in state and report existence before delivery. Bounded security-mail batches serve both security and optional report mail. See [implementation and readiness](SETTINGS_2FA_EMAIL_2026-11-11.md).
+TwoFactorInput supplies six numeric cells with whole-code paste, keyboard navigation, one-time-code autocomplete and a separate recovery-code mode. Existing TOTP, operator enrollment, replay/lockout/recent-verification controls are preserved. AccountMailDelivery admits configured TLS SMTP only outside tests; sample addresses are excluded. Gmail uses MuniAlert's own credentials, never PDEA's. SendReportEmail queues only a notification UUID transactionally and rechecks current owner, active/verified/opt-in state and report existence before delivery. Bounded security-mail batches serve both security and optional report mail. See [implementation and readiness](SETTINGS_2FA_EMAIL_2026-11-11.md).
 
 ## Emergency-first reporting and private local screening
 

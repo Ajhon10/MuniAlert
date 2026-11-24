@@ -13,7 +13,7 @@ The owner selected a **one-year term**, not an exact hosting tier or domain. The
 | Database | Create a dedicated MySQL database/user and private credentials; never deploy using root or copy local records by default. |
 | Privacy decisions | Approve a public PRIVACY_CONTACT_EMAIL, policy wording, reviewer authority, assisted alternatives and account/incident/backup retention. SMTP sender/login stays private unless separately approved for publication. |
 | Administrator | Designate a real admin; complete email, current policies and authenticator MFA. ID review is optional, with no self-approval. |
-| Services | Transfer BANTAY's SMTP settings privately and verify real delivery. Use local private evidence by default. Firebase/private R2 are optional and need separate setup/acceptance. |
+| Services | Transfer MuniAlert's SMTP settings privately and verify real delivery. Use local private evidence by default. Firebase/private R2 are optional and need separate setup/acceptance. |
 | Security/operations | Confirm provider patching, a supported private ClamAV service/signatures for the existing upload-security gate, storage permissions, monitoring and tested encrypted backup restoration. Do not simply enable scanner flags without a working service or bypass a failed gate. |
 | Acceptance | Run host checks and synthetic smoke tests, then obtain municipal permission before real collection/public operation. |
 
@@ -21,7 +21,7 @@ The owner selected a **one-year term**, not an exact hosting tier or domain. The
 
 1. Run `npm run verify` from the project root on the exact candidate state. It includes backend/browser/build/security/document and release-package safeguards. Resolve any failed/unavailable check before treating the candidate as accepted.
 2. Run `npm run package:hostinger`. This creates a new ZIP and staging directory under ignored `.cache/releases/`; the command prints their exact paths. Its manifest hashes the prepared files. The public/private layout is already arranged. It contains **no vendor**, so Composer/terminal access or a separately prepared target-compatible production vendor directory is required.
-3. For a new empty site's domain directory, upload `bantay/hazard-server` beside `public_html`, then upload the package's `public_html` contents to the real document root. Preserve `.htaccess`. Never replace an existing live environment/storage/database without an approved backed-up release procedure. Application source, vendor, .env, IDs and uploads must remain outside public_html.
+3. For a new empty site's domain directory, upload `munialert/hazard-server` beside `public_html`, then upload the package's `public_html` contents to the real document root. Preserve `.htaccess`. Never replace an existing live environment/storage/database without an approved backed-up release procedure. Application source, vendor, .env, IDs and uploads must remain outside public_html.
 4. In the private server directory use the verified host PHP/Composer to run:
 
 ```sh
@@ -66,7 +66,7 @@ deploy the compiled web interface and Laravel API on one HTTPS domain.
 
 1. Run the full verification gate, install locked production PHP dependencies in
    an environment matching the destination, and run `npm run build:web` from
-   BANTAY. Node runs locally/CI; it is not needed as a production web server.
+   MuniAlert. Node runs locally/CI; it is not needed as a production web server.
 2. Create the Hostinger MySQL database/user, HTTPS domain and private application
    directory. Confirm the account's PHP CLI and web versions/extensions separately
    with `composer check-platform-reqs --lock`. The local workstation uses PHP 8.5;
@@ -75,7 +75,7 @@ deploy the compiled web interface and Laravel API on one HTTPS domain.
 
 ```text
 /home/u123456789/domains/example.org/
-  bantay/hazard-server/       private Laravel app, vendor, .env, storage
+  munialert/hazard-server/       private Laravel app, vendor, .env, storage
   public_html/
     index.php                adapted public entry point
     .htaccess                from hazard-server/public/.htaccess
@@ -130,7 +130,7 @@ minute if the account permits it. Set its command to the adapted version of
 [the command example](../deployment/hostinger/cron-command.example):
 
 ```text
-/verified/path/to/php /home/u123456789/domains/example.org/bantay/hazard-server/artisan schedule:run
+/verified/path/to/php /home/u123456789/domains/example.org/munialert/hazard-server/artisan schedule:run
 ```
 
 Use the real verified CLI binary, not a guessed PHP path. Enter the schedule in
@@ -184,3 +184,7 @@ Sources: [Hostinger cron setup](https://www.hostinger.com/support/1583465-how-to
 All 11 parent verification checks passed: **32 backend tests / 209 assertions**, **20 browser tests**, both web build variants, TypeScript, PHP formatting, Android asset synchronization, zero npm vulnerabilities, no Composer advisories and documentation consistency. The relocated public entry template passed PHP 8.5 syntax checking. Tests use isolated SQLite databases and synthetic jobs; the five new scheduler cases verify bounded work, overlap exclusion, lock-expiry recovery, preserving work without Firebase and environment-controlled scheduler registration.
 
 See [the dated verification record](evidence/hostinger-web-cloud-2026-11-04.json). The earlier UI review remains historical. Actual Hostinger execution, MySQL target acceptance, real cloud delivery, physical Android and deployment are still unverified. No live account configuration or deployment was performed.
+
+## Local MuniAlert environment alignment
+
+The server .env.example is the canonical local key list and layout. The private .env uses the same keys with the operator's own APP_KEY, MySQL and SMTP values. Keep APP_ENV=local, local HTTP origins and SESSION_SECURE_COOKIE=false until deployment. Retired provider/demo keys are removed. Production configuration is a separate deployment template; do not copy its production/debug/cookie settings over local development. The current MuniAlert Hostinger layout uses munialert/hazard-server beside public_html. Older archives and templates using another private directory are superseded.

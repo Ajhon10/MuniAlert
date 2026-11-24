@@ -1,6 +1,6 @@
 # Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking
 
-**Application:** MuniAlert (BANTAY project)\
+**Application:** MuniAlert\
 **Institution:** [School / college — edit later]\
 **College / department:** [Edit later]\
 **Degree / course:** [Edit later]\

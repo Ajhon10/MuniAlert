@@ -89,7 +89,7 @@ class StatisticsExportTest extends TestCase
 
                 continue;
             }
-            $file = tempnam(sys_get_temp_dir(), 'bantay-stat-test-');
+            $file = tempnam(sys_get_temp_dir(), 'munialert-stat-test-');
             try {
                 file_put_contents($file, $bytes);
                 $zip = new ZipArchive;

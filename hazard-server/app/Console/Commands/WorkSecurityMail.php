@@ -19,7 +19,7 @@ class WorkSecurityMail extends Command
 
             return self::SUCCESS;
         }
-        $lock = SecurityLock::make('bantay:security-mail-worker', 180);
+        $lock = SecurityLock::make('munialert:security-mail-worker', 180);
         if (! $lock->get()) {
             $this->info('Another security-mail batch is running.');
 

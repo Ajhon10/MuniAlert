@@ -1,6 +1,6 @@
 # Reading, action feedback and motion — 10 November 2026
 
-The user requested toast feedback throughout BANTAY/MuniAlert, animated numbers and a more readable interface for a broad age range, including Android-style accessibility settings. The existing Vue/TypeScript and Capacitor client remains in place.
+The user requested toast feedback throughout MuniAlert/MuniAlert, animated numbers and a more readable interface for a broad age range, including Android-style accessibility settings. The existing Vue/TypeScript and Capacitor client remains in place.
 
 ## Design decisions
 

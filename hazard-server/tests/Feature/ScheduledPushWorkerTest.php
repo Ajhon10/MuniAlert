@@ -37,7 +37,7 @@ class ScheduledPushWorkerTest extends TestCase
     public function test_an_overlapping_invocation_retains_all_queued_work(): void
     {
         Queue::connection('report-push')->push(new RecordScheduledPush);
-        $lock = Cache::store('database')->lock('bantay:scheduled-push-worker', 180);
+        $lock = Cache::store('database')->lock('munialert:scheduled-push-worker', 180);
         $this->assertTrue($lock->get());
         try {
             $this->artisan('hazard:work-push')->expectsOutput('Another scheduled notification batch is still running.')->assertSuccessful();
@@ -51,7 +51,7 @@ class ScheduledPushWorkerTest extends TestCase
     public function test_expired_lock_can_recover_after_a_killed_cron_process(): void
     {
         Queue::connection('report-push')->push(new RecordScheduledPush);
-        Cache::store('database')->lock('bantay:scheduled-push-worker', 1)->get();
+        Cache::store('database')->lock('munialert:scheduled-push-worker', 1)->get();
         $this->travel(2)->seconds();
         $this->artisan('hazard:work-push')->assertSuccessful();
         $this->assertDatabaseCount('jobs', 0);

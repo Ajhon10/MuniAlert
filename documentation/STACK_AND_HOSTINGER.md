@@ -33,7 +33,7 @@ The user confirmed **Hostinger Web/Cloud hosting** and **Android app + responsiv
 
 ## One-origin package implemented
 
-From BANTAY, run `npm run build:web` (`npm.cmd run build:web` in PowerShell).
+From MuniAlert, run `npm run build:web` (`npm.cmd run build:web` in PowerShell).
 It builds into `hazard-client/dist-web`, then copies compiled files into
 `hazard-server/public/app`. This command forces an empty API origin for the web
 build and `/app/` for asset URLs. Android continues to use `hazard-client/dist`

@@ -19,7 +19,7 @@ class WorkImageScreening extends Command
 
             return self::SUCCESS;
         }
-        $lock = SecurityLock::make('bantay:image-screening-worker', 180);
+        $lock = SecurityLock::make('munialert:image-screening-worker', 180);
         if (! $lock->get()) {
             return self::SUCCESS;
         }

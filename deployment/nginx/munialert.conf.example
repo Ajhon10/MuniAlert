@@ -8,7 +8,7 @@ server {
     listen 80;
     server_name hazards.example.org;
     # npm run build:web places compiled Vue assets inside this public directory.
-    root /var/www/bantay/hazard-server/public;
+    root /var/www/munialert/hazard-server/public;
     index index.php;
     client_max_body_size 8m;
     add_header X-Content-Type-Options nosniff always;
@@ -17,7 +17,7 @@ server {
 
     location = /index.php {
         include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME /var/www/bantay/hazard-server/public/index.php;
+        fastcgi_param SCRIPT_FILENAME /var/www/munialert/hazard-server/public/index.php;
         fastcgi_param SCRIPT_NAME /index.php;
         # Match the separately verified installed PHP-FPM version/socket.
         fastcgi_pass unix:/run/php/php8.5-fpm.sock;

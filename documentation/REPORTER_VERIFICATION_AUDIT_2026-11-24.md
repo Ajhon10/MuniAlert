@@ -1,4 +1,4 @@
-# BANTAY feature and reporter-verification audit ? 24 November 2026
+# MuniAlert feature and reporter-verification audit ? 24 November 2026
 
 ## Current revision 3 handoff
 
@@ -19,7 +19,7 @@ Replacement candidate: `.cache/releases/hostinger-9e132f5d-d583-4ed9-8299-ba3684
 
 The findings below retain the original citizen-verification audit. This revision supersedes its missing-SMTP finding, citizen-only scope and policy version: both administrators and community members now require verified local email, current policy acceptance (`2026-11-24-r2`) and independent approval of one government ID. Administrators also retain MFA. Incomplete administrators can use their own setup/security routes but cannot read municipal data or review IDs, including with an older session. Self-approval is refused. Another verified administrator reviews an admin; the first administrator instead requires an independent municipal operator's in-person original-ID check and explicit CLI attestation. No real account was approved. The additive review-method migration preserved seven accounts and zero reports.
 
-The owner has now supplied separate local BANTAY SMTP credentials. Redacted readiness and real SMTP authentication-only checks passed from this workstation without sending a message. Host-side authentication/delivery is still unverified. The private SMTP sender is not a public privacy contact; ID collection remains unavailable until an approved public contact is configured.
+The owner has now supplied separate local MuniAlert SMTP credentials. Redacted readiness and real SMTP authentication-only checks passed from this workstation without sending a message. Host-side authentication/delivery is still unverified. The private SMTP sender is not a public privacy contact; ID collection remains unavailable until an approved public contact is configured.
 
 The owner specified a one-year Hostinger term, with no tier/domain selected. The [deployment checklist](HOSTINGER_WEB_CLOUD.md) covers private/public layout, production environment, Composer installation, first-admin review, cron, scanner, provider patching, backup restoration and host acceptance. The [editable five-chapter manuscript](capstone/MUNIALERT-CAPSTONE.docx) and [PDF](capstone/MUNIALERT-CAPSTONE.pdf) contain academic placeholders and an explicitly uncollected municipal evaluation. Android source/assets exist; there is still no signed installable release or physical-device acceptance.
 
@@ -33,7 +33,7 @@ The final prepared candidate is `.cache/releases/hostinger-d2c81c4b-1994-4b94-ad
 
 Reviewed the current local working tree, including its pre-existing uncommitted changes, against TASKS.md, source, routes, tests and Android packaging records. Preserved Vue 3/TypeScript, Capacitor Android, Laravel 12/Sanctum, MySQL and the Hostinger single-origin architecture. This is a local engineering review, not a penetration test, legal approval or deployed acceptance. ASVS 5.0.0 identity, authorization, file-handling and data-protection topics informed the checks; no ASVS conformance is claimed.
 
-Not every release requirement is finished. Android source exists, but no signed release APK/AAB, available installable local artifact, physical-device acceptance or configured reachable HTTPS release backend was established. iOS remains out of scope. The user confirmed BASISTA MUNICIPAL HALL as operator and separate BANTAY Gmail credentials; the temporary SMTP sender is not automatically a public privacy contact.
+Not every release requirement is finished. Android source exists, but no signed release APK/AAB, available installable local artifact, physical-device acceptance or configured reachable HTTPS release backend was established. iOS remains out of scope. The user confirmed BASISTA MUNICIPAL HALL as operator and separate MuniAlert Gmail credentials; the temporary SMTP sender is not automatically a public privacy contact.
 
 | Capability | Source/readiness finding | Action / outstanding evidence |
 | --- | --- | --- |
@@ -44,7 +44,7 @@ Not every release requirement is finished. Android source exists, but no signed 
 | Registration email verification | Existing optional mail verification was not sent on signup and did not gate reporting | Signup now transactionally queues the existing encrypted single-use, 30-minute verification challenge; API blocks reports and confirmations until locally verified |
 | Government-ID verification | Missing | One supported Philippine photo ID, separate consent, manual admin review, encrypted private images, bounded upload and access, withdrawal, deletion and expiry added |
 | Terms/privacy | Signup acceptance and government-ID notice missing | Versioned public policies, mandatory signup acceptance and consent records added; existing/social users accept current policies in Settings |
-| SMTP | Gmail host/sender configured; separate MAIL_PASSWORD absent | User must supply BANTAY app password privately, verify allowed frontend origin and run bounded scheduled mail delivery; no real email sent |
+| SMTP | Gmail host/sender configured; separate MAIL_PASSWORD absent | User must supply MuniAlert app password privately, verify allowed frontend origin and run bounded scheduled mail delivery; no real email sent |
 | Android | Capacitor 7 project and build workflow exist; current native target is API 35 | JDK/SDK not available on PATH; no APK found in local output; signed build, HTTPS backend, camera/GPS/Keystore/push and phone acceptance outstanding |
 | Push and private object storage | In-app notifications exist; external FCM/R2 acceptance not established | Supply provider config and test actual delivery/access when deployed |
 | Optional local incident-image detector | Integration exists; no maintained/calibrated detector established | Retain explicit human review and no authenticity claims; no classifier installed |
@@ -54,7 +54,7 @@ Not every release requirement is finished. Android source exists, but no signed 
 
 Citizen reporting and confirmations require local_email_verified_at, acceptance of the current policy version, and an approved identity tied to the account name. Existing accounts are not silently grandfathered. Public news/map/emergency contacts and own report access remain available. The API checks eligibility before request work and rechecks under the user-row lock at report/confirmation commit. Admin authority and MFA remain separate; an admin does not receive citizen reporting access.
 
-Signup requires accepted=true and policy_version=2026-11-24. A valid signup creates an account, records the acceptance and queues the existing verification challenge when SMTP is ready. Missing mail configuration never marks an account verified or claims delivery. Verification resend remains rate limited. Provider-verified Google email alone does not satisfy BANTAY's local SMTP verification. Native and web reporting use the same server gate.
+Signup requires accepted=true and policy_version=2026-11-24. A valid signup creates an account, records the acceptance and queues the existing verification challenge when SMTP is ready. Missing mail configuration never marks an account verified or claims delivery. Verification resend remains rate limited. Provider-verified Google email alone does not satisfy MuniAlert's local SMTP verification. Native and web reporting use the same server gate.
 
 Settings contains reporter verification for citizens and a paginated Government-ID review queue for administrators. Accepted documents: Philippine National ID/ePhilID, Philippine passport, Philippine driver's license, UMID, PRC professional ID or Postal ID. The client resizes one redacted JPEG/PNG/WebP locally (input up to 20 MB); the server enforces at most 1 MB and 1920 pixels per side, then the image is decoded/re-encoded to WebP, stripped of source metadata, encrypted with Laravel's application encrypter and saved under the fixed identity-private disk. No ID number is collected; no AI/vendor/registry lookup, selfie or biometric recognition is claimed. Staff compare readable name/photo/type/issuer and reject uncertain documents; manual review cannot guarantee ID ownership or prevent every fabricated report. Separate incident factual review still applies.
 

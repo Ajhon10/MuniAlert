@@ -1,12 +1,12 @@
 [Unit]
-Description=Bantay Laravel notification queue worker
+Description=MuniAlert Laravel notification queue worker
 After=network.target mysql.service
 
 [Service]
 Type=simple
 User=www-data
 Group=www-data
-WorkingDirectory=/var/www/bantay/hazard-server
+WorkingDirectory=/var/www/munialert/hazard-server
 ExecStart=/usr/bin/php artisan queue:work report-push --sleep=3 --tries=3 --timeout=60
 Restart=always
 RestartSec=5

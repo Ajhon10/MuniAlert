@@ -44,7 +44,7 @@ php --ini
 composer --version
 ```
 
-Confirm that `php --version` reports 8.5. On macOS/Linux use PHP 8.5 on PATH; the Node helpers also support `BANTAY_PHP_BINARY` there. The commands below use PowerShell's `npm.cmd`; on macOS/Linux use `npm`, `cp` and the corresponding shell syntax.
+Confirm that `php --version` reports 8.5. On macOS/Linux use PHP 8.5 on PATH; the Node helpers also support `MUNIALERT_PHP_BINARY` there. The commands below use PowerShell's `npm.cmd`; on macOS/Linux use `npm`, `cp` and the corresponding shell syntax.
 
 ## 3. Install dependencies and create your environment files
 
@@ -103,7 +103,7 @@ The demo-seeder passwords, Windows PIN, GitHub password, Gmail app password and 
 1. Check **Hostname**, **Port** and **Username** against the actual local server/account. A second MySQL installation or XAMPP/MariaDB can use a different port and different credentials. Use the same explicit `127.0.0.1` endpoint throughout these steps.
 2. Edit this connection, click **Clear** beside its saved password, then **Store in Vault…** and re-enter the correct local MySQL password. Check keyboard layout, Caps Lock and accidental spaces. Clearing the saved password does not reset the MySQL account.
 3. Test again. `using password: YES` only means a password was supplied; it does not confirm that password is correct. `using password: NO` means no password was supplied.
-4. If the password is unknown, ask the person who configured **that PC's MySQL Server**. An authorized local database administrator can reset the affected account; for a forgotten root password, follow [MySQL's Windows root-password recovery procedure](https://dev.mysql.com/doc/refman/8.4/en/resetting-permissions.html). Confirm the installed server/version and preserve existing data first. Another person's BANTAY `.env` cannot recover this login.
+4. If the password is unknown, ask the person who configured **that PC's MySQL Server**. An authorized local database administrator can reset the affected account; for a forgotten root password, follow [MySQL's Windows root-password recovery procedure](https://dev.mysql.com/doc/refman/8.4/en/resetting-permissions.html). Confirm the installed server/version and preserve existing data first. Another person's MuniAlert `.env` cannot recover this login.
 5. If an administrator can connect but the new app user cannot, check that the app account exists, its password change was applied, and its allowed host matches the connection in step 4C. Retrying migrations, reseeding MuniAlert accounts or regenerating `APP_KEY` will not fix a rejected Workbench login.
 
 If the exact message instead says **Cannot connect / 2003 / 10061**, check the running service and listening port; changing a password does not start a stopped server. If it says an authentication plugin is unsupported, record that exact error and check client/server compatibility rather than switching the server to legacy authentication.

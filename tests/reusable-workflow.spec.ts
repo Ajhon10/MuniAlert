@@ -67,12 +67,21 @@ test('department management creates offices and changes category routing through
   const routing = page.getByLabel('Responsible office for Other hazard', { exact: true });
   await routing.selectOption('synthetic-health');
   await routing.locator('xpath=ancestor::form').getByRole('button', { name: 'Save routing', exact: true }).click();
+  // Disabled also means the request is still in flight. Wait for the
+  // refreshed catalog before measuring or changing this form again.
+  await expect(page.getByText('Routing saved. New reports use the selected office.', { exact: true })).toBeVisible();
+  await expect(routing).toHaveValue('synthetic-health');
   await expect(routing.locator('xpath=ancestor::form').getByRole('button', { name: 'Save routing', exact: true })).toBeDisabled();
   const catalog = await page.evaluate(async () => (await fetch('/api/catalog')).json());
   expect(catalog.categories.find((c: any) => c.id === 'other').department_id).toBe('synthetic-health');
   await page.screenshot({ path: 'test-results/department-management.png', fullPage: true });
   await routing.selectOption('general');
   await routing.locator('xpath=ancestor::form').getByRole('button', { name: 'Save routing', exact: true }).click();
+  await expect(routing.locator('xpath=ancestor::form').getByRole('button', { name: 'Save routing', exact: true })).toBeDisabled();
+  await expect.poll(async () => page.evaluate(async () => {
+    const catalog = await (await fetch('/api/catalog')).json();
+    return catalog.categories.find((c: { id: string }) => c.id === 'other').department_id;
+  })).toBe('general');
 });
 
 test('sharing prepares reviewed report content while keeping private evidence out and explaining localhost', async ({ page, context }) => {

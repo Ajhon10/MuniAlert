@@ -19,6 +19,6 @@ try {
   const port = Number(process.env.HAZARD_WEB_PORT || 5173);
   const response = await fetch(`http://127.0.0.1:${port}/api/health`, { signal: AbortSignal.timeout(5000) });
   if (!response.ok || (await response.json()).status !== 'ok') throw Error('The web proxy cannot reach the API. Check HAZARD_API_PORT and the API console.');
-  console.log(`BANTAY is connected. Open http://localhost:${port}/`);
+  console.log(`MuniAlert is connected. Open http://localhost:${port}/`);
   if (!owned.length) console.log('Both services were already running; no duplicate processes were started.');
 } catch (error) { console.error(error.message); stop(1); }

@@ -12,6 +12,9 @@ test('internet outage stays visible while scrolling and recovers automatically',
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await expect.poll(async () => (await banner.boundingBox())?.y).toBe(0);
   await page.screenshot({ path: 'test-results/connection-offline-desktop.png' });
+  // Keep the three-second recovery notice observable even when the real
+  // health request is slow; advance its dismissal clock explicitly below.
+  await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1000));
   await context.setOffline(false);
   await expect(banner.locator('strong')).toHaveText('Connected');
   await page.clock.fastForward(2000);

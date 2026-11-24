@@ -14,9 +14,9 @@ export async function ensureWeb() {
   let existing;
   try { existing = await fetch(url, { headers: { Accept: 'text/html' }, signal: AbortSignal.timeout(4000) }); } catch {}
   if (existing) {
-    if (existing.headers.get('x-bantay-dev') !== workspace || !existing.ok) throw Error(`Port ${port} is occupied by a different server. Stop that server or choose HAZARD_WEB_PORT explicitly.`);
-    if (existing.headers.get('x-bantay-api-port') !== String(apiPort)) throw Error(`The existing BANTAY client proxies to another API port. Restart it with HAZARD_API_PORT=${apiPort}.`);
-    console.log(`BANTAY web is already running: ${url}`);
+    if (existing.headers.get('x-munialert-dev') !== workspace || !existing.ok) throw Error(`Port ${port} is occupied by a different server. Stop that server or choose HAZARD_WEB_PORT explicitly.`);
+    if (existing.headers.get('x-munialert-api-port') !== String(apiPort)) throw Error(`The existing MuniAlert client proxies to another API port. Restart it with HAZARD_API_PORT=${apiPort}.`);
+    console.log(`MuniAlert web is already running: ${url}`);
     return null;
   }
   const require = createRequire(import.meta.url);
@@ -28,17 +28,17 @@ export async function ensureWeb() {
     const deadline = Date.now() + 30000;
     while (Date.now() < deadline) {
       if (failure) throw failure;
-      if (child.exitCode !== null) throw Error(`BANTAY web exited (${child.exitCode}). Read the startup error above.`);
+      if (child.exitCode !== null) throw Error(`MuniAlert web exited (${child.exitCode}). Read the startup error above.`);
       try {
         const response = await fetch(url, { headers: { Accept: 'text/html' }, signal: AbortSignal.timeout(1500) });
-        if (response.ok && response.headers.get('x-bantay-dev') === workspace) {
-          console.log(`BANTAY web ready: ${url}`);
+        if (response.ok && response.headers.get('x-munialert-dev') === workspace) {
+          console.log(`MuniAlert web ready: ${url}`);
           return child;
         }
       } catch {}
       await new Promise(resolve => setTimeout(resolve, 250));
     }
-    throw Error('BANTAY web did not start. Read the Vite error above.');
+    throw Error('MuniAlert web did not start. Read the Vite error above.');
   } catch (error) { child.kill(); throw error; }
 }
 

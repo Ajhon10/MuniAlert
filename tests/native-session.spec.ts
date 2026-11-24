@@ -87,6 +87,23 @@ test('native login fails clearly and revokes its new token if secure storage fai
   await expect(page.locator('.header-account')).toContainText('Community guest');
 });
 
+test('native credential migrates to the MuniAlert key and cannot return after logout', async ({ page, context }) => {
+  const { vault } = await nativeFixture(context);
+  await page.goto('/'); await expect(page.locator('.page-footer')).toContainText('Last synced');
+  await login(page); await expect(page.locator('.header-account')).toContainText('Device Session Test');
+  const currentKey = [...vault.keys()][0]!;
+  expect(currentKey).toContain('munialert.session');
+  const oldKey = currentKey.replace('munialert.session', 'bantay.session');
+  vault.set(oldKey, vault.get(currentKey)!); vault.delete(currentKey);
+  await page.reload(); await expect(page.locator('.header-account')).toContainText('Device Session Test');
+  expect(vault.has(currentKey)).toBe(true); expect(vault.has(oldKey)).toBe(false);
+  expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain('synthetic-device-credential');
+  await accountOption(page, 'Log out');
+  await page.getByRole('dialog', { name: 'Sign out?' }).getByRole('button', { name: 'Sign out', exact: true }).click();
+  await expect(page.locator('.header-account')).toContainText('Community guest'); expect(vault.size).toBe(0);
+  await page.reload(); await expect(page.locator('.header-account')).toContainText('Community guest');
+});
+
 test('a late unauthorized response from startup cannot erase a newly signed-in session', async ({ page, context }) => {
   const { vault } = await nativeFixture(context);
   let release: () => void = () => {};

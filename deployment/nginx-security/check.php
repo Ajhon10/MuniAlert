@@ -64,7 +64,7 @@ try {
     $fixed = projectNginxVersionIsFixed($version);
     $source = 'upstream';
     if (! $fixed) {
-        $evidencePath = '/etc/bantay/nginx-security.json';
+        $evidencePath = '/etc/munialert/nginx-security.json';
         if (! is_file($evidencePath) || is_link($evidencePath)
             || fileowner($evidencePath) !== 0 || (fileperms($evidencePath) & 0022) !== 0
             || filesize($evidencePath) > 16384) {

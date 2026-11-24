@@ -18,7 +18,7 @@ export const manualSections: ManualSection[] = [
     'Enable sound alerts with a tap, then open Settings → Hazard sound alerts to choose a pattern per hazard, volume, test or mute. Sound preferences are saved for this administrator on this device. Old unread alerts do not ring after sign-in.',
     'Sound works while the app is open and the browser allows audio. A closed app, suspended browser or silent device may not play it. The bell and visual assistance flag remain available.',
     'Open the reported hazard from the bell. Contact agencies & responders is available before image/factual review. Call a published number or Copy responder brief, then review it before forwarding to an authorized agency. Copying does not send it automatically.',
-    'Private image authenticity review shows Not assessed when no local detector is configured. Otherwise it shows advisory estimates; neither low nor high AI likelihood proves the photo or incident authentic/false. Photos stay on BANTAY.',
+    'Private image authenticity review shows Not assessed when no local detector is configured. Otherwise it shows advisory estimates; neither low nor high AI likelihood proves the photo or incident authentic/false. Photos stay on MuniAlert.',
     'Inspect each new incident photo and independent corroboration. Choose a decision, record notes and confirm inspection. Save image review before accepting the incident. Suspected or inconclusive evidence requires further checks. Manual review can stop a pending automated check; a late score cannot overwrite it.',
     'Factual verification and public news publication remain separate. Contact responders promptly when needed; documentary checks must not delay that contact.',
   ], keywords: 'admin sound ringtone mute volume alert image AI generated authenticity review confirm local detector agency responder' },
@@ -67,6 +67,7 @@ export const manualSections: ManualSection[] = [
   ], keywords: 'accessibility read text size large font bold contrast spacing animation motion toast messages android older elderly' },
   { id: 'getting-started', audience: 'all', title: 'Sign in and find your way around', summary: 'Your account, navigation and the preview workspace.', steps: [
     'Use Sign in in the header. Create a citizen account with your name, email and password. Use your email and password; Google/Facebook sign-in has been removed. The header account icon opens My profile, Settings and Log out after sign-in.',
+    'Verify your account email and accept the current policies in Settings before reporting. Government-ID verification is optional; independent approval adds a blue identity check badge in My profile. You can report without that badge.',
     'On a phone, use Home, Map, Report, Updates and More. More opens workspace navigation. Find this guide in account icon → Settings. Administrator navigation shows Review and Manage instead of citizen reporting.',
     'In a popup, scroll the middle to read all fields or details. The title, close button and bottom actions stay visible. Use Go back to cancel a confirmation without losing the form underneath.',
     'A Demo workspace banner means the records are fictional. Exit preview before sending a real report. A report is accepted only when the system returns a reference number.',

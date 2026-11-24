@@ -1,5 +1,9 @@
 # 05 — Testing and validation
 
+## MuniAlert identity and local environment continuation — 24 November 2026
+
+The rename/local-environment continuation passed 133 backend tests / 1,273 assertions, static checks and native/web builds. The local environment and sample have the same 86 keys/order, with encryption/database/SMTP settings preserved privately and the application database unchanged. Two full browser attempts each passed 93 of 94 cases: the first found a routing-save synchronization race and the second a brief recovery-notice clock race. Assertions now wait for completed routing refresh and explicitly control the recovery timer. All 17 connection/native/reusable-workflow retests and two responsive checks passed. Android synchronization, Node/PHP dependency audits, documentation/capstone checks and promotional checks passed separately; dependency findings were zero. These results do not constitute one new all-green full gate; a future push still requires a fresh complete exact-state run. See [the scoped evidence](evidence/munialert-identity-local-2026-11-24.json). No host/device/municipal acceptance or deployment is claimed.
+
 ## Current revision 3 verification
 
 The optional-ID/admin-lifecycle change passes 133 backend tests / 1,273 assertions, a separate 25-test / 247-assertion isolated MySQL run, five focused new-feature browser cases and a 24-case broad retest. The first broad run passed 85/93 browser cases: failures exposed obsolete demo-name/provider-return expectations, profile-name overflow at 200% phone text and a notification measurement race between separate layout reads. Fixtures now use synthetic identities, manual return tests follow email sign-in, profile names wrap, and notification rows are sampled together while retaining equal-height/header/clamping assertions. The 24-case retest includes all eight failures. The subsequent fresh complete run passed all 21 checks, including 133 backend tests / 1,273 assertions and all 93 browser cases. Native synchronization and dependency/document/source-secret checks passed. Result-record/export updates received refreshed document/artifact/source checks afterward; a future push still requires its own fresh exact-state gate. Historical counts below do not replace this result.
@@ -124,9 +128,11 @@ Initially, the local MySQL instance rejected the example's empty password. The c
 
 The following screenshots were captured by the browser test using **fictional, read-only demo records**. They demonstrate interface layout, not real municipal incident collection or field evaluation.
 
-![Desktop demo dashboard](evidence/dashboard-desktop.png)
+The current MuniAlert captures below were refreshed on 24 November 2026 from the fictional preview. Original captures remain in the evidence directory as historical records.
 
-![Phone demo dashboard, 390-pixel viewport](evidence/dashboard-mobile.png)
+![MuniAlert desktop fictional preview](evidence/munialert-dashboard-desktop-2026-11-24.png)
+
+![MuniAlert phone fictional preview, 320-pixel viewport](evidence/munialert-dashboard-phone-320-2026-11-24.png)
 
 ## Reproduction
 
@@ -271,7 +277,7 @@ AccountPreferencesMailTest checks allowlisted per-account reading saves, invalid
 
 ### Final Settings verification
 
-The final Settings/2FA/email gate passed all **19 checks**, including **114 backend tests / 1030 assertions and 74 browser tests**, zero PHPStan errors and zero dependency findings. Separate isolated MySQL checks passed **25 tests / 190 assertions**. Native/web production assets and Android synchronization are current. Initial failures were stale motion counting after entering Settings and repeated dismissal during a toast leave transition; both test corrections retain the behavior assertions. Both manuals and the technical appendix are refreshed. No real email, deployment or physical-device acceptance is claimed; BANTAY still needs its separate Gmail app password. Result-record changes receive documentation/secret checks, and future pushes require a fresh exact-state gate.
+The final Settings/2FA/email gate passed all **19 checks**, including **114 backend tests / 1030 assertions and 74 browser tests**, zero PHPStan errors and zero dependency findings. Separate isolated MySQL checks passed **25 tests / 190 assertions**. Native/web production assets and Android synchronization are current. Initial failures were stale motion counting after entering Settings and repeated dismissal during a toast leave transition; both test corrections retain the behavior assertions. Both manuals and the technical appendix are refreshed. No real email, deployment or physical-device acceptance is claimed; MuniAlert still needs its separate Gmail app password. Result-record changes receive documentation/secret checks, and future pushes require a fresh exact-state gate.
 
 See [redacted feature evidence](evidence/settings-2fa-email-2026-11-11.json) and [nineteen-check report](evidence/settings-2fa-email-gate-final-2026-11-11.json).
 

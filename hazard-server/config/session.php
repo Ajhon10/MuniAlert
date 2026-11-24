@@ -126,7 +126,7 @@ return [
     */
 
     // Keep existing browser sessions when the public application name changes.
-    'cookie' => env('SESSION_COOKIE', 'bantay_session'),
+    'cookie' => env('SESSION_COOKIE', 'munialert_session'),
 
     /*
     |--------------------------------------------------------------------------

@@ -20,7 +20,7 @@ Checked 9 November 2026 against the private repository and local configuration p
 | Android source, manifests, icons and Gradle wrapper JAR/scripts | Yes | Native source is complete; install the local build toolchain |
 | `android/local.properties` | No, intentionally | Android Studio creates a machine-specific SDK path |
 | APK/AAB and build/dist folders | No, intentionally | Build locally or obtain an approved test APK; a source download is not an installed app |
-| Native Firebase `android/app/google-services.json` | No, intentionally | Only for configured native push: obtain the test Firebase Android config for `ph.municipal.bantay` |
+| Native Firebase `android/app/google-services.json` | No, intentionally | Only for configured native push: obtain the test Firebase Android config for `ph.municipal.munialert` |
 | Firebase service-account JSON / R2 keys / OAuth client secrets | No, intentionally | Backend maintainer configures controlled test services; do not place server secrets in an APK, client env or repository |
 | Release signing keystore/password | No, intentionally | Keep with the release maintainer; teammates can build debug apps without the owner's release key |
 | Promo MP4s / speech-model cache | No, intentionally | Not needed to run/test the app; editable source, generated narration and captures are included |

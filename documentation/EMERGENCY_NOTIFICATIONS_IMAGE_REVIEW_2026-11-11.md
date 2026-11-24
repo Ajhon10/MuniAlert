@@ -1,6 +1,6 @@
 # Emergency-first reports, actionable notifications, sound alerts and image review
 
-The user requested bell-based notifications instead of a sidebar page; a yes/no immediate-assistance question before reporting; searchable nearby agency hotlines with an online-report fallback; per-hazard administrator sound alerts; image authenticity screening with administrator confirmation; and a bottom-right highlighted guide like DEOS. They explicitly selected keeping photos on BANTAY and using a local detector when configured. DEOS was inspected read-only for its floating tour launcher; no unrelated code/data was changed.
+The user requested bell-based notifications instead of a sidebar page; a yes/no immediate-assistance question before reporting; searchable nearby agency hotlines with an online-report fallback; per-hazard administrator sound alerts; image authenticity screening with administrator confirmation; and a bottom-right highlighted guide like DEOS. They explicitly selected keeping photos on MuniAlert and using a local detector when configured. DEOS was inspected read-only for its floating tour launcher; no unrelated code/data was changed.
 
 ## Citizen experience
 
@@ -34,7 +34,7 @@ The detector adapter is implemented and tested with synthetic local responses. N
 
 ## Configure a local detector
 
-Provide a maintained classifier on the same trusted server, without forwarding inputs or storing them outside BANTAY's approved evidence policy. The HTTP contract is POST multipart field image (sanitized WebP) and optional bearer token; response example: {"ai_probability":0.73,"model":"your-evaluated-model@revision"}. This example is a protocol fixture, not an included detection model.
+Provide a maintained classifier on the same trusted server, without forwarding inputs or storing them outside MuniAlert's approved evidence policy. The HTTP contract is POST multipart field image (sanitized WebP) and optional bearer token; response example: {"ai_probability":0.73,"model":"your-evaluated-model@revision"}. This example is a protocol fixture, not an included detection model.
 
 Set these server-only values in the ignored environment:
 
@@ -64,4 +64,4 @@ See [redacted evidence](evidence/emergency-workflow-2026-11-11.json), [all ninet
 
 ### Ownership and record checks
 
-Lenovo ownership was restored across 75 affected BANTAY scopes. All 42 sampled access-control lists were preserved; no wildcard Git ownership exception was added. Generated-document, expanded source-secret and whitespace checks cover the final result records.
+Lenovo ownership was restored across 75 affected MuniAlert scopes. All 42 sampled access-control lists were preserved; no wildcard Git ownership exception was added. Generated-document, expanded source-secret and whitespace checks cover the final result records.

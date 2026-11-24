@@ -13,7 +13,7 @@ Route::get('/', function () {
         return response()->file($index, ['Content-Type' => 'text/html; charset=UTF-8', 'Cache-Control' => 'no-store']);
     }
 
-    return response()->json(['application' => 'Bantay Municipal Hazard API', 'frontend' => 'Run the frontend on port 5173, or package the web assets for a single-origin deployment.']);
+    return response()->json(['application' => 'MuniAlert Municipal Hazard API', 'frontend' => 'Run the frontend on port 5173, or package the web assets for a single-origin deployment.']);
 });
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:10,1,auth-login');
 Route::post('/auth/mfa/verify', [AccountSecurityController::class, 'verify'])->middleware('throttle:10,1,mfa-verify');

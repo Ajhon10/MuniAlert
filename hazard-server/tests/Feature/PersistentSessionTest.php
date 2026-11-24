@@ -30,8 +30,8 @@ class PersistentSessionTest extends TestCase
     {
         $user = $this->citizen();
         $response = $this->postJson('/auth/login', ['email' => $user->email, 'password' => self::PASSWORD])->assertOk();
-        $this->assertSame('bantay_session', config('session.cookie'));
-        $response->assertCookie('bantay_session');
+        $this->assertSame('munialert_session', config('session.cookie'));
+        $response->assertCookie('munialert_session');
         $name = Auth::guard('web')->getRecallerName();
         $response->assertCookie($name);
         $cookie = collect($response->headers->getCookies())->first(fn ($cookie) => $cookie->getName() === $name);

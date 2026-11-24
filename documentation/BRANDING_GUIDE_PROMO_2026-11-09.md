@@ -6,7 +6,7 @@ Updated 9 November 2026, Philippine time. Implementation began 8 November. These
 
 The short application name is **MuniAlert**, with subtitle **Emergency & Public Hazard Reporting**. The user-selected capstone title is **Municipal Emergency and Public Hazard Reporting System with Photo and Location-Based Incident Tracking**.
 
-The web title, dashboard branding, authentication messages, Android display label and current capstone documents use the new identity. The full title appears in the guide's **About this capstone**, its footer and the video closing scene. `hazard-client/src/config/identity.json` holds the client identity. Android package ID, callback scheme, credential-storage keys and the `bantay_session` cookie remain stable for compatibility. Existing `SESSION_COOKIE` overrides remain valid. The workspace folder stays named BANTAY.
+The web title, dashboard branding, authentication messages, Android display label and current capstone documents use the new identity. The full title appears in the guide's **About this capstone**, its footer and the video closing scene. `hazard-client/src/config/identity.json` holds the client identity. The current unreleased Android package/scheme is ph.municipal.munialert, the native credential key is munialert.session and the browser-session cookie is munialert_session. Read-only legacy storage migration is retained for existing records. A changed application ID creates a separate installation; Firebase registration must match the new ID before a device build. The physical checkout path is an operational location, not another product identity.
 
 ## Feature guide and user manual
 

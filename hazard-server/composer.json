@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "bantay/hazard-server",
+    "name": "munialert/hazard-server",
     "type": "project",
     "description": "Laravel API for municipal hazard reporting, location verification, and response tracking",
     "keywords": [

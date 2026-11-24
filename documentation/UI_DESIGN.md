@@ -1,7 +1,7 @@
 # MuniAlert interface direction
 
 The requested reference is LUMA Store's system typography and liquid-glass
-material. BANTAY remains a community safety tool: the map, report status and
+material. MuniAlert remains a community safety tool: the map, report status and
 reporting action take priority over decorative content.
 
 - Type: LUMA's `-apple-system`, BlinkMacSystemFont, SF Pro, Segoe UI, Helvetica,

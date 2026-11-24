@@ -4,6 +4,7 @@ import { initializeApp, getApps } from 'firebase/app';
 import { getMessaging, getToken, isSupported, onMessage } from 'firebase/messaging';
 import workerUrl from '../firebase-messaging-sw.ts?worker&url';
 import { api } from './api';
+import { legacyStorage } from './legacyStorage';
 export async function enablePush(onNotice: (text: string) => void) {
   let token: string;
   if (Capacitor.isNativePlatform()) {
@@ -35,6 +36,7 @@ export async function enablePush(onNotice: (text: string) => void) {
     onMessage(messaging, payload => onNotice(payload.notification?.body || 'A report has been updated.'));
   }
   await api('/api/devices', { method: 'POST', body: JSON.stringify({ token, platform: Capacitor.isNativePlatform() ? Capacitor.getPlatform() : 'web' }) });
-  localStorage.setItem('bantay.push-token', token);
+  localStorage.setItem('munialert.push-token', token);
+  localStorage.removeItem(legacyStorage.pushToken);
 }
-export async function unregisterDevice() { const token = localStorage.getItem('bantay.push-token'); if (token) { await api('/api/devices', { method: 'DELETE', body: JSON.stringify({ token }) }); localStorage.removeItem('bantay.push-token'); } }
+export async function unregisterDevice() { const token = localStorage.getItem('munialert.push-token') || localStorage.getItem(legacyStorage.pushToken); if (token) { await api('/api/devices', { method: 'DELETE', body: JSON.stringify({ token }) }); localStorage.removeItem('munialert.push-token'); localStorage.removeItem(legacyStorage.pushToken); } }

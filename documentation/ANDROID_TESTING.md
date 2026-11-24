@@ -76,7 +76,7 @@ The current source uses Capacitor 7, Android SDK Platform/target 35, minimum API
 
 The private repository also provides a manual **Build Android debug APK** workflow. Supply the approved HTTPS API origin in Actions, then download the `munialert-android-debug` artifact after success. A debug APK and its configured backend must both be reachable/useful to the tester. A signed release APK/AAB is a separate deliverable.
 
-The source repository already includes the Gradle wrapper JAR/scripts; do not request an owner's dependency/build directories. Android Studio creates `local.properties` for each PC. No debug APK or HTTPS staging address is currently supplied in the checked local setup. Native Firebase push additionally needs a test `google-services.json` for `ph.municipal.bantay`; its server service-account key belongs on the backend, never in the APK.
+The source repository already includes the Gradle wrapper JAR/scripts; do not request an owner's dependency/build directories. Android Studio creates `local.properties` for each PC. No debug APK or HTTPS staging address is currently supplied in the checked local setup. Native Firebase push additionally needs a test `google-services.json` for `ph.municipal.munialert`; its server service-account key belongs on the backend, never in the APK.
 
 ## 5. Troubleshooting and remote members
 

@@ -1,6 +1,6 @@
 # Social authentication implementation ? 4 November 2026
 
-Google and Facebook signup/sign-in are implemented in the existing Vue/Laravel applications. The form keeps BANTAY's system typography, rounded glass surface, keyboard focus and 48px provider controls. New provider users are citizens. Password accounts link providers only after authenticated password confirmation; matching email does not merge accounts.
+Google and Facebook signup/sign-in are implemented in the existing Vue/Laravel applications. The form keeps MuniAlert's system typography, rounded glass surface, keyboard focus and 48px provider controls. New provider users are citizens. Password accounts link providers only after authenticated password confirmation; matching email does not merge accounts.
 
 Web uses state-protected Socialite redirects, a verified session on return, and the existing persistent HttpOnly cookies. Android uses the system browser, secure pending-verifier storage and a fixed app callback with a one-use, 90-second S256-protected code. Cold launch, provider cancellation, account collisions, stale/revoked link proof and replay handling are covered. A newly issued mobile token is revoked if secure storage fails or a pending exchange was cancelled.
 
